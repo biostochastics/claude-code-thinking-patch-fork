@@ -11,6 +11,8 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
+**Current Version:** Claude Code 2.0.10 (Updated 2025-10-08)
+
 ## Quick Start
 
 ```bash
@@ -46,40 +48,44 @@ That's it! Thinking blocks now display inline without `ctrl+o`.
 
 This patch modifies two locations in Claude Code's compiled JavaScript:
 
-### Patch 1: Remove the Banner (Line 1909)
+### Patch 1: Remove the Banner (Line 1912 in v2.0.10)
 **Before:**
 ```javascript
-function Mr2({streamMode:A}){
+function br2({streamMode:A}){
   // ... displays "Thought for Xs (ctrl+o to show thinking)"
 }
 ```
 
 **After:**
 ```javascript
-function Mr2({streamMode:A}){return null}
+function br2({streamMode:A}){return null}
 ```
 
 **Effect:** Removes the collapsed thinking banner entirely.
 
-### Patch 2: Force Thinking Visibility (Line 2212)
+**Version Note:** Function was named `Mr2` in v2.0.9, renamed to `br2` in v2.0.10.
+
+### Patch 2: Force Thinking Visibility (Line 2226 in v2.0.10)
 **Before:**
 ```javascript
-case"thinking":if(!K)return null;if(z)return null;
-  return R8.createElement(S2B,{addMargin:B,param:A,isTranscriptMode:K});
+case"thinking":if(!K)return null;if(H)return null;
+  return _8.createElement(DOB,{addMargin:B,param:A,isTranscriptMode:K});
 ```
 
 **After:**
 ```javascript
-case"thinking":if(z)return null;
-  return R8.createElement(S2B,{addMargin:B,param:A,isTranscriptMode:!0});
+case"thinking":if(H)return null;
+  return _8.createElement(DOB,{addMargin:B,param:A,isTranscriptMode:!0});
 ```
 
 **Effect:** Forces thinking content to render as if in transcript mode (visible).
 
+**Version Note:** Variable/component names changed in v2.0.10: `z`→`H`, `S2B`→`DOB`, `R8`→`_8`.
+
 ## Files
 
 - **Target:** `/Users/aleks/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js`
-- **Patch Script:** `/Users/aleks/.claude/patch-thinking.js`
+- **Patch Script:** `/Users/aleks/.claude/patch-thinking.js` (Updated for v2.0.10)
 - **Backup:** `/Users/aleks/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js.backup`
 - **Documentation:** `/Users/aleks/.claude/plan.md` (detailed analysis)
 
@@ -129,25 +135,27 @@ Both must be patched because they're separate systems:
 ### Location Discovery Process
 
 The patches target specific patterns in the minified code:
-- **Line 1909:** Found by searching for `function Mr2({streamMode:A})`
-- **Line 2212:** Found by searching for `case"thinking"` in the Y$6 function
+- **Line 1912 (v2.0.10):** Found by searching for `function br2({streamMode:A})`
+- **Line 2226 (v2.0.10):** Found by searching for `case"thinking"` with the DOB component
 
-These line numbers may change with Claude Code updates.
+These line numbers and function names change with Claude Code updates:
+- **v2.0.9:** `Mr2` at line 1909, thinking case at line 2212
+- **v2.0.10:** `br2` at line 1912, thinking case at line 2226
 
 ## Verification
 
-Check if patches are applied:
+Check if patches are applied (for v2.0.10):
 
 ```bash
-# Check Mr2 patch
-grep -n "function Mr2" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check br2 patch
+grep -n "function br2" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
-# Should show: function Mr2({streamMode:A}){return null}
+# Should show: function br2({streamMode:A}){return null}
 
 # Check thinking visibility patch
-grep -n 'case"thinking"' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+grep -n 'case"thinking":if(H)return null' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
-# Should show: case"thinking":if(z)return null;return R8.createElement(S2B,{addMargin:B,param:A,isTranscriptMode:!0});
+# Should show: case"thinking":if(H)return null;return _8.createElement(DOB,{addMargin:B,param:A,isTranscriptMode:!0});
 ```
 
 ## Troubleshooting
@@ -192,7 +200,10 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2025-10-07
-**Claude Code Version:** 2.0.9
+**Last Updated:** 2025-10-08
+**Claude Code Version:** 2.0.10
 **Status:** ✅ Working
-# claude-code-thinking-patch
+
+### Version Notes
+
+When Claude Code updates, the minified code is recompiled and identifiers change. The patch script targets the current v2.0.10 patterns. If it fails after a future update, you'll need to locate the new function names and update the patterns in `patch-thinking.js`.
