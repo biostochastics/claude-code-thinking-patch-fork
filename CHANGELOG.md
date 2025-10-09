@@ -1,0 +1,102 @@
+# Claude Code Thinking Visibility Patch Changelog
+
+## Version Support
+
+This repository contains patches for multiple Claude Code versions:
+- **v2.0.11**: `patch-thinking.js`
+- **v2.0.13**: `patch-thinking-v2.0.13.js`
+
+## Why v2.0.11 patch doesn't work on v2.0.13
+
+When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail.
+
+## Changes from v2.0.11 to v2.0.13
+
+### Patch 1: Banner Removal
+
+**Function name changed:**
+- v2.0.11: `er2`
+- v2.0.13: `hGB`
+
+**Variable names changed:**
+- React import: `BY1` → `RX1`
+- Element creator: `_E` → `TL`
+- Component `S` → `j`
+- Component `E` → `$`
+
+**v2.0.11 pattern:**
+```javascript
+function er2({streamMode:A}){let[B,Q]=BY1.useState(null),[Z,G]=BY1.useState(null);if(BY1.useEffect(()=>{if(A==="thinking"&&B===null)Q(Date.now());else if(A!=="thinking"&&B!==null)G(Date.now()-B),Q(null)},[A,B]),A==="thinking")return _E.createElement(S,{marginTop:1},_E.createElement(E,{dimColor:!0},"∴ Thinking…"));if(Z!==null)return _E.createElement(S,{marginTop:1},_E.createElement(E,{dimColor:!0},"∴ Thought for ",Math.max(1,Math.round(Z/1000)),"s"," ",_E.createElement(E,{dimColor:!0,bold:!0},"(ctrl+o")," ","to show thinking)"));return null}
+```
+
+**v2.0.13 pattern:**
+```javascript
+function hGB({streamMode:A}){let[B,Q]=RX1.useState(null),[Z,G]=RX1.useState(null);if(RX1.useEffect(()=>{if(A==="thinking"&&B===null)Q(Date.now());else if(A!=="thinking"&&B!==null)G(Date.now()-B),Q(null)},[A,B]),A==="thinking")return TL.createElement(j,{marginTop:1},TL.createElement($,{dimColor:!0},"∴ Thinking…"));if(Z!==null)return TL.createElement(j,{marginTop:1},TL.createElement($,{dimColor:!0},"∴ Thought for ",Math.max(1,Math.round(Z/1000)),"s"," ",TL.createElement($,{dimColor:!0,bold:!0},"(ctrl+o")," ","to show thinking)"));return null}
+```
+
+### Patch 2: Thinking Visibility
+
+**Variable names changed:**
+- `K` (isTranscriptMode in v2.0.11) → `D` (in v2.0.13)
+- `z` (some condition in v2.0.11) → `K` (in v2.0.13)
+- Element creator: `_8` → `z3`
+- Component: `SOB` → `xlB`
+
+**v2.0.11 pattern:**
+```javascript
+case"thinking":if(!K)return null;if(z)return null;return _8.createElement(SOB,{addMargin:B,param:A,isTranscriptMode:K});
+```
+
+**v2.0.13 pattern:**
+```javascript
+case"thinking":if(!D)return null;if(K)return null;return z3.createElement(xlB,{addMargin:B,param:A,isTranscriptMode:D});
+```
+
+## How to Find Patterns for Future Versions
+
+If you need to update the patch for newer versions:
+
+1. **Find the banner function:**
+   ```bash
+   grep -o 'function \w\+({streamMode:\w\+}){[^}]*"∴ Thinking…"[^}]*}' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+   ```
+
+2. **Find the thinking case:**
+   ```bash
+   grep -o 'case"thinking":if[^;]*isTranscriptMode:[^;]*;' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+   ```
+
+3. Look for these distinctive strings:
+   - `"∴ Thinking…"` (thinking banner)
+   - `"∴ Thought for "` (thought timer)
+   - `"(ctrl+o"` (keyboard hint)
+   - `isTranscriptMode` (visibility flag)
+
+## Usage
+
+**For v2.0.11:**
+```bash
+cd ~/claude-code-thinking-patch-fork
+node patch-thinking.js
+```
+
+**For v2.0.13:**
+```bash
+cd ~/claude-code-thinking-patch-fork
+node patch-thinking-v2.0.13.js
+```
+
+After running the appropriate patch, restart Claude Code for changes to take effect.
+
+## What the Patch Does
+
+1. **Removes the banner**: Makes the banner function return `null` immediately, hiding the "Thinking..." message
+2. **Forces thinking visibility**: Changes `isTranscriptMode:D` to `isTranscriptMode:!0` (always true), making thinking content always visible
+
+This allows you to see Claude's reasoning process without the distracting banner.
+
+## Version History
+
+- **2025-10-09**: Added v2.0.13 support with dynamic username detection
+- **2025-10-09**: Added dynamic username detection to v2.0.11 script
+- **Earlier**: Initial v2.0.11 release with hardcoded paths
