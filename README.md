@@ -11,7 +11,7 @@ Claude Code collapses thinking blocks by default, showing only:
 
 You have to press `ctrl+o` every time to see the actual thinking content. This patch makes thinking blocks visible inline automatically.
 
-**Current Version:** Claude Code 2.0.10 (Updated 2025-10-08)
+**Current Version:** Claude Code 2.0.11 (Updated 2025-10-09)
 
 ## Quick Start
 
@@ -48,44 +48,50 @@ That's it! Thinking blocks now display inline without `ctrl+o`.
 
 This patch modifies two locations in Claude Code's compiled JavaScript:
 
-### Patch 1: Remove the Banner (Line 1912 in v2.0.10)
+### Patch 1: Remove the Banner (v2.0.11)
 **Before:**
 ```javascript
-function br2({streamMode:A}){
+function er2({streamMode:A}){
   // ... displays "Thought for Xs (ctrl+o to show thinking)"
 }
 ```
 
 **After:**
 ```javascript
-function br2({streamMode:A}){return null}
+function er2({streamMode:A}){return null}
 ```
 
 **Effect:** Removes the collapsed thinking banner entirely.
 
-**Version Note:** Function was named `Mr2` in v2.0.9, renamed to `br2` in v2.0.10.
+**Version Notes:**
+- v2.0.9: Function named `Mr2`
+- v2.0.10: Renamed to `br2`, used `PE.createElement`
+- v2.0.11: Renamed to `er2`, uses `_E.createElement`
 
-### Patch 2: Force Thinking Visibility (Line 2226 in v2.0.10)
+### Patch 2: Force Thinking Visibility (v2.0.11)
 **Before:**
 ```javascript
-case"thinking":if(!K)return null;if(H)return null;
-  return _8.createElement(DOB,{addMargin:B,param:A,isTranscriptMode:K});
+case"thinking":if(!K)return null;if(z)return null;
+  return _8.createElement(SOB,{addMargin:B,param:A,isTranscriptMode:K});
 ```
 
 **After:**
 ```javascript
-case"thinking":if(H)return null;
-  return _8.createElement(DOB,{addMargin:B,param:A,isTranscriptMode:!0});
+case"thinking":if(z)return null;
+  return _8.createElement(SOB,{addMargin:B,param:A,isTranscriptMode:!0});
 ```
 
 **Effect:** Forces thinking content to render as if in transcript mode (visible).
 
-**Version Note:** Variable/component names changed in v2.0.10: `z`→`H`, `S2B`→`DOB`, `R8`→`_8`.
+**Version Notes:**
+- v2.0.9: Used `S2B` component
+- v2.0.10: Changed to `DOB` component, `z`→`H` variable
+- v2.0.11: Changed to `SOB` component, `H`→`z` variable
 
 ## Files
 
 - **Target:** `/Users/aleks/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js`
-- **Patch Script:** `/Users/aleks/.claude/patch-thinking.js` (Updated for v2.0.10)
+- **Patch Script:** `/Users/aleks/.claude/patch-thinking.js` (Updated for v2.0.11)
 - **Backup:** `/Users/aleks/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js.backup`
 - **Documentation:** `/Users/aleks/.claude/plan.md` (detailed analysis)
 
@@ -125,37 +131,38 @@ Then restart Claude Code.
 
 ### Why Two Patches?
 
-1. **Mr2 Function:** Controls the UI banner shown after thinking completes
+1. **er2 Function:** Controls the UI banner shown after thinking completes
 2. **Thinking Renderer:** Controls whether the actual thinking text is displayed
 
 Both must be patched because they're separate systems:
-- Patching only Mr2 → Blank line appears where thinking should be
+- Patching only er2 → Blank line appears where thinking should be
 - Patching only the renderer → Banner still shows "ctrl+o to show"
 
 ### Location Discovery Process
 
 The patches target specific patterns in the minified code:
-- **Line 1912 (v2.0.10):** Found by searching for `function br2({streamMode:A})`
-- **Line 2226 (v2.0.10):** Found by searching for `case"thinking"` with the DOB component
+- **er2 Function (v2.0.11):** Found by searching for `function er2({streamMode:A})`
+- **Thinking Visibility (v2.0.11):** Found by searching for `case"thinking"` with the SOB component
 
-These line numbers and function names change with Claude Code updates:
-- **v2.0.9:** `Mr2` at line 1909, thinking case at line 2212
-- **v2.0.10:** `br2` at line 1912, thinking case at line 2226
+These patterns change with Claude Code updates:
+- **v2.0.9:** `Mr2` function, `S2B` component
+- **v2.0.10:** `br2` function, `DOB` component, `H` variable
+- **v2.0.11:** `er2` function, `SOB` component, `z` variable
 
 ## Verification
 
-Check if patches are applied (for v2.0.10):
+Check if patches are applied (for v2.0.11):
 
 ```bash
-# Check br2 patch
-grep -n "function br2" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+# Check er2 patch
+grep -n "function er2" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
-# Should show: function br2({streamMode:A}){return null}
+# Should show: function er2({streamMode:A}){return null}
 
 # Check thinking visibility patch
-grep -n 'case"thinking":if(H)return null' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+grep -n 'case"thinking":if(z)return null' ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
-# Should show: case"thinking":if(H)return null;return _8.createElement(DOB,{addMargin:B,param:A,isTranscriptMode:!0});
+# Should show: case"thinking":if(z)return null;return _8.createElement(SOB,{addMargin:B,param:A,isTranscriptMode:!0});
 ```
 
 ## Troubleshooting
@@ -200,10 +207,10 @@ Developed through analysis of Claude Code's compiled JavaScript. Special thanks 
 
 ---
 
-**Last Updated:** 2025-10-08
-**Claude Code Version:** 2.0.10
+**Last Updated:** 2025-10-09
+**Claude Code Version:** 2.0.11
 **Status:** ✅ Working
 
 ### Version Notes
 
-When Claude Code updates, the minified code is recompiled and identifiers change. The patch script targets the current v2.0.10 patterns. If it fails after a future update, you'll need to locate the new function names and update the patterns in `patch-thinking.js`.
+When Claude Code updates, the minified code is recompiled and identifiers change. The patch script targets the current v2.0.11 patterns. If it fails after a future update, you'll need to locate the new function names and update the patterns in `patch-thinking.js`.
