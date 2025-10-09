@@ -241,7 +241,7 @@ Consider requesting this as an official feature from Anthropic:
 
 ## Credits & Attribution
 
-This fork builds upon the original work by [@aleks](https://github.com/aleks). Key improvements in this fork:
+This fork builds upon the original work by [@aleks-apostle](https://github.com/aleks-apostle). Key improvements in this fork:
 - Dynamic username detection (no hardcoded paths)
 - Multi-version support (v2.0.11 and v2.0.13)
 - Comprehensive changelog documenting version differences
