@@ -29,6 +29,12 @@ cd ~/claude-code-thinking-patch-fork
 node patch-thinking-v2.0.14.js
 ```
 
+For **v2.0.15**:
+```bash
+cd ~/claude-code-thinking-patch-fork
+node patch-thinking-v2.0.15.js
+```
+
 **Step 3: Restart Claude Code**
 
 That's it! Thinking blocks now display inline without `ctrl+o`.
@@ -51,6 +57,7 @@ You have to press `ctrl+o` every time to see the actual thinking content. This p
 | v2.0.11 | `patch-thinking.js` | ✅ Working |
 | v2.0.13 | `patch-thinking-v2.0.13.js` | ✅ Working |
 | v2.0.14 | `patch-thinking-v2.0.14.js` | ✅ Working |
+| v2.0.15 | `patch-thinking-v2.0.15.js` | ✅ Working |
 
 Both scripts now support **dynamic username detection** - they work on any system without hardcoded paths!
 
@@ -82,6 +89,7 @@ Replaces the thinking banner function with a simple `return null`:
 **v2.0.11**: Patches `er2` function
 **v2.0.13**: Patches `hGB` function
 **v2.0.14**: Patches `pGB` function
+**v2.0.15**: Patches `KYB` function
 
 **Effect:** Removes the collapsed thinking banner entirely.
 
@@ -92,6 +100,7 @@ Changes the transcript mode check to always return `true`:
 **v2.0.11**: Changes `isTranscriptMode:K` → `isTranscriptMode:!0`
 **v2.0.13**: Changes `isTranscriptMode:D` → `isTranscriptMode:!0`
 **v2.0.14**: Changes `isTranscriptMode:D` → `isTranscriptMode:!0`
+**v2.0.15**: Changes `isTranscriptMode:D` → `isTranscriptMode:!0`
 
 **Effect:** Forces thinking content to render as if in transcript mode (visible).
 
@@ -104,6 +113,7 @@ claude-code-thinking-patch-fork/
 ├── patch-thinking.js           # v2.0.11 patch
 ├── patch-thinking-v2.0.13.js   # v2.0.13 patch
 ├── patch-thinking-v2.0.14.js   # v2.0.14 patch
+├── patch-thinking-v2.0.15.js   # v2.0.15 patch
 ├── CHANGELOG.md                # Technical version differences
 └── README.md                   # This file
 ```
@@ -130,6 +140,8 @@ node patch-thinking.js              # for v2.0.11
 node patch-thinking-v2.0.13.js      # for v2.0.13
 # or
 node patch-thinking-v2.0.14.js      # for v2.0.14
+# or
+node patch-thinking-v2.0.15.js      # for v2.0.15
 
 # Restart Claude Code
 ```
@@ -159,6 +171,9 @@ grep -o "function hGB" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cl
 
 # Check for v2.0.14 (pGB function)
 grep -o "function pGB" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+
+# Check for v2.0.15 (KYB function)
+grep -o "function KYB" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 ```
 
 ### Patch Script Says "Pattern not found"
@@ -210,6 +225,14 @@ grep -o "function hGB({streamMode:A}){return null}" ~/.claude/local/node_modules
 grep -o "function pGB({streamMode:A}){return null}" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
 # Should return: function pGB({streamMode:A}){return null}
+```
+
+**For v2.0.15:**
+```bash
+# Check KYB patch
+grep -o "function KYB({streamMode:A}){return null}" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+
+# Should return: function KYB({streamMode:A}){return null}
 ```
 
 ## Technical Details
@@ -280,8 +303,8 @@ This patch is provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last Updated:** 2025-10-10
-**Supported Versions:** v2.0.11, v2.0.13, v2.0.14
+**Last Updated:** 2025-10-14
+**Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15
 **Status:** ✅ Working
 
 ### Contributing
