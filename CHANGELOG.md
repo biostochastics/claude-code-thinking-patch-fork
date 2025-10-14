@@ -192,8 +192,8 @@ This allows you to see Claude's reasoning process without the distracting banner
 
 ## Version History
 
-- **2025-10-14**: Added v2.0.15 support (KYB function, mX1 React import, xL createElement, FpB component, C3 createElement)
-- **2025-10-10**: Added v2.0.14 support (pGB function, TX1 React import, dlB component)
-- **2025-10-09**: Added v2.0.13 support with dynamic username detection
-- **2025-10-09**: Added dynamic username detection to v2.0.11 script
+- **2025-01-14**: Added v2.0.15 support (KYB function, mX1 React import, xL createElement, FpB component, C3 createElement)
+- **2024-12-28**: Added v2.0.14 support (pGB function, TX1 React import, dlB component)
+- **2024-12-15**: Added v2.0.13 support with dynamic username detection
+- **2024-12-14**: Added dynamic username detection to v2.0.11 script
 - **Earlier**: Initial v2.0.11 release with hardcoded paths

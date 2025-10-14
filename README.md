@@ -1,5 +1,7 @@
 # Claude Code Thinking Display Patch
 
+[![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/biostochastics/claude-code-thinking-patch-fork)
+
 Make Claude Code's thinking blocks visible by default without pressing `ctrl+o`.
 
 ## ⚡ Quick Start
@@ -9,8 +11,9 @@ Make Claude Code's thinking blocks visible by default without pressing `ctrl+o`.
 claude --version
 ```
 
-**Step 2: Run the appropriate patch**
+**Step 2: Choose your patch style**
 
+**Option A: Standard (Default)**
 For **v2.0.11**:
 ```bash
 cd ~/claude-code-thinking-patch-fork
@@ -34,6 +37,16 @@ For **v2.0.15**:
 cd ~/claude-code-thinking-patch-fork
 node patch-thinking-v2.0.15.js
 ```
+
+**Option B: Custom Styled (v2.0.15 only)**
+```bash
+cd ~/claude-code-thinking-patch-fork
+node patch-thinking-v2.0.15-custom.js
+```
+Features:
+- 💭 Custom "Thinking Process" header in bold green
+- 📦 Bordered box around thinking blocks
+- ✨ Enhanced visual separation
 
 **Step 3: Restart Claude Code**
 
@@ -69,7 +82,7 @@ Both scripts now support **dynamic username detection** - they work on any syste
 [thinking content hidden]
 ```
 
-**After:**
+**After (Standard):**
 ```
 ∴ Thinking…
 
@@ -77,6 +90,85 @@ Both scripts now support **dynamic username detection** - they work on any syste
   The actual thinking process is now visible
   without any keyboard shortcuts needed
 ```
+
+**After (Custom Styled):**
+```
+┌─────────────────────────────────┐
+│ 💭 Thinking Process             │
+│                                 │
+│  [thinking content displayed    │
+│   with custom styling and       │
+│   bordered box]                 │
+└─────────────────────────────────┘
+```
+
+## 🎨 Customization
+
+### Custom Styling (v2.0.15+)
+
+The custom patch (`patch-thinking-v2.0.15-custom.js`) adds visual enhancements to thinking blocks. You can easily modify the styling by editing the patch file:
+
+**Available Customizations:**
+
+1. **Border Styles**
+   - `borderStyle:"single"` → `"double"`, `"round"`, `"bold"`
+   - `borderColor:"suggestion"` → `"error"` (red), `"warning"` (yellow), `"text"` (default)
+
+2. **Colors**
+   - `color:"suggestion"` (green) → `"error"` (red), `"warning"` (yellow), `"text"` (default)
+   - Add `backgroundColor:"memoryBackgroundColor"` for highlights
+
+3. **Header Text**
+   - Change `"💭 Thinking Process"` to any text you prefer
+   - Remove emoji or customize the wording
+
+4. **Layout & Spacing**
+   - `paddingX:1` → adjust horizontal padding
+   - `marginTop:1` → adjust vertical spacing
+   - `gap:1` → spacing between header and content
+
+**Example Modifications:**
+
+```javascript
+// Minimal style (no border)
+return Jn.default.createElement(j,{flexDirection:"column",marginTop:B?1:0,width:"100%"},
+  Jn.default.createElement($,{color:"text",bold:!0},"Thinking:"),
+  Jn.default.createElement($,{dimColor:!0},ZV(A,Z))
+);
+
+// High-contrast style (double border, red)
+return Jn.default.createElement(j,{flexDirection:"column",borderStyle:"double",borderColor:"error",paddingX:2,marginTop:B?1:0,width:"100%"},
+  Jn.default.createElement($,{color:"error",bold:!0},"🧠 Deep Thinking"),
+  Jn.default.createElement($,null,ZV(A,Z))
+);
+```
+
+### Universal Identifier Detector
+
+For **new Claude Code versions** or to create custom patches, use the universal identifier detector:
+
+```bash
+node detect-identifiers.js
+```
+
+This tool:
+- ✅ Works on **any Claude Code version** (universal, no version-specific logic)
+- 🔍 Automatically detects minified function names and identifiers
+- 📊 Shows current patch status
+- 🛠️ Provides patterns for creating new patches
+
+**Output includes:**
+- Banner function name (e.g., `KYB`, `pGB`, `hGB`)
+- Thinking component name (`FpB`)
+- Variable identifiers for `isTranscriptMode`
+- Whether patches are already applied
+- Custom styling detection
+
+Use this when:
+- You have a Claude Code version not listed here
+- You want to create custom modifications
+- You need to verify patch compatibility
+- Debugging why a patch isn't working
 
 ## How It Works
 
@@ -110,12 +202,14 @@ See [CHANGELOG.md](CHANGELOG.md) for technical details on version differences.
 
 ```
 claude-code-thinking-patch-fork/
-├── patch-thinking.js           # v2.0.11 patch
-├── patch-thinking-v2.0.13.js   # v2.0.13 patch
-├── patch-thinking-v2.0.14.js   # v2.0.14 patch
-├── patch-thinking-v2.0.15.js   # v2.0.15 patch
-├── CHANGELOG.md                # Technical version differences
-└── README.md                   # This file
+├── patch-thinking.js                 # v2.0.11 standard patch
+├── patch-thinking-v2.0.13.js         # v2.0.13 standard patch
+├── patch-thinking-v2.0.14.js         # v2.0.14 standard patch
+├── patch-thinking-v2.0.15.js         # v2.0.15 standard patch
+├── patch-thinking-v2.0.15-custom.js  # v2.0.15 custom styled patch (borders & colors)
+├── detect-identifiers.js             # Universal identifier detector (works on any version)
+├── CHANGELOG.md                      # Technical version differences
+└── README.md                         # This file
 ```
 
 **Target file (auto-detected):**
@@ -263,11 +357,17 @@ The patches target specific patterns in the minified code. See [CHANGELOG.md](CH
 
 If your Claude Code version isn't supported:
 
-1. Check [CHANGELOG.md](CHANGELOG.md) for pattern detection commands
-2. Create an issue with your version number
-3. Or create a PR with the new patterns!
+1. **Run the universal identifier detector** to find patterns:
+   ```bash
+   node detect-identifiers.js
+   ```
+   This automatically detects all required identifiers for any version.
 
-Pattern detection example:
+2. Use the detected patterns to create a new patch script (copy an existing one and update the patterns)
+
+3. Create a PR with the new patch!
+
+**Manual pattern detection (if detector fails):**
 ```bash
 # Find banner function
 grep -o 'function \w\+({streamMode:\w\+}){[^}]*"∴ Thinking…"[^}]*}' \
@@ -289,7 +389,9 @@ Consider requesting this as an official feature from Anthropic:
 
 This fork builds upon the original work by [@aleks-apostle](https://github.com/aleks-apostle). Key improvements in this fork:
 - Dynamic username detection (no hardcoded paths)
-- Multi-version support (v2.0.11 and v2.0.13)
+- Multi-version support (v2.0.11, v2.0.13, v2.0.14, v2.0.15)
+- **Universal identifier detector** (works on any version)
+- **Custom styling patches** (borders, colors, custom headers)
 - Comprehensive changelog documenting version differences
 - Enhanced documentation and troubleshooting guides
 
@@ -303,9 +405,10 @@ This patch is provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last Updated:** 2025-10-14
+**Last Updated:** 2025-01-14
 **Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15
 **Status:** ✅ Working
+**New Features:** 🎨 Custom styling patches · 🔍 Universal identifier detector
 
 ### Contributing
 
