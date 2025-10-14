@@ -36,8 +36,11 @@ const thinkingReplacement = 'case"thinking":if(K)return null;return C3.createEle
 // Original FpB function that we want to replace
 const fpbSearchPattern = 'function FpB({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){let[Z]=uB();if(!A)return null;if(!Q)return Jn.default.createElement(j,{marginTop:B?1:0},Jn.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return Jn.default.createElement(j,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},Jn.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),Jn.default.createElement(j,{paddingLeft:2},Jn.default.createElement($,{dimColor:!0,italic:!0},ZV(A,Z))))}';
 
-// Custom FpB with border and green color
-const fpbReplacement = 'function FpB({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){let[Z]=uB();if(!A)return null;if(!Q)return Jn.default.createElement(j,{marginTop:B?1:0},Jn.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return Jn.default.createElement(j,{flexDirection:"column",borderStyle:"single",borderColor:"suggestion",paddingX:1,marginTop:B?1:0,width:"100%"},Jn.default.createElement($,{color:"suggestion",bold:!0},"💭 Thinking Process"),Jn.default.createElement(j,{paddingLeft:1,marginTop:1},Jn.default.createElement($,{dimColor:!0},ZV(A,Z))))}';
+// Old green version (for migration)
+const fpbOldGreenPattern = 'function FpB({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){let[Z]=uB();if(!A)return null;if(!Q)return Jn.default.createElement(j,{marginTop:B?1:0},Jn.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return Jn.default.createElement(j,{flexDirection:"column",borderStyle:"single",borderColor:"suggestion",paddingX:1,marginTop:B?1:0,width:"100%"},Jn.default.createElement($,{color:"suggestion",bold:!0},"💭 Thinking Process"),Jn.default.createElement(j,{paddingLeft:1,marginTop:1},Jn.default.createElement($,{dimColor:!0},ZV(A,Z))))}';
+
+// Custom FpB with border and orange color
+const fpbReplacement = 'function FpB({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){let[Z]=uB();if(!A)return null;if(!Q)return Jn.default.createElement(j,{marginTop:B?1:0},Jn.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return Jn.default.createElement(j,{flexDirection:"column",borderStyle:"single",borderColor:"warning",paddingX:1,marginTop:B?1:0,width:"100%"},Jn.default.createElement($,{color:"warning",bold:!0},"🍑 Thinking Process"),Jn.default.createElement(j,{paddingLeft:1,marginTop:1},Jn.default.createElement($,{dimColor:!0},ZV(A,Z))))}';
 
 let patch1Applied = false;
 let patch2Applied = false;
@@ -75,11 +78,18 @@ if (content.includes(fpbSearchPattern)) {
   content = content.replace(fpbSearchPattern, fpbReplacement);
   patch3Applied = true;
   console.log('✅ Patch 3 applied: FpB now has custom border and colors');
-  console.log('   • Added single-line border with suggestion color');
-  console.log('   • Changed header to "💭 Thinking Process" with bold green text');
+  console.log('   • Added single-line border with orange/warning color');
+  console.log('   • Changed header to "🍑 Thinking Process" with bold orange text');
   console.log('   • Adjusted padding and layout');
+} else if (content.includes(fpbOldGreenPattern)) {
+  content = content.replace(fpbOldGreenPattern, fpbReplacement);
+  patch3Applied = true;
+  console.log('✅ Patch 3 applied: Updated from green to orange styling');
+  console.log('   • Changed border color: green → orange');
+  console.log('   • Changed header: 💭 → 🍑');
+  console.log('   • Updated text color: green → orange');
 } else if (content.includes(fpbReplacement)) {
-  console.log('ℹ️  Patch 3 already applied');
+  console.log('ℹ️  Patch 3 already applied (orange peach version)');
   patch3Applied = true;
 } else {
   console.log('⚠️  Patch 3 pattern not found');
@@ -101,8 +111,8 @@ if (patch1Applied || patch2Applied || patch3Applied) {
   console.log(`- Patch 3 (custom style): ${patch3Applied ? 'APPLIED' : 'SKIPPED'}`);
   console.log('\n🎉 Patches applied! Please restart Claude Code for changes to take effect.');
   console.log('\n📝 Custom Style Features:');
-  console.log('   - Thinking blocks now have a bordered box');
-  console.log('   - Header text is "💭 Thinking Process" in green');
+  console.log('   - Thinking blocks now have an orange bordered box');
+  console.log('   - Header text is "🍑 Thinking Process" in bold orange');
   console.log('   - Improved visual separation from other content');
   process.exit(0);
 } else {
