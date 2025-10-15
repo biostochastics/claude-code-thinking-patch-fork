@@ -11,69 +11,24 @@ Make Claude Code's thinking blocks visible by default without pressing `ctrl+o`.
 claude --version
 ```
 
-**Step 2: Choose your patch style**
+**Step 2: Run the patch for your version**
 
-**Option A: Standard (Default)**
-For **v2.0.11**:
+**Latest versions (v2.0.17, v2.0.19):**
+
+Standard patch:
 ```bash
 cd ~/claude-code-thinking-patch-fork
-node patch-thinking.js
+node patch-thinking-v2.0.19.js       # for v2.0.19
+node patch-thinking-v2.0.17.js       # for v2.0.17
 ```
 
-For **v2.0.13**:
+Custom styled patch (orange border, 🍑 peach emoji):
 ```bash
-cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.13.js
+node patch-thinking-v2.0.19-custom.js    # for v2.0.19
+node patch-thinking-v2.0.17-custom.js    # for v2.0.17
 ```
 
-For **v2.0.14**:
-```bash
-cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.14.js
-```
-
-For **v2.0.15**:
-```bash
-cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.15.js
-```
-
-For **v2.0.17**:
-```bash
-cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.17.js
-```
-
-For **v2.0.19**:
-```bash
-cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.19.js
-```
-
-**Option B: Custom Styled (v2.0.15, v2.0.17 & v2.0.19)**
-
-For **v2.0.15**:
-```bash
-cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.15-custom.js
-```
-
-For **v2.0.17**:
-```bash
-cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.17-custom.js
-```
-
-For **v2.0.19**:
-```bash
-cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.19-custom.js
-```
-
-Features:
-- 🍑 Custom "Thinking Process" header in bold orange
-- 📦 Bordered box around thinking blocks
-- ✨ Enhanced visual separation
+**Older versions:** See the [Version Support](#version-support) table below for complete list. Patches available for v2.0.11, v2.0.13, v2.0.14, and v2.0.15.
 
 **Step 3: Restart Claude Code**
 
@@ -205,29 +160,11 @@ This patch modifies two locations in Claude Code's compiled JavaScript:
 
 ### Patch 1: Remove the Banner
 
-Replaces the thinking banner function with a simple `return null`:
-
-**v2.0.11**: Patches `er2` function
-**v2.0.13**: Patches `hGB` function
-**v2.0.14**: Patches `pGB` function
-**v2.0.15**: Patches `KYB` function
-**v2.0.17**: Patches `dXB` function
-**v2.0.19**: Patches `aFB` function
-
-**Effect:** Removes the collapsed thinking banner entirely.
+Replaces the thinking banner function with `return null` to hide the "Thinking..." / "Thought for Xs" message.
 
 ### Patch 2: Force Thinking Visibility
 
-Changes the transcript mode check to always return `true`:
-
-**v2.0.11**: Changes `isTranscriptMode:K` → `isTranscriptMode:!0`
-**v2.0.13**: Changes `isTranscriptMode:D` → `isTranscriptMode:!0`
-**v2.0.14**: Changes `isTranscriptMode:D` → `isTranscriptMode:!0`
-**v2.0.15**: Changes `isTranscriptMode:D` → `isTranscriptMode:!0`
-**v2.0.17**: Changes `isTranscriptMode:D` → `isTranscriptMode:!0`
-**v2.0.19**: Changes `isTranscriptMode:D` → `isTranscriptMode:!0`
-
-**Effect:** Forces thinking content to render as if in transcript mode (visible).
+Changes `isTranscriptMode` to always be `true`, making thinking content always visible inline.
 
 See [CHANGELOG.md](CHANGELOG.md) for technical details on version differences.
 
@@ -264,19 +201,9 @@ When you run `claude update`, the patches will be **overwritten**. You must re-a
 # Check new version
 claude --version
 
-# Run appropriate patch
+# Run appropriate patch (see Quick Start above)
 cd ~/claude-code-thinking-patch-fork
-node patch-thinking.js              # for v2.0.11
-# or
-node patch-thinking-v2.0.13.js      # for v2.0.13
-# or
-node patch-thinking-v2.0.14.js      # for v2.0.14
-# or
-node patch-thinking-v2.0.15.js      # for v2.0.15
-# or
-node patch-thinking-v2.0.17.js      # for v2.0.17
-# or
-node patch-thinking-v2.0.19.js      # for v2.0.19
+node patch-thinking-v2.0.19.js      # example for v2.0.19
 
 # Restart Claude Code
 ```
@@ -296,25 +223,9 @@ The patch scripts:
 claude --version
 ```
 
-Or check for function names in cli.js:
+Or use the universal identifier detector:
 ```bash
-# Check for v2.0.11 (er2 function)
-grep -o "function er2" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Check for v2.0.13 (hGB function)
-grep -o "function hGB" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Check for v2.0.14 (pGB function)
-grep -o "function pGB" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Check for v2.0.15 (KYB function)
-grep -o "function KYB" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Check for v2.0.17 (dXB function)
-grep -o "function dXB" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Check for v2.0.19 (aFB function)
-grep -o "function aFB" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+node detect-identifiers.js
 ```
 
 ### Patch Script Says "Pattern not found"
@@ -342,55 +253,14 @@ This means:
 
 ## Verification
 
-Check if patches are applied:
+Verify patches are applied:
 
-**For v2.0.11:**
 ```bash
-# Check er2 patch
-grep -o "function er2({streamMode:A}){return null}" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Should return: function er2({streamMode:A}){return null}
+# Use the universal detector to check patch status
+node detect-identifiers.js
 ```
 
-**For v2.0.13:**
-```bash
-# Check hGB patch
-grep -o "function hGB({streamMode:A}){return null}" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Should return: function hGB({streamMode:A}){return null}
-```
-
-**For v2.0.14:**
-```bash
-# Check pGB patch
-grep -o "function pGB({streamMode:A}){return null}" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Should return: function pGB({streamMode:A}){return null}
-```
-
-**For v2.0.15:**
-```bash
-# Check KYB patch
-grep -o "function KYB({streamMode:A}){return null}" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Should return: function KYB({streamMode:A}){return null}
-```
-
-**For v2.0.17:**
-```bash
-# Check dXB patch
-grep -o "function dXB({streamMode:A}){return null}" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Should return: function dXB({streamMode:A}){return null}
-```
-
-**For v2.0.19:**
-```bash
-# Check aFB patch
-grep -o "function aFB({streamMode:A}){return null}" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
-
-# Should return: function aFB({streamMode:A}){return null}
-```
+The detector will show whether patches have been applied and if custom styling is detected.
 
 ## Technical Details
 
