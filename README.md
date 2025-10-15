@@ -38,13 +38,27 @@ cd ~/claude-code-thinking-patch-fork
 node patch-thinking-v2.0.15.js
 ```
 
-**Option B: Custom Styled (v2.0.15 only)**
+For **v2.0.17**:
+```bash
+cd ~/claude-code-thinking-patch-fork
+node patch-thinking-v2.0.17.js
+```
+
+**Option B: Custom Styled (v2.0.15 & v2.0.17)**
+
+For **v2.0.15**:
 ```bash
 cd ~/claude-code-thinking-patch-fork
 node patch-thinking-v2.0.15-custom.js
 ```
+
+For **v2.0.17**:
+```bash
+cd ~/claude-code-thinking-patch-fork
+node patch-thinking-v2.0.17-custom.js
+```
 Features:
-- 💭 Custom "Thinking Process" header in bold green
+- 🍑 Custom "Thinking Process" header in bold orange
 - 📦 Bordered box around thinking blocks
 - ✨ Enhanced visual separation
 
@@ -71,6 +85,7 @@ You have to press `ctrl+o` every time to see the actual thinking content. This p
 | v2.0.13 | `patch-thinking-v2.0.13.js` | ✅ Working |
 | v2.0.14 | `patch-thinking-v2.0.14.js` | ✅ Working |
 | v2.0.15 | `patch-thinking-v2.0.15.js` | ✅ Working |
+| v2.0.17 | `patch-thinking-v2.0.17.js` | ✅ Working |
 
 Both scripts now support **dynamic username detection** - they work on any system without hardcoded paths!
 
@@ -182,6 +197,7 @@ Replaces the thinking banner function with a simple `return null`:
 **v2.0.13**: Patches `hGB` function
 **v2.0.14**: Patches `pGB` function
 **v2.0.15**: Patches `KYB` function
+**v2.0.17**: Patches `dXB` function
 
 **Effect:** Removes the collapsed thinking banner entirely.
 
@@ -193,6 +209,7 @@ Changes the transcript mode check to always return `true`:
 **v2.0.13**: Changes `isTranscriptMode:D` → `isTranscriptMode:!0`
 **v2.0.14**: Changes `isTranscriptMode:D` → `isTranscriptMode:!0`
 **v2.0.15**: Changes `isTranscriptMode:D` → `isTranscriptMode:!0`
+**v2.0.17**: Changes `isTranscriptMode:D` → `isTranscriptMode:!0`
 
 **Effect:** Forces thinking content to render as if in transcript mode (visible).
 
@@ -207,6 +224,8 @@ claude-code-thinking-patch-fork/
 ├── patch-thinking-v2.0.14.js         # v2.0.14 standard patch
 ├── patch-thinking-v2.0.15.js         # v2.0.15 standard patch
 ├── patch-thinking-v2.0.15-custom.js  # v2.0.15 custom styled patch (borders & colors)
+├── patch-thinking-v2.0.17.js         # v2.0.17 standard patch
+├── patch-thinking-v2.0.17-custom.js  # v2.0.17 custom styled patch (borders & colors)
 ├── detect-identifiers.js             # Universal identifier detector (works on any version)
 ├── CHANGELOG.md                      # Technical version differences
 └── README.md                         # This file
@@ -236,6 +255,8 @@ node patch-thinking-v2.0.13.js      # for v2.0.13
 node patch-thinking-v2.0.14.js      # for v2.0.14
 # or
 node patch-thinking-v2.0.15.js      # for v2.0.15
+# or
+node patch-thinking-v2.0.17.js      # for v2.0.17
 
 # Restart Claude Code
 ```
@@ -268,6 +289,9 @@ grep -o "function pGB" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cl
 
 # Check for v2.0.15 (KYB function)
 grep -o "function KYB" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+
+# Check for v2.0.17 (dXB function)
+grep -o "function dXB" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 ```
 
 ### Patch Script Says "Pattern not found"
@@ -327,6 +351,14 @@ grep -o "function pGB({streamMode:A}){return null}" ~/.claude/local/node_modules
 grep -o "function KYB({streamMode:A}){return null}" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
 
 # Should return: function KYB({streamMode:A}){return null}
+```
+
+**For v2.0.17:**
+```bash
+# Check dXB patch
+grep -o "function dXB({streamMode:A}){return null}" ~/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js
+
+# Should return: function dXB({streamMode:A}){return null}
 ```
 
 ## Technical Details
@@ -405,8 +437,8 @@ This patch is provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last Updated:** 2025-01-14
-**Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15
+**Last Updated:** 2025-01-15
+**Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15, v2.0.17
 **Status:** ✅ Working
 **New Features:** 🎨 Custom styling patches · 🔍 Universal identifier detector
 
