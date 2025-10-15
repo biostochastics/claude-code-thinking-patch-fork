@@ -258,7 +258,7 @@ This allows you to see Claude's reasoning process without the distracting banner
 
 ## Version History
 
-- **2025-01-15**: Added v2.0.17 support (dXB function, kF1 React import, sL createElement, WaB component, A7 createElement, mB hook, xn React module, AV string formatter)
+- **2025-10-15**: Added v2.0.17 support (dXB function, kF1 React import, sL createElement, WaB component, A7 createElement, mB hook, xn React module, AV string formatter)
 - **2025-01-14**: Added v2.0.15 support (KYB function, mX1 React import, xL createElement, FpB component, C3 createElement)
 - **2024-12-28**: Added v2.0.14 support (pGB function, TX1 React import, dlB component)
 - **2024-12-15**: Added v2.0.13 support with dynamic username detection
