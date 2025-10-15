@@ -8,10 +8,70 @@ This repository contains patches for multiple Claude Code versions:
 - **v2.0.14**: `patch-thinking-v2.0.14.js`
 - **v2.0.15**: `patch-thinking-v2.0.15.js`
 - **v2.0.17**: `patch-thinking-v2.0.17.js`
+- **v2.0.19**: `patch-thinking-v2.0.19.js`
 
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.17 to v2.0.19
+
+### Patch 1: Banner Removal
+
+**Function name changed:**
+- v2.0.17: `dXB`
+- v2.0.19: `aFB`
+
+**Variable names changed:**
+- React import: `kF1` → `BV1`
+- Element creator: `sL` → `ZM`
+- Component `j` → `j` (unchanged)
+- Component `$` → `$` (unchanged)
+
+**v2.0.17 pattern:**
+```javascript
+function dXB({streamMode:A}){let[B,Q]=kF1.useState(null),[Z,G]=kF1.useState(null);if(kF1.useEffect(()=>{if(A==="thinking"&&B===null)Q(Date.now());else if(A!=="thinking"&&B!==null)G(Date.now()-B),Q(null)},[A,B]),A==="thinking")return sL.createElement(j,{marginTop:1},sL.createElement($,{dimColor:!0},"∴ Thinking…"));if(Z!==null)return sL.createElement(j,{marginTop:1},sL.createElement($,{dimColor:!0},"∴ Thought for ",Math.max(1,Math.round(Z/1000)),"s"," ",sL.createElement($,{dimColor:!0,bold:!0},"(ctrl+o")," ","to show thinking)"));return null}
+```
+
+**v2.0.19 pattern:**
+```javascript
+function aFB({streamMode:A}){let[B,Q]=BV1.useState(null),[Z,G]=BV1.useState(null);if(BV1.useEffect(()=>{if(A==="thinking"&&B===null)Q(Date.now());else if(A!=="thinking"&&B!==null)G(Date.now()-B),Q(null)},[A,B]),A==="thinking")return ZM.createElement(j,{marginTop:1},ZM.createElement($,{dimColor:!0},"∴ Thinking…"));if(Z!==null)return ZM.createElement(j,{marginTop:1},ZM.createElement($,{dimColor:!0},"∴ Thought for ",Math.max(1,Math.round(Z/1000)),"s"," ",ZM.createElement($,{dimColor:!0,bold:!0},"(ctrl+o")," ","to show thinking)"));return null}
+```
+
+### Patch 2: Thinking Visibility
+
+**Variable names changed:**
+- Component: `WaB` → `NoB`
+- Element creator: `A7` → `B7`
+- All other variables remain: `D`, `K`, `B`, `A`
+
+**v2.0.17 pattern:**
+```javascript
+case"thinking":if(!D)return null;if(K)return null;return A7.createElement(WaB,{addMargin:B,param:A,isTranscriptMode:D});
+```
+
+**v2.0.19 pattern:**
+```javascript
+case"thinking":if(!D)return null;if(K)return null;return B7.createElement(NoB,{addMargin:B,param:A,isTranscriptMode:D});
+```
+
+### Patch 3: Custom Styling (v2.0.19)
+
+**Component rendering function changed:**
+- Component name: `WaB` → `NoB`
+- React hooks: `mB` → `mB` (unchanged)
+- React import: `xn` → `tn`
+- String formatter: `AV` → `ZV`
+
+**v2.0.17 WaB function:**
+```javascript
+function WaB({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){let[Z]=mB();if(!A)return null;if(!Q)return xn.default.createElement(j,{marginTop:B?1:0},xn.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return xn.default.createElement(j,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},xn.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),xn.default.createElement(j,{paddingLeft:2},xn.default.createElement($,{dimColor:!0,italic:!0},AV(A,Z))))}
+```
+
+**v2.0.19 NoB function:**
+```javascript
+function NoB({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){let[Z]=mB();if(!A)return null;if(!Q)return tn.default.createElement(j,{marginTop:B?1:0},tn.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return tn.default.createElement(j,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},tn.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),tn.default.createElement(j,{paddingLeft:2},tn.default.createElement($,{dimColor:!0,italic:!0},ZV(A,Z))))}
+```
 
 ## Changes from v2.0.15 to v2.0.17
 
@@ -247,6 +307,12 @@ cd ~/claude-code-thinking-patch-fork
 node patch-thinking-v2.0.17.js
 ```
 
+**For v2.0.19:**
+```bash
+cd ~/claude-code-thinking-patch-fork
+node patch-thinking-v2.0.19.js
+```
+
 After running the appropriate patch, restart Claude Code for changes to take effect.
 
 ## What the Patch Does
@@ -258,6 +324,7 @@ This allows you to see Claude's reasoning process without the distracting banner
 
 ## Version History
 
+- **2025-10-15**: Added v2.0.19 support (aFB function, BV1 React import, ZM createElement, NoB component, B7 createElement, tn React module, ZV string formatter)
 - **2025-10-15**: Added v2.0.17 support (dXB function, kF1 React import, sL createElement, WaB component, A7 createElement, mB hook, xn React module, AV string formatter)
 - **2025-01-14**: Added v2.0.15 support (KYB function, mX1 React import, xL createElement, FpB component, C3 createElement)
 - **2024-12-28**: Added v2.0.14 support (pGB function, TX1 React import, dlB component)
