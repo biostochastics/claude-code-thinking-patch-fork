@@ -13,17 +13,19 @@ claude --version
 
 **Step 2: Run the patch for your version**
 
-**Latest versions (v2.0.17, v2.0.19):**
+**Latest versions (v2.0.17, v2.0.19, v2.0.21):**
 
 Standard patch:
 ```bash
 cd ~/claude-code-thinking-patch-fork
+node patch-thinking-v2.0.21.js       # for v2.0.21
 node patch-thinking-v2.0.19.js       # for v2.0.19
 node patch-thinking-v2.0.17.js       # for v2.0.17
 ```
 
 Custom styled patch (orange border, 🍑 peach emoji):
 ```bash
+node patch-thinking-v2.0.21-custom.js    # for v2.0.21
 node patch-thinking-v2.0.19-custom.js    # for v2.0.19
 node patch-thinking-v2.0.17-custom.js    # for v2.0.17
 ```
@@ -55,6 +57,7 @@ You have to press `ctrl+o` every time to see the actual thinking content. This p
 | v2.0.15 | `patch-thinking-v2.0.15.js` | ✅ Working |
 | v2.0.17 | `patch-thinking-v2.0.17.js` | ✅ Working |
 | v2.0.19 | `patch-thinking-v2.0.19.js` | ✅ Working |
+| v2.0.21 | `patch-thinking-v2.0.21.js` | ✅ Working |
 
 All scripts now support **dynamic username detection** - they work on any system without hardcoded paths!
 
@@ -181,6 +184,8 @@ claude-code-thinking-patch-fork/
 ├── patch-thinking-v2.0.17-custom.js  # v2.0.17 custom styled patch (borders & colors)
 ├── patch-thinking-v2.0.19.js         # v2.0.19 standard patch
 ├── patch-thinking-v2.0.19-custom.js  # v2.0.19 custom styled patch (borders & colors)
+├── patch-thinking-v2.0.21.js         # v2.0.21 standard patch
+├── patch-thinking-v2.0.21-custom.js  # v2.0.21 custom styled patch (borders & colors)
 ├── detect-identifiers.js             # Universal identifier detector (works on any version)
 ├── CHANGELOG.md                      # Technical version differences
 └── README.md                         # This file
@@ -203,7 +208,7 @@ claude --version
 
 # Run appropriate patch (see Quick Start above)
 cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.19.js      # example for v2.0.19
+node patch-thinking-v2.0.21.js      # example for v2.0.21
 
 # Restart Claude Code
 ```
@@ -338,8 +343,8 @@ This patch is provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last Updated:** 2025-10-15
-**Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15, v2.0.17, v2.0.19
+**Last Updated:** 2025-10-17
+**Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15, v2.0.17, v2.0.19, v2.0.21
 **Status:** ✅ Working
 **New Features:** 🎨 Custom styling patches · 🔍 Universal identifier detector
 
