@@ -10,10 +10,57 @@ This repository contains patches for multiple Claude Code versions:
 - **v2.0.17**: `patch-thinking-v2.0.17.js`
 - **v2.0.19**: `patch-thinking-v2.0.19.js`
 - **v2.0.21**: `patch-thinking-v2.0.21.js`
+- **v2.0.22**: `patch-thinking-v2.0.22.js`
 
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.21 to v2.0.22
+
+### Patch 1: Banner Removal
+
+**Function name changed:**
+- v2.0.21: `wVB`
+- v2.0.22: `YOB`
+
+**Variable names changed:**
+- React hook: `DV1` → `zK1`
+- Element creator: `XM` → `NM`
+- Components `j` and `$` (unchanged)
+
+**v2.0.21 pattern:**
+```javascript
+function wVB({streamMode:A}){let[B,Q]=DV1.useState(null),[Z,G]=DV1.useState(null);if(DV1.useEffect(()=>{if(A==="thinking"&&B===null)Q(Date.now());else if(A!=="thinking"&&B!==null)G(Date.now()-B),Q(null)},[A,B]),A==="thinking")return XM.createElement(j,{marginTop:1},XM.createElement($,{dimColor:!0},"∴ Thinking…"));if(Z!==null)return XM.createElement(j,{marginTop:1},XM.createElement($,{dimColor:!0},"∴ Thought for ",Math.max(1,Math.round(Z/1000)),"s"," ",XM.createElement($,{dimColor:!0,bold:!0},"(ctrl+o")," ","to show thinking)"));return null}
+```
+
+**v2.0.22 pattern:**
+```javascript
+function YOB({streamMode:A}){let[B,Q]=zK1.useState(null),[Z,G]=zK1.useState(null);if(zK1.useEffect(()=>{if(A==="thinking"&&B===null)Q(Date.now());else if(A!=="thinking"&&B!==null)G(Date.now()-B),Q(null)},[A,B]),A==="thinking")return NM.createElement(j,{marginTop:1},NM.createElement($,{dimColor:!0},"∴ Thinking…"));if(Z!==null)return NM.createElement(j,{marginTop:1},NM.createElement($,{dimColor:!0},"∴ Thought for ",Math.max(1,Math.round(Z/1000)),"s"," ",NM.createElement($,{dimColor:!0,bold:!0},"(ctrl+o")," ","to show thinking)"));return null}
+```
+
+### Patch 2: Thinking Visibility
+
+**Variable names changed:**
+- Component: `H8Q` → `nNB`
+- Element creator: `G7` → `e3`
+- Variables `K` and `D` (unchanged)
+
+**v2.0.21 pattern:**
+```javascript
+case"thinking":if(!K)return null;if(D)return null;return G7.createElement(H8Q,{addMargin:B,param:A,isTranscriptMode:K});
+```
+
+**v2.0.22 pattern:**
+```javascript
+case"thinking":if(!K)return null;if(D)return null;return e3.createElement(nNB,{addMargin:B,param:A,isTranscriptMode:K});
+```
+
+### Patch 3: Custom Styling (v2.0.22-custom.js)
+
+**Component function changed:**
+- v2.0.21: `H8Q` with hook `mB`, React import `va.default`, function `WV`
+- v2.0.22: `nNB` with hook `cB`, React import `wn.default`, function `FV`
 
 ## Changes from v2.0.19 to v2.0.21
 
