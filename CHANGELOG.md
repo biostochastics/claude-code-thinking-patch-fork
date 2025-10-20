@@ -12,10 +12,77 @@ This repository contains patches for multiple Claude Code versions:
 - **v2.0.21**: `patch-thinking-v2.0.21.js`
 - **v2.0.22**: `patch-thinking-v2.0.22.js`
 - **v2.0.23**: `patch-thinking-v2.0.23.js`
+- **v2.0.24**: `patch-thinking-v2.0.24.js`
 
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.23 to v2.0.24
+
+### Patch 1: Banner Removal
+
+**Function name changed:**
+- v2.0.23: `sNB`
+- v2.0.24: `sTB`
+
+**Variable names changed:**
+- React import: `j_0.default` → `mx0.default`
+- Components `S` and `$` (unchanged)
+
+**v2.0.23 pattern:**
+```javascript
+function sNB({addMargin:A=!1}){return j_0.default.createElement(j,{marginTop:A?1:0},j_0.default.createElement($,{dimColor:!0,italic:!0},"✻ Thinking…"))}
+```
+
+**v2.0.24 pattern:**
+```javascript
+function sTB({addMargin:A=!1}){return mx0.default.createElement(S,{marginTop:A?1:0},mx0.default.createElement($,{dimColor:!0,italic:!0},"✻ Thinking…"))}
+```
+
+**Key changes:**
+- Function name: `sNB` → `sTB`
+- React import: `j_0.default` → `mx0.default`
+- Container component: `j` → `S`
+
+### Patch 2: Thinking Visibility
+
+**Variable names changed:**
+- Component: `nNB` → `nTB`
+- Element creator: `e3` → `Y7`
+- Variables `K`, `D`, `B`, `A` (unchanged)
+
+**v2.0.23 pattern:**
+```javascript
+case"thinking":if(!K)return null;if(D)return null;return e3.createElement(nNB,{addMargin:B,param:A,isTranscriptMode:K});
+```
+
+**v2.0.24 pattern:**
+```javascript
+case"thinking":if(!K)return null;if(D)return null;return Y7.createElement(nTB,{addMargin:B,param:A,isTranscriptMode:K});
+```
+
+**Key changes:**
+- Component: `nNB` → `nTB`
+- Element creator: `e3` → `Y7`
+
+### Patch 3: Custom Styling (nTB Component)
+
+**v2.0.24 nTB function identifiers:**
+- Component name: `nTB`
+- React import: `$a.default`
+- Hook: `xB()`
+- Helper function: `MV` (for rendering thinking content)
+
+**v2.0.24 original pattern:**
+```javascript
+function nTB({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){let[Z]=xB();if(!A)return null;if(!Q)return $a.default.createElement(S,{marginTop:B?1:0},$a.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return $a.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},$a.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),$a.default.createElement(S,{paddingLeft:2},$a.default.createElement($,{dimColor:!0,italic:!0},MV(A,Z))))}
+```
+
+**Key changes from v2.0.23:**
+- React import: `Nn.default` → `$a.default`
+- Hook: `cB()` → `xB()`
+- Helper function: `FV` → `MV`
 
 ## Changes from v2.0.22 to v2.0.23
 
