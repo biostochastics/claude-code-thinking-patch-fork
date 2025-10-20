@@ -13,11 +13,12 @@ claude --version
 
 **Step 2: Run the patch for your version**
 
-**Latest versions (v2.0.17, v2.0.19, v2.0.21, v2.0.22):**
+**Latest versions (v2.0.17, v2.0.19, v2.0.21, v2.0.22, v2.0.23):**
 
 Standard patch:
 ```bash
 cd ~/claude-code-thinking-patch-fork
+node patch-thinking-v2.0.23.js       # for v2.0.23
 node patch-thinking-v2.0.22.js       # for v2.0.22
 node patch-thinking-v2.0.21.js       # for v2.0.21
 node patch-thinking-v2.0.19.js       # for v2.0.19
@@ -26,6 +27,7 @@ node patch-thinking-v2.0.17.js       # for v2.0.17
 
 Custom styled patch (orange border, 🍑 peach emoji):
 ```bash
+node patch-thinking-v2.0.23-custom.js    # for v2.0.23
 node patch-thinking-v2.0.22-custom.js    # for v2.0.22
 node patch-thinking-v2.0.21-custom.js    # for v2.0.21
 node patch-thinking-v2.0.19-custom.js    # for v2.0.19
@@ -61,6 +63,7 @@ You have to press `ctrl+o` every time to see the actual thinking content. This p
 | v2.0.19 | `patch-thinking-v2.0.19.js` | ✅ Working |
 | v2.0.21 | `patch-thinking-v2.0.21.js` | ✅ Working |
 | v2.0.22 | `patch-thinking-v2.0.22.js` | ✅ Working |
+| v2.0.23 | `patch-thinking-v2.0.23.js` | ✅ Working |
 
 All scripts now support **dynamic username detection** - they work on any system without hardcoded paths!
 

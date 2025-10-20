@@ -11,10 +11,64 @@ This repository contains patches for multiple Claude Code versions:
 - **v2.0.19**: `patch-thinking-v2.0.19.js`
 - **v2.0.21**: `patch-thinking-v2.0.21.js`
 - **v2.0.22**: `patch-thinking-v2.0.22.js`
+- **v2.0.23**: `patch-thinking-v2.0.23.js`
 
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.22 to v2.0.23
+
+### Patch 1: Banner Removal
+
+**Function name changed:**
+- v2.0.22: `YOB`
+- v2.0.23: `sNB`
+
+**Variable names changed:**
+- React hook: `zK1` → removed (no longer uses useState/useEffect)
+- Element creator: `NM` → `j_0.default`
+- Components `j` and `$` (unchanged)
+
+**v2.0.22 pattern:**
+```javascript
+function YOB({streamMode:A}){let[B,Q]=zK1.useState(null),[Z,G]=zK1.useState(null);if(zK1.useEffect(()=>{if(A==="thinking"&&B===null)Q(Date.now());else if(A!=="thinking"&&B!==null)G(Date.now()-B),Q(null)},[A,B]),A==="thinking")return NM.createElement(j,{marginTop:1},NM.createElement($,{dimColor:!0},"∴ Thinking…"));if(Z!==null)return NM.createElement(j,{marginTop:1},NM.createElement($,{dimColor:!0},"∴ Thought for ",Math.max(1,Math.round(Z/1000)),"s"," ",NM.createElement($,{dimColor:!0,bold:!0},"(ctrl+o")," ","to show thinking)"));return null}
+```
+
+**v2.0.23 pattern:**
+```javascript
+function sNB({addMargin:A=!1}){return j_0.default.createElement(j,{marginTop:A?1:0},j_0.default.createElement($,{dimColor:!0,italic:!0},"✻ Thinking…"))}
+```
+
+**Key changes:**
+- Simplified banner function - no longer tracks timing with useState/useEffect
+- Parameter changed from `streamMode` to `addMargin`
+- Banner symbol changed from "∴" to "✻"
+- Different React import pattern (`j_0.default` instead of just `NM`)
+
+### Patch 2: Thinking Visibility
+
+**Variable names (unchanged):**
+- Component: `nNB` (same as v2.0.22)
+- Element creator: `e3` (same as v2.0.22)
+- Variables `K`, `D`, `B`, `A` (unchanged)
+
+**v2.0.22 and v2.0.23 pattern (identical):**
+```javascript
+case"thinking":if(!K)return null;if(D)return null;return e3.createElement(nNB,{addMargin:B,param:A,isTranscriptMode:K});
+```
+
+**Key changes:**
+- No changes in Patch 2 between v2.0.22 and v2.0.23
+
+### Patch 3 (Custom): nNB Component Styling
+
+**Variable names changed:**
+- Component React import: `Nn.default` (same pattern as v2.0.22)
+- Helper function: `FV` (formatting function, same as v2.0.22)
+- Hook: `cB` (same as v2.0.22)
+
+The nNB component structure remained consistent, allowing the custom styling patch to work with the same modification approach.
 
 ## Changes from v2.0.21 to v2.0.22
 
