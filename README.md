@@ -13,11 +13,12 @@ claude --version
 
 **Step 2: Run the patch for your version**
 
-**Latest versions (v2.0.17, v2.0.19, v2.0.21, v2.0.22, v2.0.23, v2.0.24):**
+**Latest versions (v2.0.17+):**
 
 Standard patch:
 ```bash
 cd ~/claude-code-thinking-patch-fork
+node patch-thinking-v2.0.26.js       # for v2.0.26 (newest)
 node patch-thinking-v2.0.24.js       # for v2.0.24
 node patch-thinking-v2.0.23.js       # for v2.0.23
 node patch-thinking-v2.0.22.js       # for v2.0.22
@@ -28,6 +29,7 @@ node patch-thinking-v2.0.17.js       # for v2.0.17
 
 Custom styled patch (orange border, 🍑 peach emoji):
 ```bash
+node patch-thinking-v2.0.26-custom.js    # for v2.0.26 (newest)
 node patch-thinking-v2.0.24-custom.js    # for v2.0.24
 node patch-thinking-v2.0.23-custom.js    # for v2.0.23
 node patch-thinking-v2.0.22-custom.js    # for v2.0.22
@@ -57,16 +59,17 @@ You have to press `ctrl+o` every time to see the actual thinking content. This p
 
 | Version | Script | Status |
 |---------|--------|--------|
-| v2.0.11 | `patch-thinking.js` | ✅ Working |
-| v2.0.13 | `patch-thinking-v2.0.13.js` | ✅ Working |
-| v2.0.14 | `patch-thinking-v2.0.14.js` | ✅ Working |
-| v2.0.15 | `patch-thinking-v2.0.15.js` | ✅ Working |
-| v2.0.17 | `patch-thinking-v2.0.17.js` | ✅ Working |
-| v2.0.19 | `patch-thinking-v2.0.19.js` | ✅ Working |
-| v2.0.21 | `patch-thinking-v2.0.21.js` | ✅ Working |
-| v2.0.22 | `patch-thinking-v2.0.22.js` | ✅ Working |
-| v2.0.23 | `patch-thinking-v2.0.23.js` | ✅ Working |
+| v2.0.26 | `patch-thinking-v2.0.26.js` | ✅ Working |
 | v2.0.24 | `patch-thinking-v2.0.24.js` | ✅ Working |
+| v2.0.23 | `patch-thinking-v2.0.23.js` | ✅ Working |
+| v2.0.22 | `patch-thinking-v2.0.22.js` | ✅ Working |
+| v2.0.21 | `patch-thinking-v2.0.21.js` | ✅ Working |
+| v2.0.19 | `patch-thinking-v2.0.19.js` | ✅ Working |
+| v2.0.17 | `patch-thinking-v2.0.17.js` | ✅ Working |
+| v2.0.15 | `patch-thinking-v2.0.15.js` | ✅ Working |
+| v2.0.14 | `patch-thinking-v2.0.14.js` | ✅ Working |
+| v2.0.13 | `patch-thinking-v2.0.13.js` | ✅ Working |
+| v2.0.11 | `patch-thinking.js` | ✅ Working |
 
 All scripts now support **dynamic username detection** - they work on any system without hardcoded paths!
 

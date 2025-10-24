@@ -3,20 +3,83 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.11**: `patch-thinking.js`
-- **v2.0.13**: `patch-thinking-v2.0.13.js`
-- **v2.0.14**: `patch-thinking-v2.0.14.js`
-- **v2.0.15**: `patch-thinking-v2.0.15.js`
-- **v2.0.17**: `patch-thinking-v2.0.17.js`
-- **v2.0.19**: `patch-thinking-v2.0.19.js`
-- **v2.0.21**: `patch-thinking-v2.0.21.js`
-- **v2.0.22**: `patch-thinking-v2.0.22.js`
-- **v2.0.23**: `patch-thinking-v2.0.23.js`
+- **v2.0.26**: `patch-thinking-v2.0.26.js`
 - **v2.0.24**: `patch-thinking-v2.0.24.js`
+- **v2.0.23**: `patch-thinking-v2.0.23.js`
+- **v2.0.22**: `patch-thinking-v2.0.22.js`
+- **v2.0.21**: `patch-thinking-v2.0.21.js`
+- **v2.0.19**: `patch-thinking-v2.0.19.js`
+- **v2.0.17**: `patch-thinking-v2.0.17.js`
+- **v2.0.15**: `patch-thinking-v2.0.15.js`
+- **v2.0.14**: `patch-thinking-v2.0.14.js`
+- **v2.0.13**: `patch-thinking-v2.0.13.js`
+- **v2.0.11**: `patch-thinking.js`
 
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.24 to v2.0.26
+
+### Major Architectural Change
+
+**v2.0.26 simplifies the thinking display logic:**
+- ❌ **Removed**: Separate banner function (previously `sTB` in v2.0.24)
+- ✅ **Consolidated**: Banner logic now built into thinking component
+
+### Thinking Component
+
+**Component name changed:**
+- v2.0.24: `TQB`
+- v2.0.26: `CTQ`
+
+**React import changed:**
+- v2.0.24: `yy0.default`
+- v2.0.26: `Ta.default` (in component) / `Y3` (in case statement)
+
+**v2.0.24 pattern (thinking component):**
+```javascript
+function TQB({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){...}
+```
+
+**v2.0.26 pattern (thinking component):**
+```javascript
+function CTQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){let[I]=RQ();if(!A)return null;if(!Q)return Ta.default.createElement(S,{marginTop:B?1:0},Ta.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return Ta.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},Ta.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),Ta.default.createElement(S,{paddingLeft:2},Ta.default.createElement(z,{dimColor:!0,italic:!0},OF(A,I))))}
+```
+
+### Case Statement (Thinking Visibility)
+
+**Critical change:** v2.0.26 includes guard clause `if(!V)return null;` before rendering
+
+**v2.0.24 pattern:**
+```javascript
+case"thinking":return cX.createElement(TQB,{addMargin:B,param:A,isTranscriptMode:!0});
+```
+
+**v2.0.26 pattern (original):**
+```javascript
+case"thinking":if(!V)return null;return Y3.createElement(CTQ,{addMargin:B,param:A,isTranscriptMode:V});
+```
+
+**v2.0.26 patch (removes guard + forces visible):**
+```javascript
+case"thinking":return Y3.createElement(CTQ,{addMargin:B,param:A,isTranscriptMode:!0});
+```
+
+**Key changes:**
+- Guard clause `if(!V)return null;` must be removed
+- React import: `cX` → `Y3`
+- Component name: `TQB` → `CTQ`
+- Variable name: (implicit true) → `V` (patched to `!0`)
+
+### Patch Development Notes
+
+v2.0.26 patch was developed using **multi-model AI consensus** (GPT-5, Claude Opus, Gemini 2.5 Pro) to validate the approach:
+- **GPT-5** identified the critical issue: guard clause prevents rendering
+- **Opus** confirmed the minimal invasiveness of the solution
+- **Gemini** validated the technical approach and identified risks
+
+The consensus confirmed that simply forcing `isTranscriptMode:!0` is insufficient - the guard `if(!V)return null;` must also be removed.
 
 ## Changes from v2.0.23 to v2.0.24
 
