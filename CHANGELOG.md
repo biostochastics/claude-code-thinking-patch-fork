@@ -3,6 +3,7 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
+- **v2.0.27**: `patch-thinking-v2.0.27.js` (latest)
 - **v2.0.26**: `patch-thinking-v2.0.26.js`
 - **v2.0.24**: `patch-thinking-v2.0.24.js`
 - **v2.0.23**: `patch-thinking-v2.0.23.js`
@@ -18,6 +19,63 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.26 to v2.0.27
+
+### Identifier Updates
+
+**Thinking Component name changed:**
+- v2.0.26: `CTQ`
+- v2.0.27: `UTQ`
+
+**React imports changed:**
+- v2.0.26: `Ta.default` (in component) / `Y3` (in case statement)
+- v2.0.27: `ja.default` (in component) / `C3` (in case statement)
+
+**Message renderer function:**
+- v2.0.26: (not explicitly named in previous docs)
+- v2.0.27: `yyI` (handles thinking case statement)
+
+### Case Statement (Thinking Visibility)
+
+**Architecture remains consistent with v2.0.26:**
+- Guard clause `if(!V)return null;` must be removed
+- `isTranscriptMode` variable changed from `V` (same as v2.0.26)
+
+**v2.0.27 pattern (original):**
+```javascript
+case"thinking":if(!V)return null;return C3.createElement(UTQ,{addMargin:B,param:A,isTranscriptMode:V});
+```
+
+**v2.0.27 patch (removes guard + forces visible):**
+```javascript
+case"thinking":return C3.createElement(UTQ,{addMargin:B,param:A,isTranscriptMode:!0});
+```
+
+### Thinking Component
+
+**v2.0.27 pattern (thinking component):**
+```javascript
+function UTQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){let[I]=qQ();if(!A)return null;if(!Q)return ja.default.createElement(S,{marginTop:B?1:0},ja.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return ja.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},ja.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),ja.default.createElement(S,{paddingLeft:2},ja.default.createElement(z,{dimColor:!0,italic:!0},MF(A,I))))}
+```
+
+**Key changes from v2.0.26:**
+- Component name: `CTQ` → `UTQ`
+- React import in component: `Ta.default` → `ja.default`
+- React import in case: `Y3` → `C3`
+- Thinking formatter: `OF(A,I)` → `MF(A,I)`
+
+### Custom Styling (v2.0.27-custom.js)
+
+**Custom styled component with orange border:**
+```javascript
+function UTQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){let[I]=qQ();if(!A)return null;if(!Q)return ja.default.createElement(S,{marginTop:B?1:0},ja.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return ja.default.createElement(S,{flexDirection:"column",borderStyle:"single",borderColor:"warning",paddingX:1,marginTop:B?1:0,width:"100%"},ja.default.createElement(z,{color:"warning",bold:!0},"🍑 Thinking Process"),ja.default.createElement(S,{paddingLeft:1,marginTop:1},ja.default.createElement(z,{dimColor:!0},MF(A,I))))}
+```
+
+**Styling features:**
+- Border: `borderStyle:"single", borderColor:"warning"` (orange)
+- Header: `"🍑 Thinking Process"` with `color:"warning", bold:!0`
+- Content: Removed `dimColor` and `italic` for better readability
 
 ## Changes from v2.0.24 to v2.0.26
 

@@ -18,7 +18,8 @@ claude --version
 Standard patch:
 ```bash
 cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.26.js       # for v2.0.26 (newest)
+node patch-thinking-v2.0.27.js       # for v2.0.27 (newest)
+node patch-thinking-v2.0.26.js       # for v2.0.26
 node patch-thinking-v2.0.24.js       # for v2.0.24
 node patch-thinking-v2.0.23.js       # for v2.0.23
 node patch-thinking-v2.0.22.js       # for v2.0.22
@@ -29,7 +30,8 @@ node patch-thinking-v2.0.17.js       # for v2.0.17
 
 Custom styled patch (orange border, 🍑 peach emoji):
 ```bash
-node patch-thinking-v2.0.26-custom.js    # for v2.0.26 (newest)
+node patch-thinking-v2.0.27-custom.js    # for v2.0.27 (newest)
+node patch-thinking-v2.0.26-custom.js    # for v2.0.26
 node patch-thinking-v2.0.24-custom.js    # for v2.0.24
 node patch-thinking-v2.0.23-custom.js    # for v2.0.23
 node patch-thinking-v2.0.22-custom.js    # for v2.0.22
@@ -59,6 +61,7 @@ You have to press `ctrl+o` every time to see the actual thinking content. This p
 
 | Version | Script | Status |
 |---------|--------|--------|
+| v2.0.27 | `patch-thinking-v2.0.27.js` | ✅ Working |
 | v2.0.26 | `patch-thinking-v2.0.26.js` | ✅ Working |
 | v2.0.24 | `patch-thinking-v2.0.24.js` | ✅ Working |
 | v2.0.23 | `patch-thinking-v2.0.23.js` | ✅ Working |
@@ -198,6 +201,16 @@ claude-code-thinking-patch-fork/
 ├── patch-thinking-v2.0.19-custom.js  # v2.0.19 custom styled patch (borders & colors)
 ├── patch-thinking-v2.0.21.js         # v2.0.21 standard patch
 ├── patch-thinking-v2.0.21-custom.js  # v2.0.21 custom styled patch (borders & colors)
+├── patch-thinking-v2.0.22.js         # v2.0.22 standard patch
+├── patch-thinking-v2.0.22-custom.js  # v2.0.22 custom styled patch (borders & colors)
+├── patch-thinking-v2.0.23.js         # v2.0.23 standard patch
+├── patch-thinking-v2.0.23-custom.js  # v2.0.23 custom styled patch (borders & colors)
+├── patch-thinking-v2.0.24.js         # v2.0.24 standard patch
+├── patch-thinking-v2.0.24-custom.js  # v2.0.24 custom styled patch (borders & colors)
+├── patch-thinking-v2.0.26.js         # v2.0.26 standard patch
+├── patch-thinking-v2.0.26-custom.js  # v2.0.26 custom styled patch (borders & colors)
+├── patch-thinking-v2.0.27.js         # v2.0.27 standard patch
+├── patch-thinking-v2.0.27-custom.js  # v2.0.27 custom styled patch (borders & colors)
 ├── detect-identifiers.js             # Universal identifier detector (works on any version)
 ├── CHANGELOG.md                      # Technical version differences
 └── README.md                         # This file
@@ -355,8 +368,8 @@ This patch is provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last Updated:** 2025-10-17
-**Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15, v2.0.17, v2.0.19, v2.0.21
+**Last Updated:** 2025-01-24
+**Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15, v2.0.17, v2.0.19, v2.0.21, v2.0.22, v2.0.23, v2.0.24, v2.0.26, v2.0.27
 **Status:** ✅ Working
 **New Features:** 🎨 Custom styling patches · 🔍 Universal identifier detector
 
