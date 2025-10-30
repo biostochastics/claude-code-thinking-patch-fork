@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.28**: `patch-thinking-v2.0.28.js` (latest)
+- **v2.0.29**: `patch-thinking-v2.0.29.js` (latest)
+- **v2.0.28**: `patch-thinking-v2.0.28.js`
 - **v2.0.27**: `patch-thinking-v2.0.27.js`
 - **v2.0.26**: `patch-thinking-v2.0.26.js`
 - **v2.0.24**: `patch-thinking-v2.0.24.js`
@@ -20,6 +21,70 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.28 to v2.0.29
+
+### Identifier Updates
+
+**Thinking Component name unchanged:**
+- v2.0.28: `LTQ`
+- v2.0.29: `LTQ` (unchanged)
+
+**React import in component changed:**
+- v2.0.28: `ja.default`
+- v2.0.29: `Sa.default`
+
+**React import in case statement:**
+- v2.0.28: `C3`
+- v2.0.29: `C3` (unchanged)
+
+**Hook unchanged:**
+- v2.0.28: `NQ`
+- v2.0.29: `NQ` (unchanged)
+
+**Helper function changed:**
+- v2.0.28: `OF`
+- v2.0.29: `MF`
+
+### Case Statement (Thinking Visibility)
+
+**Architecture remains consistent with v2.0.28:**
+- Guard clause `if(!V)return null;` must be removed
+- `isTranscriptMode` variable `V` remains unchanged
+
+**v2.0.29 pattern (original):**
+```javascript
+case"thinking":if(!V)return null;return C3.createElement(LTQ,{addMargin:B,param:A,isTranscriptMode:V});
+```
+
+**v2.0.29 patch (removes guard + forces visible):**
+```javascript
+case"thinking":return C3.createElement(LTQ,{addMargin:B,param:A,isTranscriptMode:!0});
+```
+
+### Thinking Component
+
+**v2.0.29 pattern (thinking component):**
+```javascript
+function LTQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){let[I]=NQ();if(!A)return null;if(!Q)return Sa.default.createElement(S,{marginTop:B?1:0},Sa.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return Sa.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},Sa.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),Sa.default.createElement(S,{paddingLeft:2},Sa.default.createElement(z,{dimColor:!0,italic:!0},MF(A,I))))}
+```
+
+**Key changes from v2.0.28:**
+- React import: `ja.default` → `Sa.default`
+- Thinking formatter: `OF(A,I)` → `MF(A,I)`
+- Component name, hook (NQ), and other elements remain the same
+
+### Custom Styling (v2.0.29-custom.js)
+
+**Custom styled component with peach/orange border:**
+```javascript
+function LTQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q}){let[I]=NQ();if(!A)return null;if(!Q)return Sa.default.createElement(S,{marginTop:B?1:0},Sa.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return Sa.default.createElement(S,{flexDirection:"column",borderStyle:"single",borderColor:"warning",paddingX:1,marginTop:B?1:0,width:"100%"},Sa.default.createElement(z,{color:"warning",bold:!0},"🍑 Thinking Process"),Sa.default.createElement(S,{paddingLeft:1,marginTop:1},Sa.default.createElement(z,{dimColor:!0},MF(A,I))))}
+```
+
+**Custom styling features:**
+- Single-line peach/orange border around thinking blocks
+- Header: "🍑 Thinking Process" in bold peach color
+- Enhanced padding and visual separation
 
 ## Changes from v2.0.27 to v2.0.28
 
