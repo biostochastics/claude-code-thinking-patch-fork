@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.29**: `patch-thinking-v2.0.29.js` (latest)
+- **v2.0.30**: `patch-thinking-v2.0.30.js` (latest)
+- **v2.0.29**: `patch-thinking-v2.0.29.js`
 - **v2.0.28**: `patch-thinking-v2.0.28.js`
 - **v2.0.27**: `patch-thinking-v2.0.27.js`
 - **v2.0.26**: `patch-thinking-v2.0.26.js`
@@ -21,6 +22,63 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.29 to v2.0.30
+
+### Major Architectural Simplification
+
+**v2.0.30 significantly simplifies thinking display logic:**
+- ✅ **Simplified component**: Thinking component now directly handles visibility
+- ❌ **Removed case statement guard**: No longer needs separate case statement modification
+- ✅ **Single patch point**: Only the component function needs patching
+
+### Identifier Updates
+
+**Thinking Component name changed:**
+- v2.0.29: `LTQ`
+- v2.0.30: `sjQ`
+
+**React import in component changed:**
+- v2.0.29: `Sa.default`
+- v2.0.30: `Js.default`
+
+**Hook unchanged:**
+- v2.0.29: `NQ`
+- v2.0.30: `kQ` (changed)
+
+**Helper function changed:**
+- v2.0.29: `MF`
+- v2.0.30: `yF`
+
+### Thinking Component
+
+**v2.0.30 pattern (original):**
+```javascript
+function sjQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q,verbose:I}){let[G]=kQ();if(!A)return null;if(!(Q||I))return Js.default.createElement(S,{marginTop:B?1:0},Js.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return Js.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},Js.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),Js.default.createElement(S,{paddingLeft:2},Js.default.createElement(z,{dimColor:!0,italic:!0},yF(A,G))))}
+```
+
+**v2.0.30 patch (removes collapsed state check):**
+```javascript
+function sjQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q,verbose:I}){let[G]=kQ();if(!A)return null;return Js.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},Js.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),Js.default.createElement(S,{paddingLeft:2},Js.default.createElement(z,{dimColor:!0,italic:!0},yF(A,G))))}
+```
+
+**Key architectural change:**
+- v2.0.29 required modifying case statement: `case"thinking":if(!V)return null;return C3.createElement(LTQ,...)`
+- v2.0.30 only requires component modification: Removed `if(!(Q||I))return...` collapsed state check
+- Simpler patch with only one modification point
+
+### Custom Peach Styling (v2.0.30-custom-peach.js)
+
+**Custom styled component with peach border:**
+```javascript
+function sjQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q,verbose:I}){let[G]=kQ();if(!A)return null;return Js.default.createElement(S,{flexDirection:"column",marginTop:B?1:0,width:"100%",borderStyle:"double",borderColor:"#FF9E64",paddingX:1},Js.default.createElement(z,{bold:!0,color:"#FF9E64"},"🧠 Thinking Process"),Js.default.createElement(S,{paddingLeft:1,paddingTop:1},Js.default.createElement(z,{color:"text"},yF(A,G))))}
+```
+
+**Custom styling features:**
+- Double-line peach border (#FF9E64)
+- Header: "🧠 Thinking Process" in bold peach
+- Improved padding and readability
+- No dimmed/italic text for better visibility
 
 ## Changes from v2.0.28 to v2.0.29
 
