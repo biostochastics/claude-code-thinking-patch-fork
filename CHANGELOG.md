@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.30**: `patch-thinking-v2.0.30.js` (latest)
+- **v2.0.31**: `patches/patch-thinking-v2.0.31.js` (latest)
+- **v2.0.30**: `patch-thinking-v2.0.30.js`
 - **v2.0.29**: `patch-thinking-v2.0.29.js`
 - **v2.0.28**: `patch-thinking-v2.0.28.js`
 - **v2.0.27**: `patch-thinking-v2.0.27.js`
@@ -22,6 +23,60 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.30 to v2.0.31
+
+### Identifier Updates
+
+**Banner Function:**
+- v2.0.30: Not identified/used in previous patches
+- v2.0.31: `_kQ`
+- Pattern: `function _kQ({streamMode:A})`
+
+**Thinking Component name changed:**
+- v2.0.30: `sjQ`
+- v2.0.31: `MSQ`
+
+**React import in component changed:**
+- v2.0.30: `Js.default`
+- v2.0.31: `Vs.default`
+
+**Hook changed:**
+- v2.0.30: `kQ`
+- v2.0.31: `MQ`
+
+**Helper function changed:**
+- v2.0.30: `yF`
+- v2.0.31: `_F`
+
+**isTranscriptMode variable changed:**
+- v2.0.30: Not explicitly tracked
+- v2.0.31: `K`
+- Pattern: `isTranscriptMode:K` → `isTranscriptMode:!0`
+
+### Thinking Component
+
+**v2.0.31 pattern (original):**
+```javascript
+function MSQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q,verbose:I}){let[G]=MQ();if(!A)return null;if(!(Q||I))return Vs.default.createElement(S,{marginTop:B?1:0},Vs.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return Vs.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},Vs.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),Vs.default.createElement(S,{paddingLeft:2},Vs.default.createElement(z,{dimColor:!0,italic:!0},_F(A,G))))}
+```
+
+**v2.0.31 standard patch:**
+- Hides banner by replacing `function _kQ` body with `return null`
+- Forces visibility by changing `isTranscriptMode:K` to `isTranscriptMode:!0`
+
+### Custom Styling (v2.0.31-custom-peach.js)
+
+**Custom styled component with peach border:**
+```javascript
+function MSQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q,verbose:I}){let[G]=MQ();if(!A)return null;if(!(Q||I))return Vs.default.createElement(S,{marginTop:B?1:0},Vs.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));return Vs.default.createElement(S,{flexDirection:"column",borderStyle:"single",borderColor:"warning",paddingX:1,marginTop:B?1:0,width:"100%"},Vs.default.createElement(z,{color:"warning",bold:!0},"🍑 Thinking Process"),Vs.default.createElement(S,{paddingLeft:1,marginTop:1},Vs.default.createElement(z,{dimColor:!0},_F(A,G))))}
+```
+
+**Custom styling features:**
+- Single-line peach/orange border around thinking blocks
+- Header: "🍑 Thinking Process" in bold peach color
+- Enhanced padding and visual separation
+- Removed dimmed/italic styling for better visibility
 
 ## Changes from v2.0.29 to v2.0.30
 
