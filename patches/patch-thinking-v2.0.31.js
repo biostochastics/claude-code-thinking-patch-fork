@@ -33,17 +33,38 @@ let changesMade = 0;
 // ==================== PATCH 1: Hide Thinking Banner ====================
 console.log('🔧 Patch 1: Hiding thinking banner...');
 
-const bannerSearch = /function _kQ\(\{streamMode:([A-Za-z0-9_]+)\}\)\{[^}]*var [A-Za-z0-9_,\[\]= ]*BaA[^}]*useState[^}]*\{/;
-const bannerMatch = content.match(bannerSearch);
+// Simple pattern: just find and replace the return statement
+const bannerPattern = /function _kQ\(\{streamMode:(\w+)\}\)\{[^}]+return/;
+const bannerMatch = content.match(bannerPattern);
 
 if (bannerMatch) {
   const streamVar = bannerMatch[1];
-  const fullMatch = bannerMatch[0];
-  const replacement = `function _kQ({streamMode:${streamVar}}){return null`;
+  // Find the full function
+  const funcStart = content.indexOf(`function _kQ({streamMode:${streamVar})`);
+  if (funcStart !== -1) {
+    // Find the opening brace
+    const braceStart = content.indexOf('{', funcStart);
+    // Find the matching closing brace
+    let braceCount = 0;
+    let funcEnd = braceStart;
+    for (let i = braceStart; i < content.length; i++) {
+      if (content[i] === '{') braceCount++;
+      if (content[i] === '}') {
+        braceCount--;
+        if (braceCount === 0) {
+          funcEnd = i;
+          break;
+        }
+      }
+    }
 
-  content = content.replace(fullMatch, replacement);
-  changesMade++;
-  console.log(`   ✅ Banner function patched (_kQ)`);
+    const oldFunction = content.substring(funcStart, funcEnd + 1);
+    const newFunction = `function _kQ({streamMode:${streamVar}}){return null}`;
+
+    content = content.replace(oldFunction, newFunction);
+    changesMade++;
+    console.log(`   ✅ Banner function patched (_kQ)`);
+  }
 } else {
   console.log('   ⚠️  Banner function not found or already patched');
 }
@@ -51,12 +72,9 @@ if (bannerMatch) {
 // ==================== PATCH 2: Force Thinking Visibility ====================
 console.log('\n🔧 Patch 2: Forcing thinking visibility...');
 
-const visibilitySearch = /isTranscriptMode:K([,}])/;
-const visibilityMatch = content.match(visibilitySearch);
-
-if (visibilityMatch) {
-  const after = visibilityMatch[1];
-  content = content.replace(visibilitySearch, `isTranscriptMode:!0${after}`);
+// Simple replacement: find isTranscriptMode:K and replace with isTranscriptMode:!0
+if (content.includes('isTranscriptMode:K,') || content.includes('isTranscriptMode:K}')) {
+  content = content.replace(/isTranscriptMode:K([,}])/g, 'isTranscriptMode:!0$1');
   changesMade++;
   console.log('   ✅ Thinking visibility forced (K → !0)');
 } else {
