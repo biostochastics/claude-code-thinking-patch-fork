@@ -68,10 +68,20 @@ if (bannerMatch) {
 // ==================== PATCH 2: Force Thinking Visibility ====================
 console.log('\n🔧 Patch 2: Forcing thinking visibility...');
 
-if (content.includes('isTranscriptMode:K,') || content.includes('isTranscriptMode:K}')) {
-  content = content.replace(/isTranscriptMode:K([,}])/g, 'isTranscriptMode:!0$1');
+// CRITICAL: Only replace in the specific case statement where MSQ is called
+// DO NOT use global replace - it breaks function parameters!
+const casePattern = /case"thinking":([^}]+createElement\(MSQ,\{[^}]*isTranscriptMode:)K([,}])/;
+const caseMatch = content.match(casePattern);
+
+if (caseMatch) {
+  const before = caseMatch[1];
+  const after = caseMatch[2];
+  const oldCase = caseMatch[0];
+  const newCase = `case"thinking":${before}!0${after}`;
+
+  content = content.replace(oldCase, newCase);
   changesMade++;
-  console.log('   ✅ Thinking visibility forced (K → !0)');
+  console.log('   ✅ Thinking visibility forced (K → !0 in case statement only)');
 } else {
   console.log('   ⚠️  Visibility control not found or already patched');
 }
@@ -79,64 +89,72 @@ if (content.includes('isTranscriptMode:K,') || content.includes('isTranscriptMod
 // ==================== PATCH 3: Custom Peach Styling ====================
 console.log('\n🎨 Patch 3: Applying custom peach styling...');
 
-// Find the MSQ component more safely - just look for the key parts
-const msdPattern = /function MSQ\([^)]+\)\{[^}]+if\(!A\)return null;if\(!\(Q\|\|I\)\)return [^;]+;return ([A-Za-z0-9_]+)\.default\.createElement\(S,\{flexDirection:"column",gap:1,marginTop:B\?1:0,width:"100%"\}/;
-const msqMatch = content.match(msdPattern);
+// Find MSQ function - look for the visible return statement
+const funcStart = content.indexOf('function MSQ(');
+if (funcStart !== -1) {
+  // Find function end using bracket counting
+  let braceCount = 0;
+  let funcEnd = funcStart;
+  let inFunction = false;
 
-if (msqMatch) {
-  const reactVar = msqMatch[1]; // e.g., "Vs"
-
-  // Find the start of function MSQ
-  const funcStart = content.indexOf('function MSQ(');
-  if (funcStart !== -1) {
-    // Find the end of the function
-    let braceCount = 0;
-    let funcEnd = funcStart;
-    let inFunction = false;
-
-    for (let i = funcStart; i < content.length; i++) {
-      if (content[i] === '{') {
-        braceCount++;
-        inFunction = true;
-      }
-      if (content[i] === '}') {
-        braceCount--;
-        if (braceCount === 0 && inFunction) {
-          funcEnd = i;
-          break;
-        }
-      }
+  for (let i = funcStart; i < content.length; i++) {
+    if (content[i] === '{') {
+      braceCount++;
+      inFunction = true;
     }
-
-    const oldFunction = content.substring(funcStart, funcEnd + 1);
-
-    // Create new function with custom peach styling
-    // This is a simplified replacement - we replace the visible return with styled version
-    const newFunction = oldFunction.replace(
-      /return ([A-Za-z0-9_]+)\.default\.createElement\(S,\{flexDirection:"column",gap:1,marginTop:B\?1:0,width:"100%"\}/,
-      `return ${reactVar}.default.createElement(S,{flexDirection:"column",borderStyle:"single",borderColor:"warning",paddingX:1,marginTop:B?1:0,width:"100%"`
-    ).replace(
-      /"∴ Thinking…"/,
-      '"🍑 Thinking Process"'
-    ).replace(
-      /createElement\(z,\{dimColor:!0,italic:!0\},"∴ Thinking…"\)/,
-      `createElement(z,{color:"warning",bold:!0},"🍑 Thinking Process")`
-    ).replace(
-      /\{paddingLeft:2\}/,
-      '{paddingLeft:1,marginTop:1}'
-    );
-
-    if (newFunction !== oldFunction) {
-      content = content.replace(oldFunction, newFunction);
-      changesMade++;
-      console.log('   ✅ Custom peach styling applied (MSQ component)');
-      console.log('   🍑 Features: Single-line orange border, peach emoji header');
-    } else {
-      console.log('   ⚠️  Styling replacement failed');
+    if (content[i] === '}') {
+      braceCount--;
+      if (braceCount === 0 && inFunction) {
+        funcEnd = i;
+        break;
+      }
     }
   }
+
+  let oldFunction = content.substring(funcStart, funcEnd + 1);
+  let newFunction = oldFunction;
+  let styleChanges = 0;
+
+  // Change 1: Add border styling to the visible return
+  const borderChange = newFunction.replace(
+    /createElement\(S,\{flexDirection:"column",gap:1,marginTop:B\?1:0,width:"100%"\}/,
+    'createElement(S,{flexDirection:"column",borderStyle:"single",borderColor:"warning",paddingX:1,marginTop:B?1:0,width:"100%"}'
+  );
+  if (borderChange !== newFunction) {
+    newFunction = borderChange;
+    styleChanges++;
+  }
+
+  // Change 2: Replace header text and styling
+  const headerChange = newFunction.replace(
+    /createElement\(z,\{dimColor:!0,italic:!0\},"∴ Thinking…"\)/,
+    'createElement(z,{color:"warning",bold:!0},"🍑 Thinking Process")'
+  );
+  if (headerChange !== newFunction) {
+    newFunction = headerChange;
+    styleChanges++;
+  }
+
+  // Change 3: Adjust padding
+  const paddingChange = newFunction.replace(
+    /createElement\(S,\{paddingLeft:2\}/,
+    'createElement(S,{paddingLeft:1,marginTop:1}'
+  );
+  if (paddingChange !== newFunction) {
+    newFunction = paddingChange;
+    styleChanges++;
+  }
+
+  if (styleChanges > 0) {
+    content = content.replace(oldFunction, newFunction);
+    changesMade++;
+    console.log(`   ✅ Custom peach styling applied (${styleChanges} style changes)`);
+    console.log('   🍑 Features: Single-line orange border, peach emoji header');
+  } else {
+    console.log('   ⚠️  No style changes applied');
+  }
 } else {
-  console.log('   ⚠️  Component not found or already styled');
+  console.log('   ⚠️  MSQ function not found');
 }
 
 // ==================== WRITE CHANGES ====================

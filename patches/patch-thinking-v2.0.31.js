@@ -33,18 +33,14 @@ let changesMade = 0;
 // ==================== PATCH 1: Hide Thinking Banner ====================
 console.log('🔧 Patch 1: Hiding thinking banner...');
 
-// Simple pattern: just find and replace the return statement
 const bannerPattern = /function _kQ\(\{streamMode:(\w+)\}\)\{[^}]+return/;
 const bannerMatch = content.match(bannerPattern);
 
 if (bannerMatch) {
   const streamVar = bannerMatch[1];
-  // Find the full function
   const funcStart = content.indexOf(`function _kQ({streamMode:${streamVar})`);
   if (funcStart !== -1) {
-    // Find the opening brace
     const braceStart = content.indexOf('{', funcStart);
-    // Find the matching closing brace
     let braceCount = 0;
     let funcEnd = braceStart;
     for (let i = braceStart; i < content.length; i++) {
@@ -72,11 +68,20 @@ if (bannerMatch) {
 // ==================== PATCH 2: Force Thinking Visibility ====================
 console.log('\n🔧 Patch 2: Forcing thinking visibility...');
 
-// Simple replacement: find isTranscriptMode:K and replace with isTranscriptMode:!0
-if (content.includes('isTranscriptMode:K,') || content.includes('isTranscriptMode:K}')) {
-  content = content.replace(/isTranscriptMode:K([,}])/g, 'isTranscriptMode:!0$1');
+// CRITICAL: Only replace in the specific case statement where MSQ is called
+// DO NOT use global replace - it breaks function parameters!
+const casePattern = /case"thinking":([^}]+createElement\(MSQ,\{[^}]*isTranscriptMode:)K([,}])/;
+const caseMatch = content.match(casePattern);
+
+if (caseMatch) {
+  const before = caseMatch[1];
+  const after = caseMatch[2];
+  const oldCase = caseMatch[0];
+  const newCase = `case"thinking":${before}!0${after}`;
+
+  content = content.replace(oldCase, newCase);
   changesMade++;
-  console.log('   ✅ Thinking visibility forced (K → !0)');
+  console.log('   ✅ Thinking visibility forced (K → !0 in case statement only)');
 } else {
   console.log('   ⚠️  Visibility control not found or already patched');
 }
