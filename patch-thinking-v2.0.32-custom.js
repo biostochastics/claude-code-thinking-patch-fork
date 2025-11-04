@@ -9,7 +9,7 @@
  *
  * Custom styling features:
  * - Peach emoji (🍑) in the header instead of ∴ symbol
- * - Orange border (1px solid #f97316) around thinking blocks
+ * - Yellow border (Ink.js "yellow" color) around thinking blocks
  * - Maintains all original functionality
  *
  * Pattern changed in v2.0.32:
@@ -26,7 +26,7 @@ const path = require('path');
 const username = os.userInfo().username;
 const CLI_PATH = `/Users/${username}/.claude/local/node_modules/@anthropic-ai/claude-code/cli.js`;
 
-console.log('Claude Code v2.0.32 Custom Thinking Patch (Peach 🍑 + Orange Border)');
+console.log('Claude Code v2.0.32 Custom Thinking Patch (Peach 🍑 + Yellow Border)');
 console.log('='.repeat(70));
 console.log(`Target: ${CLI_PATH}`);
 console.log('');
@@ -48,12 +48,12 @@ const replacePattern1 = 'case"thinking":';
 // Pattern 2: Modify rSQ component for custom styling
 // Original rSQ function (collapsed view - not in transcript/verbose mode)
 const searchPattern2 = 'if(!(Q||I))return $s.default.createElement(S,{marginTop:B?1:0},$s.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));';
-const replacePattern2 = 'if(!(Q||I))return $s.default.createElement(S,{marginTop:B?1:0,borderStyle:"single",borderColor:"#f97316",paddingLeft:1,paddingRight:1},$s.default.createElement(z,{color:"#f97316",bold:!0},"🍑 Thinking (ctrl+o to expand)"));';
+const replacePattern2 = 'if(!(Q||I))return $s.default.createElement(S,{marginTop:B?1:0,borderStyle:"single",borderColor:"yellow",paddingLeft:1,paddingRight:1},$s.default.createElement(z,{color:"yellow",bold:!0},"🍑 Thinking (ctrl+o to expand)"));';
 
 // Pattern 3: Modify rSQ component for custom styling (expanded view)
 // Original: return $s.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},$s.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),
 const searchPattern3 = 'return $s.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},$s.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),';
-const replacePattern3 = 'return $s.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%",borderStyle:"single",borderColor:"#f97316",paddingLeft:1,paddingRight:1},$s.default.createElement(z,{color:"#f97316",bold:!0},"🍑 Thinking…"),';
+const replacePattern3 = 'return $s.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%",borderStyle:"single",borderColor:"yellow",paddingLeft:1,paddingRight:1},$s.default.createElement(z,{color:"yellow",bold:!0},"🍑 Thinking…"),';
 
 // Check if already patched
 const isPattern1Patched = !content.includes(searchPattern1);
@@ -65,7 +65,7 @@ if (isPattern1Patched && isPattern2Patched && isPattern3Patched) {
   console.log('');
   console.log('Features active:');
   console.log('  🍑 Peach emoji header');
-  console.log('  📦 Orange border styling');
+  console.log('  🟡 Yellow border styling');
   console.log('  ✨ Thinking always visible');
   process.exit(0);
 }
@@ -122,8 +122,8 @@ console.log('✅ Custom patch applied successfully!');
 console.log('');
 console.log('Custom styling features:');
 console.log('  🍑 Peach emoji instead of ∴ symbol');
-console.log('  🟠 Orange border (#f97316) around thinking blocks');
-console.log('  ✨ Bold orange text for "Thinking" header');
+console.log('  🟡 Yellow border around thinking blocks');
+console.log('  ✨ Bold yellow text for "Thinking" header');
 console.log('  📦 Works in both collapsed and expanded modes');
 console.log('');
 console.log('Restart your Claude Code session to see the custom thinking style!');

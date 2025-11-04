@@ -33,7 +33,7 @@ node patch-thinking-v2.0.19.js       # for v2.0.19
 node patch-thinking-v2.0.17.js       # for v2.0.17
 ```
 
-Custom styled patch (orange border, 🍑 peach emoji):
+Custom styled patch (yellow border, 🍑 peach emoji):
 ```bash
 node patch-thinking-v2.0.32-custom.js        # for v2.0.32 (newest)
 node patches/patch-thinking-v2.0.31-custom-peach.js  # for v2.0.31

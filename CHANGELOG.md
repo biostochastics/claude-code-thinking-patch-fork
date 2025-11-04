@@ -100,8 +100,8 @@ function rSQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q,verbose:I}){
 // Before:
 $s.default.createElement(S,{marginTop:B?1:0},$s.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"))
 
-// After (with peach emoji and orange border):
-$s.default.createElement(S,{marginTop:B?1:0,borderStyle:"single",borderColor:"#f97316",paddingLeft:1,paddingRight:1},$s.default.createElement(z,{color:"#f97316",bold:!0},"🍑 Thinking (ctrl+o to expand)"))
+// After (with peach emoji and yellow border):
+$s.default.createElement(S,{marginTop:B?1:0,borderStyle:"single",borderColor:"yellow",paddingLeft:1,paddingRight:1},$s.default.createElement(z,{color:"yellow",bold:!0},"🍑 Thinking (ctrl+o to expand)"))
 ```
 
 3. **Expanded view styling:**
@@ -109,16 +109,18 @@ $s.default.createElement(S,{marginTop:B?1:0,borderStyle:"single",borderColor:"#f
 // Before:
 $s.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},$s.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),
 
-// After (with peach emoji and orange border):
-$s.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%",borderStyle:"single",borderColor:"#f97316",paddingLeft:1,paddingRight:1},$s.default.createElement(z,{color:"#f97316",bold:!0},"🍑 Thinking…"),
+// After (with peach emoji and yellow border):
+$s.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%",borderStyle:"single",borderColor:"yellow",paddingLeft:1,paddingRight:1},$s.default.createElement(z,{color:"yellow",bold:!0},"🍑 Thinking…"),
 ```
 
 **Custom styling features:**
 - 🍑 Peach emoji instead of ∴ symbol
-- 🟠 Orange border (#f97316) using Ink's borderStyle
-- ✨ Bold orange text for "Thinking" header
+- 🟡 Yellow border (Ink.js "yellow" color) using borderStyle
+- ✨ Bold yellow text for "Thinking" header
 - 📦 Works in both collapsed and expanded modes
 - Removed dimColor and italic for better visibility
+
+**Note:** Originally attempted orange border with hex code #f97316, but Ink.js only supports named colors for borderColor. Changed to "yellow" (closest to orange/peach).
 
 ### Architecture Notes
 
