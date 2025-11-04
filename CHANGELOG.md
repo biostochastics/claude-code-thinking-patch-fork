@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.31**: `patches/patch-thinking-v2.0.31.js` (latest)
+- **v2.0.32**: `patch-thinking-v2.0.32.js` (latest)
+- **v2.0.31**: `patches/patch-thinking-v2.0.31.js`
 - **v2.0.30**: `patch-thinking-v2.0.30.js`
 - **v2.0.29**: `patch-thinking-v2.0.29.js`
 - **v2.0.28**: `patch-thinking-v2.0.28.js`
@@ -23,6 +24,128 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.31 to v2.0.32
+
+### Major Pattern Change
+
+**v2.0.32 reverts to case statement-based hiding:**
+- ✅ **Returns to conditional hiding**: Unlike v2.0.30-v2.0.31 which used component-level checks
+- ✅ **Simpler patch approach**: Single case statement modification instead of component rewriting
+- ✅ **More robust**: Directly removes the hiding conditional
+
+### Identifier Updates
+
+**Thinking Component name changed:**
+- v2.0.31: `MSQ`
+- v2.0.32: `rSQ`
+
+**React import in component changed:**
+- v2.0.31: `Vs.default`
+- v2.0.32: `$s.default` and `E3` (multiple React imports)
+
+**Hook changed:**
+- v2.0.31: `MQ`
+- v2.0.32: `LQ`
+
+**Helper function changed:**
+- v2.0.31: `_F`
+- v2.0.32: `SF`
+
+**Visibility control variables changed:**
+- v2.0.31: `isTranscriptMode:Q`, `verbose:I` in component params
+- v2.0.32: `V` (isTranscriptMode), `I` (verbose) in case statement
+
+### Case Statement Pattern
+
+**v2.0.32 uses case statement with conditional hiding:**
+```javascript
+case"thinking":if(!V&&!I)return null;return E3.createElement(rSQ,{addMargin:B,param:A,isTranscriptMode:V,verbose:I});
+```
+
+**Standard patch removes the conditional:**
+```javascript
+// Before:
+case"thinking":if(!V&&!I)return null;
+
+// After:
+case"thinking":
+```
+
+This makes thinking visible regardless of transcript mode (V) or verbose (I) settings.
+
+### Thinking Component
+
+**v2.0.32 component (rSQ):**
+```javascript
+function rSQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q,verbose:I}){
+  let[G]=LQ();
+  if(!A)return null;
+  if(!(Q||I))return $s.default.createElement(S,{marginTop:B?1:0},$s.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return $s.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},$s.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),$s.default.createElement(S,{paddingLeft:2},$s.default.createElement(z,{dimColor:!0,italic:!0},SF(A,G))))
+}
+```
+
+**Standard patch:**
+- Only modifies the case statement to remove `if(!V&&!I)return null;`
+- Component remains unchanged
+
+### Custom Styling (v2.0.32-custom.js)
+
+**Custom patch modifies both case statement AND component:**
+
+1. **Case statement patch** (same as standard)
+2. **Collapsed view styling:**
+```javascript
+// Before:
+$s.default.createElement(S,{marginTop:B?1:0},$s.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"))
+
+// After (with peach emoji and orange border):
+$s.default.createElement(S,{marginTop:B?1:0,borderStyle:"single",borderColor:"#f97316",paddingLeft:1,paddingRight:1},$s.default.createElement(z,{color:"#f97316",bold:!0},"🍑 Thinking (ctrl+o to expand)"))
+```
+
+3. **Expanded view styling:**
+```javascript
+// Before:
+$s.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},$s.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),
+
+// After (with peach emoji and orange border):
+$s.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%",borderStyle:"single",borderColor:"#f97316",paddingLeft:1,paddingRight:1},$s.default.createElement(z,{color:"#f97316",bold:!0},"🍑 Thinking…"),
+```
+
+**Custom styling features:**
+- 🍑 Peach emoji instead of ∴ symbol
+- 🟠 Orange border (#f97316) using Ink's borderStyle
+- ✨ Bold orange text for "Thinking" header
+- 📦 Works in both collapsed and expanded modes
+- Removed dimColor and italic for better visibility
+
+### Architecture Notes
+
+**v2.0.32 combines patterns from earlier versions:**
+- Uses **case statement conditional** (like v2.0.15-v2.0.29)
+- Has **separate component** with transcript/verbose checks (like v2.0.30-v2.0.31)
+- Requires **different patch strategy** than v2.0.30-v2.0.31
+
+**Why this matters:**
+- v2.0.30-v2.0.31: Modified component's `isTranscriptMode` parameter
+- v2.0.32: Must modify case statement's conditional instead
+- Both approaches work, but target different code locations
+
+### Detection Results
+
+**Position markers for v2.0.32:**
+- Thinking case statement: position 6939607 (contains `case"thinking":case"redacted_thinking"`)
+- Actual visibility control: position 7046601 (contains `case"thinking":if(!V&&!I)return null;`)
+- Component definition (rSQ): position 7034125
+
+**Universal identifier detector output:**
+```
+Component name: rSQ
+Case statement: case"thinking": found
+Function length: 77 characters
+No custom styling detected (before patch)
+```
 
 ## Changes from v2.0.30 to v2.0.31
 
