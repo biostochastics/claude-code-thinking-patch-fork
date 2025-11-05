@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.32**: `patch-thinking-v2.0.32.js` (latest)
+- **v2.0.33**: `patch-thinking-v2.0.33.js` (latest)
+- **v2.0.32**: `patch-thinking-v2.0.32.js`
 - **v2.0.31**: `patches/patch-thinking-v2.0.31.js`
 - **v2.0.30**: `patch-thinking-v2.0.30.js`
 - **v2.0.29**: `patch-thinking-v2.0.29.js`
@@ -24,6 +25,52 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.32 to v2.0.33
+
+### Major Pattern Change
+
+**v2.0.33 maintains case statement-based hiding (same approach as v2.0.32):**
+- ✅ **Continues conditional hiding approach**: Uses case statement modification
+- ✅ **Consistent patch strategy**: Same simple approach as v2.0.32
+- ✅ **Stable pattern**: Direct removal of hiding conditional
+
+### Identifier Updates
+
+**Switch component function changed:**
+- v2.0.32: Function containing thinking case uses variables `V` (isTranscriptMode), `I` (verbose)
+- v2.0.33: Function `sh6` uses same variable names `V` and `I`
+
+**Thinking display component:**
+- v2.0.32: `rSQ` component renders thinking blocks
+- v2.0.33: `q$Q` component renders thinking blocks
+
+**Pattern to patch:**
+- v2.0.32: `case"thinking":if(!V&&!I)return null;`
+- v2.0.33: `case"thinking":if(!V&&!I)return null;` (same pattern!)
+
+**React import in component:**
+- v2.0.32: `$s.default`
+- v2.0.33: `oa.default`
+
+### Files Created
+
+- **Standard patch**: `patch-thinking-v2.0.33.js`
+  - Removes visibility conditional
+  - Restores default thinking display
+
+- **Custom peach patch**: `patch-thinking-v2.0.33-custom-peach.js`
+  - Adds 🍑 peach emoji header
+  - Adds yellow border styling
+  - Maintains all visibility fixes
+
+### Testing
+
+Both patches tested and verified working on Claude Code v2.0.33:
+- ✅ Standard patch applies cleanly
+- ✅ Custom peach patch applies cleanly
+- ✅ Both patches can be applied sequentially
+- ✅ Thinking blocks visible in all modes
 
 ## Changes from v2.0.31 to v2.0.32
 
