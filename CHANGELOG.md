@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.34**: `patch-thinking-v2.0.34.js` (latest)
+- **v2.0.35**: `patch-thinking-v2.0.35.js` (latest)
+- **v2.0.34**: `patch-thinking-v2.0.34.js`
 - **v2.0.33**: `patch-thinking-v2.0.33.js`
 - **v2.0.32**: `patch-thinking-v2.0.32.js`
 - **v2.0.31**: `patches/patch-thinking-v2.0.31.js`
@@ -26,6 +27,39 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.34 to v2.0.35
+
+### Major Identifier Changes
+
+**v2.0.35 updates component and hook identifiers:**
+- ✅ **Component name**: `OSQ` (was `LSQ` in v2.0.34)
+- ✅ **Hook name**: `HQ()` (was `UQ()` in v2.0.34)
+- ✅ **React import patterns**: `_s.default.createElement` and `z3.createElement` (stable)
+- ✅ **Patch approach**: Component-level modification with if(false) visibility fix
+
+### Identifier Updates
+
+**Thinking display component:**
+- v2.0.34: `LSQ` component with `UQ()` hook
+- v2.0.35: `OSQ` component with `HQ()` hook
+
+**Function signature (OSQ component):**
+```javascript
+function OSQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q,verbose:I}){let[G]=HQ();...}
+```
+- Parameters: `A` (thinking content), `B` (addMargin), `Q` (isTranscriptMode), `I` (verbose)
+- Hook: `HQ()` for column width (changed from `UQ()`)
+- Variable: `G` stores the column width result
+
+**Custom peach styling:**
+- Border: `borderStyle:"single",borderColor:"warning"`
+- Header: `"🍑 Thinking Process"` with `color:"warning",bold:!0`
+- Layout: `paddingX:1`, `paddingLeft:1`, `marginTop:1`
+
+### Files
+- `patch-thinking-v2.0.35.js` - Standard patch (visibility fix only)
+- `patch-thinking-v2.0.35-custom-peach.js` - Custom styled patch with orange borders and peach emoji
 
 ## Changes from v2.0.33 to v2.0.34
 
