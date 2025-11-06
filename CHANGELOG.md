@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.33**: `patch-thinking-v2.0.33.js` (latest)
+- **v2.0.34**: `patch-thinking-v2.0.34.js` (latest)
+- **v2.0.33**: `patch-thinking-v2.0.33.js`
 - **v2.0.32**: `patch-thinking-v2.0.32.js`
 - **v2.0.31**: `patches/patch-thinking-v2.0.31.js`
 - **v2.0.30**: `patch-thinking-v2.0.30.js`
@@ -25,6 +26,44 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.33 to v2.0.34
+
+### Major Pattern Change
+
+**v2.0.34 moves from case statement to component-level patching:**
+- ✅ **New component name**: `LSQ` (was `q$Q` in v2.0.33, `rSQ` in v2.0.32)
+- ✅ **Different patch approach**: Direct component modification instead of case statement
+- ✅ **React import pattern**: `_s.default.createElement` (stable pattern)
+
+### Identifier Updates
+
+**Thinking display component:**
+- v2.0.33: `q$Q` component renders thinking blocks
+- v2.0.34: `LSQ` component renders thinking blocks
+
+**Function signature (LSQ component):**
+```javascript
+function LSQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q,verbose:I})
+```
+- Parameters: `A` (thinking content), `B` (addMargin), `Q` (isTranscriptMode), `I` (verbose)
+- Hook: `UQ()` for column width
+- Text formatter: `gC(A,G)` for content processing
+
+**Pattern to patch:**
+- v2.0.33: `case"thinking":if(!V&&!I)return null;` (case statement)
+- v2.0.34: `if(!(Q||I))return _s.default.createElement(S,{marginTop:B?1:0}...` (component conditional)
+
+### Custom Patch Improvements
+
+**v2.0.34 custom patch (`patch-thinking-v2.0.34-custom.js`):**
+- Handles three scenarios automatically:
+  1. Fresh v2.0.34 installation (original LSQ)
+  2. Standard-patched file (LSQ with `if(false)`)
+  3. Already custom-patched (peach emoji version)
+- Smart detection and upgrade path
+- Orange border with peach emoji (🍑) header
+- Consistent with v2.0.33 custom patch styling
 
 ## Changes from v2.0.32 to v2.0.33
 
