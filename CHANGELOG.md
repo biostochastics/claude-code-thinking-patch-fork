@@ -3,7 +3,9 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.35**: `patch-thinking-v2.0.35.js` (latest)
+- **v2.0.37**: `patch-thinking-v2.0.37.js` (latest)
+- **v2.0.36**: `patch-thinking-v2.0.36.js`
+- **v2.0.35**: `patch-thinking-v2.0.35.js`
 - **v2.0.34**: `patch-thinking-v2.0.34.js`
 - **v2.0.33**: `patch-thinking-v2.0.33.js`
 - **v2.0.32**: `patch-thinking-v2.0.32.js`
@@ -27,6 +29,37 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.36 to v2.0.37
+
+### Major Identifier Changes
+
+**v2.0.37 updates component and hook identifiers:**
+- ✅ **Component name**: `n$Q` (was `pSQ` in v2.0.36)
+- ✅ **Hook name**: `EQ()` (was `HQ()` in v2.0.36)
+- ✅ **React import patterns**: `Fs.default.createElement` (was `hs.default.createElement` in v2.0.36)
+- ✅ **Patch approach**: Component-level modification with if(false) visibility fix
+
+### Identifier Updates
+
+**Thinking display component:**
+- v2.0.36: `pSQ` component with `HQ()` hook and `hs.default` React import
+- v2.0.37: `n$Q` component with `EQ()` hook and `Fs.default` React import
+
+**Function signature (n$Q component):**
+```javascript
+function n$Q({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q,verbose:I}){let[G]=EQ();...}
+```
+
+**Custom styling (with peach emoji 🍑 and orange border):**
+- Applied to `n$Q` component
+- Orange border (`borderColor:"warning"`)
+- Bold orange header text: "🍑 Thinking Process"
+- Enhanced padding and layout for better visual separation
+
+### Files Created
+- `patch-thinking-v2.0.37.js` - Standard patch with visibility fix
+- `patch-thinking-v2.0.37-custom.js` - Custom styled patch with peach emoji and orange border
 
 ## Changes from v2.0.34 to v2.0.35
 
