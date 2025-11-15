@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.37**: `patch-thinking-v2.0.37.js` (latest)
+- **v2.0.42**: `patch-thinking-v2.0.42.js` (latest)
+- **v2.0.37**: `patch-thinking-v2.0.37.js`
 - **v2.0.36**: `patch-thinking-v2.0.36.js`
 - **v2.0.35**: `patch-thinking-v2.0.35.js`
 - **v2.0.34**: `patch-thinking-v2.0.34.js`
@@ -29,6 +30,59 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.37 to v2.0.42
+
+### Major Identifier Changes
+
+**v2.0.42 updates component and hook identifiers:**
+- ✅ **Component name**: `xLQ` (was `n$Q` in v2.0.37)
+- ✅ **Hook name**: `HQ()` (was `EQ()` in v2.0.37)
+- ✅ **React import patterns**: `ys.default.createElement` (was `Fs.default.createElement` in v2.0.37)
+- ✅ **Patch approach**: Component-level modification with if(false) visibility fix
+
+### Identifier Updates
+
+**Thinking display component:**
+- v2.0.37: `n$Q` component with `EQ()` hook and `Fs.default` React import
+- v2.0.42: `xLQ` component with `HQ()` hook and `ys.default` React import
+
+**Function signature (xLQ component):**
+```javascript
+function xLQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q,verbose:I}){
+  let[G]=HQ();  // Hook for terminal width
+  if(!A)return null;
+  if(!(Q||I))return ys.default.createElement(S,{marginTop:B?1:0},ys.default.createElement(U,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return ys.default.createElement(S,{flexDirection:"column",gap:1,marginTop:B?1:0,width:"100%"},ys.default.createElement(U,{dimColor:!0,italic:!0},"∴ Thinking…"),ys.default.createElement(S,{paddingLeft:2},ys.default.createElement(U,{dimColor:!0,italic:!0},tC(A,G))))
+}
+```
+
+### Custom Styling Support
+
+**v2.0.42 includes both standard and custom patches:**
+- Standard patch: Simple visibility fix (if(false))
+- Custom patch: Adds peach emoji 🍑 header with orange border styling
+  - Border: `borderStyle:"single", borderColor:"warning"`
+  - Header: `"🍑 Thinking Process"` in bold orange
+  - Enhanced padding and visual separation
+
+**Custom patch features:**
+```javascript
+// Custom styled version
+return ys.default.createElement(S,{
+  flexDirection:"column",
+  borderStyle:"single",
+  borderColor:"warning",
+  paddingX:1,
+  marginTop:B?1:0,
+  width:"100%"
+},
+  ys.default.createElement(U,{color:"warning",bold:!0},"🍑 Thinking Process"),
+  ys.default.createElement(S,{paddingLeft:1,marginTop:1},
+    ys.default.createElement(U,{dimColor:!0},tC(A,G))
+  )
+)
+```
 
 ## Changes from v2.0.36 to v2.0.37
 

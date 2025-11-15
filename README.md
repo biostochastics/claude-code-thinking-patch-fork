@@ -18,7 +18,8 @@ claude --version
 Standard patch:
 ```bash
 cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.37.js       # for v2.0.37 (newest)
+node patch-thinking-v2.0.42.js       # for v2.0.42 (newest)
+node patch-thinking-v2.0.37.js       # for v2.0.37
 node patch-thinking-v2.0.36.js       # for v2.0.36
 node patch-thinking-v2.0.35.js       # for v2.0.35
 node patch-thinking-v2.0.34.js       # for v2.0.34
@@ -40,7 +41,8 @@ node patch-thinking-v2.0.17.js       # for v2.0.17
 
 Custom styled patch (orange border, 🍑 peach emoji):
 ```bash
-node patch-thinking-v2.0.37-custom.js                # for v2.0.37 (newest)
+node patch-thinking-v2.0.42-custom.js                # for v2.0.42 (newest)
+node patch-thinking-v2.0.37-custom.js                # for v2.0.37
 node patch-thinking-v2.0.36-custom-peach.js          # for v2.0.36
 node patch-thinking-v2.0.35-custom-peach.js          # for v2.0.35
 node patch-thinking-v2.0.34-custom.js                # for v2.0.34
