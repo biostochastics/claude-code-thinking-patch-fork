@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.42**: `patch-thinking-v2.0.42.js` (latest)
+- **v2.0.43**: `patch-thinking-v2.0.43.js` (latest)
+- **v2.0.42**: `patch-thinking-v2.0.42.js`
 - **v2.0.37**: `patch-thinking-v2.0.37.js`
 - **v2.0.36**: `patch-thinking-v2.0.36.js`
 - **v2.0.35**: `patch-thinking-v2.0.35.js`
@@ -30,6 +31,46 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.42 to v2.0.43
+
+### Major Identifier Changes
+
+**v2.0.43 updates component and hook identifiers:**
+- ✅ **Component name**: `mRQ` (was `xLQ` in v2.0.42)
+- ✅ **Hook name**: `UQ()` (was `HQ()` in v2.0.42)
+- ✅ **React import patterns**: `Gr.default.createElement` (was `ys.default.createElement` in v2.0.42)
+- ✅ **Text helper**: `BV` (was `tC` in v2.0.42)
+- ✅ **Patch approach**: Component-level modification with if(false) visibility fix
+
+### Identifier Updates
+
+**Thinking display component:**
+- v2.0.42: `xLQ` component with `HQ()` hook and `ys.default` React import
+- v2.0.43: `mRQ` component with `UQ()` hook and `Gr.default` React import
+
+**Function signature (mRQ component):**
+```javascript
+function mRQ({param:{thinking:A},addMargin:B=!1,isTranscriptMode:Q,verbose:I}){
+  let[G]=UQ();
+  if(!A)return null;
+  if(!(Q||I))return Gr.default.createElement(S,{marginTop:B?1:0},...);
+  return Gr.default.createElement(S,{flexDirection:"column",...},
+    Gr.default.createElement(w,{dimColor:!0,italic:!0},"∴ Thinking…"),
+    Gr.default.createElement(S,{paddingLeft:2},
+      Gr.default.createElement(w,{dimColor:!0,italic:!0},BV(A,G))));
+}
+```
+
+**Patch changes:**
+- Changes `if(!(Q||I))` to `if(false)` to force visibility
+- Custom patch adds orange border: `borderStyle:"single",borderColor:"yellow"`
+- Custom patch adds peach header: `"🍑 Thinking Process"`
+
+**Testing:**
+- Confirmed on Claude Code v2.0.43 (2025-01-17)
+- Both standard and custom patches apply successfully
+- Thinking blocks display inline without ctrl+o
 
 ## Changes from v2.0.37 to v2.0.42
 

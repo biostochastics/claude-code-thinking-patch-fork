@@ -18,7 +18,8 @@ claude --version
 Standard patch:
 ```bash
 cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.42.js       # for v2.0.42 (newest)
+node patch-thinking-v2.0.43.js       # for v2.0.43 (newest)
+node patch-thinking-v2.0.42.js       # for v2.0.42
 node patch-thinking-v2.0.37.js       # for v2.0.37
 node patch-thinking-v2.0.36.js       # for v2.0.36
 node patch-thinking-v2.0.35.js       # for v2.0.35
@@ -41,7 +42,8 @@ node patch-thinking-v2.0.17.js       # for v2.0.17
 
 Custom styled patch (orange border, 🍑 peach emoji):
 ```bash
-node patch-thinking-v2.0.42-custom.js                # for v2.0.42 (newest)
+node patch-thinking-v2.0.43-custom.js                # for v2.0.43 (newest)
+node patch-thinking-v2.0.42-custom.js                # for v2.0.42
 node patch-thinking-v2.0.37-custom.js                # for v2.0.37
 node patch-thinking-v2.0.36-custom-peach.js          # for v2.0.36
 node patch-thinking-v2.0.35-custom-peach.js          # for v2.0.35
@@ -83,6 +85,8 @@ You have to press `ctrl+o` every time to see the actual thinking content. This p
 
 | Version | Script | Status |
 |---------|--------|--------|
+| v2.0.43 | `patch-thinking-v2.0.43.js` | ✅ Working |
+| v2.0.42 | `patch-thinking-v2.0.42.js` | ✅ Working |
 | v2.0.37 | `patch-thinking-v2.0.37.js` | ✅ Working |
 | v2.0.36 | `patch-thinking-v2.0.36.js` | ✅ Working |
 | v2.0.35 | `patch-thinking-v2.0.35.js` | ✅ Working |
