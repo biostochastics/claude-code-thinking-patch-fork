@@ -18,7 +18,8 @@ claude --version
 Standard patch:
 ```bash
 cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.43.js       # for v2.0.43 (newest)
+node patch-thinking-v2.0.44.js       # for v2.0.44 (newest)
+node patch-thinking-v2.0.43.js       # for v2.0.43
 node patch-thinking-v2.0.42.js       # for v2.0.42
 node patch-thinking-v2.0.37.js       # for v2.0.37
 node patch-thinking-v2.0.36.js       # for v2.0.36
@@ -42,7 +43,8 @@ node patch-thinking-v2.0.17.js       # for v2.0.17
 
 Custom styled patch (orange border, 🍑 peach emoji):
 ```bash
-node patch-thinking-v2.0.43-custom.js                # for v2.0.43 (newest)
+node patch-thinking-v2.0.44-custom.js                # for v2.0.44 (newest)
+node patch-thinking-v2.0.43-custom.js                # for v2.0.43
 node patch-thinking-v2.0.42-custom.js                # for v2.0.42
 node patch-thinking-v2.0.37-custom.js                # for v2.0.37
 node patch-thinking-v2.0.36-custom-peach.js          # for v2.0.36
@@ -85,6 +87,7 @@ You have to press `ctrl+o` every time to see the actual thinking content. This p
 
 | Version | Script | Status |
 |---------|--------|--------|
+| v2.0.44 | `patch-thinking-v2.0.44.js` | ✅ Working |
 | v2.0.43 | `patch-thinking-v2.0.43.js` | ✅ Working |
 | v2.0.42 | `patch-thinking-v2.0.42.js` | ✅ Working |
 | v2.0.37 | `patch-thinking-v2.0.37.js` | ✅ Working |
@@ -404,8 +407,8 @@ This patch is provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last Updated:** 2025-01-14
-**Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15, v2.0.17, v2.0.19, v2.0.21, v2.0.22, v2.0.23, v2.0.24, v2.0.26, v2.0.27, v2.0.28, v2.0.29, v2.0.30, v2.0.31, v2.0.32
+**Last Updated:** 2025-11-17
+**Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15, v2.0.17, v2.0.19, v2.0.21, v2.0.22, v2.0.23, v2.0.24, v2.0.26, v2.0.27, v2.0.28, v2.0.29, v2.0.30, v2.0.31, v2.0.32, v2.0.33, v2.0.34, v2.0.35, v2.0.36, v2.0.37, v2.0.42, v2.0.43, v2.0.44
 **Status:** ✅ Working
 **New Features:** 🎨 Custom styling patches · 🔍 Universal identifier detector
 
