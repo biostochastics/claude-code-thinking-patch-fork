@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.45**: `patch-thinking-v2.0.45.js` (latest)
+- **v2.0.46**: `patch-thinking-v2.0.46.js` (latest)
+- **v2.0.45**: `patch-thinking-v2.0.45.js`
 - **v2.0.44**: `patch-thinking-v2.0.44.js`
 - **v2.0.43**: `patch-thinking-v2.0.43.js`
 - **v2.0.42**: `patch-thinking-v2.0.42.js`
@@ -33,6 +34,43 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.45 to v2.0.46
+
+### Minor Identifier Changes
+
+**v2.0.46 updates only the component name:**
+- ✅ **Component name**: `T32` (changed from `N32` in v2.0.45)
+- ✅ **Hook name**: `qB()` (unchanged from v2.0.45)
+- ✅ **React import patterns**: `hAA.default.createElement` (unchanged from v2.0.45)
+- ✅ **S component**: `j` (unchanged from v2.0.45)
+- ✅ **w component**: `$` (unchanged from v2.0.45)
+- ✅ **Text helper**: `QD` (unchanged from v2.0.45)
+- ✅ **Patch approach**: Component-level modification with if(false) visibility fix
+
+### Function Signature
+
+```javascript
+function T32({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:Z}){
+  let[G]=qB();
+  if(!A)return null;
+  if(!(B||Z))return hAA.default.createElement(j,{marginTop:Q?1:0},...);
+  return hAA.default.createElement(j,{flexDirection:"column",...},
+    hAA.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),
+    hAA.default.createElement(j,{paddingLeft:2},
+      hAA.default.createElement($,{dimColor:!0,italic:!0},QD(A,G))));
+}
+```
+
+**Patch changes:**
+- Changes `if(!(B||Z))` to `if(false)` to force visibility
+- Custom patch adds orange border: `borderStyle:"single",borderColor:"yellow"`
+- Custom patch adds peach header: `"🍑 Thinking Process"`
+
+**Testing:**
+- Confirmed on Claude Code v2.0.46 (2025-11-18)
+- Both standard and custom patches apply successfully
+- Thinking blocks display inline without ctrl+o
 
 ## Changes from v2.0.44 to v2.0.45
 
