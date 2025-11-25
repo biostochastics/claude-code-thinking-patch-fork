@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.52**: `patch-thinking-v2.0.52.js` (latest)
+- **v2.0.53**: `patch-thinking-v2.0.53.js` (latest)
+- **v2.0.52**: `patch-thinking-v2.0.52.js`
 - **v2.0.50**: `patch-thinking-v2.0.50.js`
 - **v2.0.49**: `patch-thinking-v2.0.49.js`
 - **v2.0.47**: `patch-thinking-v2.0.47.js`
@@ -38,6 +39,43 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.52 to v2.0.53
+
+### React Import Identifier Change
+
+**v2.0.53 updates React import identifier:**
+- ✅ **Component name**: `o09` (unchanged from v2.0.52)
+- ✅ **Hook name**: `OB()` (unchanged from v2.0.52)
+- ✅ **React import patterns**: `v0A.default.createElement` (changed from `x0A.default.createElement` in v2.0.52)
+- ✅ **S component**: `j` (unchanged from v2.0.52)
+- ✅ **Text component**: `$` (unchanged from v2.0.52)
+- ✅ **Text helper**: `wD` (unchanged from v2.0.52)
+- ✅ **Patch approach**: Component-level modification with if(!1) visibility fix
+
+**Technical changes:**
+```javascript
+// v2.0.52
+function o09({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  let[Z]=OB();
+  if(!A)return null;
+  if(!(B||G))return x0A.default.createElement(j,{marginTop:Q?1:0},x0A.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return x0A.default.createElement(j,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},x0A.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),x0A.default.createElement(j,{paddingLeft:2},x0A.default.createElement($,{dimColor:!0,italic:!0},wD(A,Z))))
+}
+
+// v2.0.53
+function o09({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  let[Z]=OB();
+  if(!A)return null;
+  if(!(B||G))return v0A.default.createElement(j,{marginTop:Q?1:0},v0A.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return v0A.default.createElement(j,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},v0A.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),v0A.default.createElement(j,{paddingLeft:2},v0A.default.createElement($,{dimColor:!0,italic:!0},wD(A,Z))))
+}
+```
+
+**Patch Details:**
+- Standard patch changes `if(!(B||G))` to `if(!1)` to always show thinking blocks
+- Custom patch adds orange border (`borderStyle:"single",borderColor:"#FFA500"`) and peach emoji header ("🍑 Thinking Process")
+- Both patches successfully tested on Claude Code v2.0.53
 
 ## Changes from v2.0.50 to v2.0.52
 
