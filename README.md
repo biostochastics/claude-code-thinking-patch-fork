@@ -18,7 +18,8 @@ claude --version
 Standard patch:
 ```bash
 cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.53.js       # for v2.0.53 (newest)
+node patch-thinking-v2.0.54.js       # for v2.0.54 (newest)
+node patch-thinking-v2.0.53.js       # for v2.0.53
 node patch-thinking-v2.0.52.js       # for v2.0.52
 node patch-thinking-v2.0.50.js       # for v2.0.50
 node patch-thinking-v2.0.49.js       # for v2.0.49
@@ -50,7 +51,8 @@ node patch-thinking-v2.0.17.js       # for v2.0.17
 
 Custom styled patch (orange border, 🍑 peach emoji):
 ```bash
-node patch-thinking-v2.0.53-custom.js                # for v2.0.53 (newest)
+node patch-thinking-v2.0.54-custom.js                # for v2.0.54 (newest)
+node patch-thinking-v2.0.53-custom.js                # for v2.0.53
 node patch-thinking-v2.0.52-custom.js                # for v2.0.52
 node patch-thinking-v2.0.50-custom.js                # for v2.0.50
 node patch-thinking-v2.0.49-custom.js                # for v2.0.49
@@ -101,6 +103,7 @@ You have to press `ctrl+o` every time to see the actual thinking content. This p
 
 | Version | Script | Status |
 |---------|--------|--------|
+| v2.0.54 | `patch-thinking-v2.0.54.js` | ✅ Working |
 | v2.0.53 | `patch-thinking-v2.0.53.js` | ✅ Working |
 | v2.0.52 | `patch-thinking-v2.0.52.js` | ✅ Working |
 | v2.0.50 | `patch-thinking-v2.0.50.js` | ✅ Working |
@@ -429,7 +432,7 @@ This patch is provided as-is for educational purposes. Use at your own risk.
 ---
 
 **Last Updated:** 2025-11-25
-**Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15, v2.0.17, v2.0.19, v2.0.21, v2.0.22, v2.0.23, v2.0.24, v2.0.26, v2.0.27, v2.0.28, v2.0.29, v2.0.30, v2.0.31, v2.0.32, v2.0.33, v2.0.34, v2.0.35, v2.0.36, v2.0.37, v2.0.42, v2.0.43, v2.0.44, v2.0.45, v2.0.46, v2.0.47, v2.0.49, v2.0.50, v2.0.52, v2.0.53
+**Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15, v2.0.17, v2.0.19, v2.0.21, v2.0.22, v2.0.23, v2.0.24, v2.0.26, v2.0.27, v2.0.28, v2.0.29, v2.0.30, v2.0.31, v2.0.32, v2.0.33, v2.0.34, v2.0.35, v2.0.36, v2.0.37, v2.0.42, v2.0.43, v2.0.44, v2.0.45, v2.0.46, v2.0.47, v2.0.49, v2.0.50, v2.0.52, v2.0.53, v2.0.54
 **Status:** ✅ Working
 **New Features:** 🎨 Custom styling patches · 🔍 Universal identifier detector
 
