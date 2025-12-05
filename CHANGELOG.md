@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.58**: `patch-thinking-v2.0.58.js` (latest)
+- **v2.0.59**: `patch-thinking-v2.0.59.js` (latest)
+- **v2.0.58**: `patch-thinking-v2.0.58.js`
 - **v2.0.57**: `patch-thinking-v2.0.57.js`
 - **v2.0.56**: `patch-thinking-v2.0.56.js`
 - **v2.0.55**: `patch-thinking-v2.0.55.js`
@@ -44,6 +45,39 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.58 to v2.0.59
+
+### Component and Hook Identifier Changes
+
+**v2.0.59 updates component and hook identifiers:**
+- ✅ **Component name**: `F89` (changed from `k49` in v2.0.58)
+- ✅ **Hook name**: `qB()` (changed from `$B()` in v2.0.58)
+- ✅ **React import patterns**: `MQA.default.createElement` (changed from `wQA.default.createElement` in v2.0.58)
+- ✅ **S component**: `S` (changed from `j` in v2.0.58)
+- ✅ **Text component**: `$` (unchanged from v2.0.58)
+- ✅ **Text helper**: `fD` (changed from `SD` in v2.0.58)
+- ✅ **Banner function**: `DO2` (changed from `SM2` in v2.0.58)
+- ✅ **Patch approach**: Component-level modification with if(!1) visibility fix
+
+**Technical changes:**
+```javascript
+// v2.0.58
+function k49({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  let[Z]=$B();
+  if(!A)return null;
+  if(!(B||G))return wQA.default.createElement(j,{marginTop:Q?1:0},wQA.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return wQA.default.createElement(j,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},wQA.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),wQA.default.createElement(j,{paddingLeft:2},wQA.default.createElement($,{dimColor:!0,italic:!0},SD(A,Z))))
+}
+
+// v2.0.59
+function F89({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  let[Z]=qB();
+  if(!A)return null;
+  if(!(B||G))return MQA.default.createElement(S,{marginTop:Q?1:0},MQA.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return MQA.default.createElement(S,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},MQA.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),MQA.default.createElement(S,{paddingLeft:2},MQA.default.createElement($,{dimColor:!0,italic:!0},fD(A,Z))))
+}
+```
 
 ## Changes from v2.0.57 to v2.0.58
 
