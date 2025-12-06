@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.59**: `patch-thinking-v2.0.59.js` (latest)
+- **v2.0.60**: `patch-thinking-v2.0.60.js` (latest)
+- **v2.0.59**: `patch-thinking-v2.0.59.js`
 - **v2.0.58**: `patch-thinking-v2.0.58.js`
 - **v2.0.57**: `patch-thinking-v2.0.57.js`
 - **v2.0.56**: `patch-thinking-v2.0.56.js`
@@ -45,6 +46,39 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.59 to v2.0.60
+
+### Component and Hook Identifier Changes
+
+**v2.0.60 updates component and hook identifiers:**
+- ✅ **Component name**: `T69` (changed from `F89` in v2.0.59)
+- ✅ **Hook name**: Removed (no longer uses `qB()`)
+- ✅ **React import patterns**: `Qs.default.createElement` (changed from `MQA.default.createElement` in v2.0.59)
+- ✅ **Box component**: `P` (changed from `S` in v2.0.59)
+- ✅ **Text component**: `$` (unchanged from v2.0.59)
+- ✅ **Text wrapper**: `gO` component (changed from `fD` helper in v2.0.59)
+- ✅ **Patch approach**: Component-level modification with if(!1) visibility fix
+
+**Technical changes:**
+```javascript
+// v2.0.59
+function F89({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  let[Z]=qB();
+  if(!A)return null;
+  if(!(B||G))return MQA.default.createElement(S,{marginTop:Q?1:0},MQA.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return MQA.default.createElement(S,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},MQA.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),MQA.default.createElement(S,{paddingLeft:2},MQA.default.createElement($,{dimColor:!0,italic:!0},fD(A,Z))))
+}
+
+// v2.0.60
+function T69({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  if(!A)return null;
+  if(!(B||G))return Qs.default.createElement(P,{marginTop:Q?1:0},Qs.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return Qs.default.createElement(P,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},Qs.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),Qs.default.createElement(P,{paddingLeft:2},Qs.default.createElement($,{dimColor:!0,italic:!0},Qs.default.createElement(gO,null,A))))
+}
+```
+
+**Notable change:** The hook `let[Z]=qB()` was removed and text rendering changed from `fD(A,Z)` helper to direct `Qs.default.createElement(gO,null,A)` component creation.
 
 ## Changes from v2.0.58 to v2.0.59
 
