@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.60**: `patch-thinking-v2.0.60.js` (latest)
+- **v2.0.61**: `patch-thinking-v2.0.61.js` (latest)
+- **v2.0.60**: `patch-thinking-v2.0.60.js`
 - **v2.0.59**: `patch-thinking-v2.0.59.js`
 - **v2.0.58**: `patch-thinking-v2.0.58.js`
 - **v2.0.57**: `patch-thinking-v2.0.57.js`
@@ -46,6 +47,30 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.60 to v2.0.61
+
+### Component and Hook Identifier Changes
+
+**v2.0.61 has identical identifiers to v2.0.60:**
+- ✅ **Component name**: `T69` (unchanged from v2.0.60)
+- ✅ **React import patterns**: `Qs.default.createElement` (unchanged from v2.0.60)
+- ✅ **Box component**: `P` (unchanged from v2.0.60)
+- ✅ **Text component**: `$` (unchanged from v2.0.60)
+- ✅ **Text wrapper**: `gO` component (unchanged from v2.0.60)
+- ✅ **Patch approach**: Component-level modification with if(!1) visibility fix
+
+**Technical changes:**
+```javascript
+// v2.0.60 and v2.0.61 - Identical pattern
+function T69({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  if(!A)return null;
+  if(!(B||G))return Qs.default.createElement(P,{marginTop:Q?1:0},Qs.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return Qs.default.createElement(P,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},Qs.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),Qs.default.createElement(P,{paddingLeft:2},Qs.default.createElement($,{dimColor:!0,italic:!0},Qs.default.createElement(gO,null,A))))
+}
+```
+
+**Notable:** No identifier changes between v2.0.60 and v2.0.61 - the thinking component pattern is identical.
 
 ## Changes from v2.0.59 to v2.0.60
 
