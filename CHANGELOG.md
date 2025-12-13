@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.61**: `patch-thinking-v2.0.61.js` (latest)
+- **v2.0.69**: `patch-thinking-v2.0.69.js` (latest)
+- **v2.0.61**: `patch-thinking-v2.0.61.js`
 - **v2.0.60**: `patch-thinking-v2.0.60.js`
 - **v2.0.59**: `patch-thinking-v2.0.59.js`
 - **v2.0.58**: `patch-thinking-v2.0.58.js`
@@ -47,6 +48,42 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.61 to v2.0.69
+
+### Component and Hook Identifier Changes
+
+**v2.0.69 updates all major identifiers:**
+- ✅ **Component name**: `sU2` (changed from `T69` in v2.0.61)
+- ✅ **React import patterns**: `ti.default.createElement` (changed from `Qs.default.createElement` in v2.0.61)
+- ✅ **Box component**: `j` (changed from `P` in v2.0.61)
+- ✅ **Text component**: `z` (changed from `$` in v2.0.61)
+- ✅ **Text wrapper**: `jM` component (changed from `gO` in v2.0.61)
+- ✅ **Patch approach**: Component-level modification with if(!1) visibility fix
+
+**Technical changes:**
+```javascript
+// v2.0.61
+function T69({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  if(!A)return null;
+  if(!(B||G))return Qs.default.createElement(P,{marginTop:Q?1:0},Qs.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return Qs.default.createElement(P,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},Qs.default.createElement($,{dimColor:!0,italic:!0},"∴ Thinking…"),Qs.default.createElement(P,{paddingLeft:2},Qs.default.createElement($,{dimColor:!0,italic:!0},Qs.default.createElement(gO,null,A))))
+}
+
+// v2.0.69
+function sU2({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  if(!A)return null;
+  if(!(B||G))return ti.default.createElement(j,{marginTop:Q?1:0},ti.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return ti.default.createElement(j,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},ti.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),ti.default.createElement(j,{paddingLeft:2},ti.default.createElement(z,{dimColor:!0,italic:!0},ti.default.createElement(jM,null,A))))
+}
+```
+
+**Notable:** All identifiers changed between v2.0.61 and v2.0.69:
+- Component: `T69` → `sU2`
+- React: `Qs` → `ti`
+- Box: `P` → `j`
+- Text: `$` → `z`
+- Wrapper: `gO` → `jM`
 
 ## Changes from v2.0.60 to v2.0.61
 
