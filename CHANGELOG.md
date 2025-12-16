@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.70**: `patch-thinking-v2.0.70.js` (latest)
+- **v2.0.71**: `patch-thinking-v2.0.71.js` (latest)
+- **v2.0.70**: `patch-thinking-v2.0.70.js`
 - **v2.0.69**: `patch-thinking-v2.0.69.js`
 - **v2.0.61**: `patch-thinking-v2.0.61.js`
 - **v2.0.60**: `patch-thinking-v2.0.60.js`
@@ -49,6 +50,42 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.70 to v2.0.71
+
+### Component and Hook Identifier Changes
+
+**v2.0.71 updates most identifiers:**
+- ✅ **Component name**: `mn2` (changed from `Rq2` in v2.0.70)
+- ✅ **React import patterns**: `nr.default.createElement` (changed from `Ba.default.createElement` in v2.0.70)
+- ✅ **Box component**: `T` (unchanged from v2.0.70)
+- ✅ **Text component**: `z` (unchanged from v2.0.70)
+- ✅ **Text wrapper**: `fE` component (changed from `C$` in v2.0.70)
+- ✅ **Patch approach**: Component-level modification with if(!1) visibility fix
+
+**Technical changes:**
+```javascript
+// v2.0.70
+function Rq2({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  if(!A)return null;
+  if(!(B||G))return Ba.default.createElement(T,{marginTop:Q?1:0},Ba.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return Ba.default.createElement(T,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},Ba.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),Ba.default.createElement(T,{paddingLeft:2},Ba.default.createElement(z,{dimColor:!0,italic:!0},Ba.default.createElement(C$,null,A))))
+}
+
+// v2.0.71
+function mn2({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  if(!A)return null;
+  if(!(B||G))return nr.default.createElement(T,{marginTop:Q?1:0},nr.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return nr.default.createElement(T,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},nr.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),nr.default.createElement(T,{paddingLeft:2},nr.default.createElement(z,{dimColor:!0,italic:!0},nr.default.createElement(fE,null,A))))
+}
+```
+
+**Notable:** Key identifier changes between v2.0.70 and v2.0.71:
+- Component: `Rq2` → `mn2`
+- React: `Ba` → `nr`
+- Box: `T` (unchanged)
+- Text: `z` (unchanged)
+- Wrapper: `C$` → `fE`
 
 ## Changes from v2.0.69 to v2.0.70
 
