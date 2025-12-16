@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.69**: `patch-thinking-v2.0.69.js` (latest)
+- **v2.0.70**: `patch-thinking-v2.0.70.js` (latest)
+- **v2.0.69**: `patch-thinking-v2.0.69.js`
 - **v2.0.61**: `patch-thinking-v2.0.61.js`
 - **v2.0.60**: `patch-thinking-v2.0.60.js`
 - **v2.0.59**: `patch-thinking-v2.0.59.js`
@@ -48,6 +49,42 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.69 to v2.0.70
+
+### Component and Hook Identifier Changes
+
+**v2.0.70 updates all major identifiers:**
+- ✅ **Component name**: `Rq2` (changed from `sU2` in v2.0.69)
+- ✅ **React import patterns**: `Ba.default.createElement` (changed from `ti.default.createElement` in v2.0.69)
+- ✅ **Box component**: `T` (changed from `j` in v2.0.69)
+- ✅ **Text component**: `z` (unchanged from v2.0.69)
+- ✅ **Text wrapper**: `C$` component (changed from `jM` in v2.0.69)
+- ✅ **Patch approach**: Component-level modification with if(!1) visibility fix
+
+**Technical changes:**
+```javascript
+// v2.0.69
+function sU2({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  if(!A)return null;
+  if(!(B||G))return ti.default.createElement(j,{marginTop:Q?1:0},ti.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return ti.default.createElement(j,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},ti.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),ti.default.createElement(j,{paddingLeft:2},ti.default.createElement(z,{dimColor:!0,italic:!0},ti.default.createElement(jM,null,A))))
+}
+
+// v2.0.70
+function Rq2({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  if(!A)return null;
+  if(!(B||G))return Ba.default.createElement(T,{marginTop:Q?1:0},Ba.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return Ba.default.createElement(T,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},Ba.default.createElement(z,{dimColor:!0,italic:!0},"∴ Thinking…"),Ba.default.createElement(T,{paddingLeft:2},Ba.default.createElement(z,{dimColor:!0,italic:!0},Ba.default.createElement(C$,null,A))))
+}
+```
+
+**Notable:** Most identifiers changed between v2.0.69 and v2.0.70:
+- Component: `sU2` → `Rq2`
+- React: `ti` → `Ba`
+- Box: `j` → `T`
+- Text: `z` (unchanged)
+- Wrapper: `jM` → `C$`
 
 ## Changes from v2.0.61 to v2.0.69
 
