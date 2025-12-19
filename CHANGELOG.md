@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.72**: `patch-thinking-v2.0.72.js` (latest)
+- **v2.0.73**: `patch-thinking-v2.0.73.js` (latest)
+- **v2.0.72**: `patch-thinking-v2.0.72.js`
 - **v2.0.71**: `patch-thinking-v2.0.71.js`
 - **v2.0.70**: `patch-thinking-v2.0.70.js`
 - **v2.0.69**: `patch-thinking-v2.0.69.js`
@@ -51,6 +52,42 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.72 to v2.0.73
+
+### Component and Hook Identifier Changes
+
+**v2.0.73 updates most identifiers:**
+- ✅ **Component name**: `Gt2` (changed from `ws2` in v2.0.72)
+- ✅ **React import patterns**: `Rs.default.createElement` (changed from `zs.default.createElement` in v2.0.72)
+- ✅ **Box component**: `T` (unchanged from v2.0.72)
+- ✅ **Text component**: `C` (unchanged from v2.0.72)
+- ✅ **Text wrapper**: `tE` component (changed from `pF` in v2.0.72)
+- ✅ **Patch approach**: Component-level modification with if(!1) visibility fix
+
+**Technical changes:**
+```javascript
+// v2.0.72
+function ws2({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  if(!A)return null;
+  if(!(B||G))return zs.default.createElement(T,{marginTop:Q?1:0},zs.default.createElement(C,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return zs.default.createElement(T,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},zs.default.createElement(C,{dimColor:!0,italic:!0},"∴ Thinking…"),zs.default.createElement(T,{paddingLeft:2},zs.default.createElement(C,{dimColor:!0,italic:!0},zs.default.createElement(pF,null,A))))
+}
+
+// v2.0.73
+function Gt2({param:{thinking:A},addMargin:Q=!1,isTranscriptMode:B,verbose:G}){
+  if(!A)return null;
+  if(!(B||G))return Rs.default.createElement(T,{marginTop:Q?1:0},Rs.default.createElement(C,{dimColor:!0,italic:!0},"∴ Thinking (ctrl+o to expand)"));
+  return Rs.default.createElement(T,{flexDirection:"column",gap:1,marginTop:Q?1:0,width:"100%"},Rs.default.createElement(C,{dimColor:!0,italic:!0},"∴ Thinking…"),Rs.default.createElement(T,{paddingLeft:2},Rs.default.createElement(C,{dimColor:!0,italic:!0},Rs.default.createElement(tE,null,A))))
+}
+```
+
+**Notable:** Key identifier changes between v2.0.72 and v2.0.73:
+- Component: `ws2` → `Gt2`
+- React: `zs` → `Rs`
+- Box: `T` (unchanged)
+- Text: `C` (unchanged)
+- Wrapper: `pF` → `tE`
 
 ## Changes from v2.0.71 to v2.0.72
 
