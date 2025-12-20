@@ -3,7 +3,8 @@
 ## Version Support
 
 This repository contains patches for multiple Claude Code versions:
-- **v2.0.74**: `patch-thinking-v2.0.74.js` (latest)
+- **v2.0.75**: `patch-thinking-v2.0.75.js` (latest)
+- **v2.0.74**: `patch-thinking-v2.0.74.js`
 - **v2.0.73**: `patch-thinking-v2.0.73.js`
 - **v2.0.72**: `patch-thinking-v2.0.72.js`
 - **v2.0.71**: `patch-thinking-v2.0.71.js`
@@ -53,6 +54,20 @@ This repository contains patches for multiple Claude Code versions:
 ## Why patches don't work across versions
 
 When JavaScript code is minified/bundled, variable and function names are shortened to reduce file size. Between versions, the build process can assign different short names to the same variables, causing exact pattern matches to fail. Each Claude Code update requires a new patch with updated identifiers.
+
+## Changes from v2.0.74 to v2.0.75
+
+### Component and Hook Identifier Changes
+
+**v2.0.75 uses identical identifiers to v2.0.74:**
+- **Component name**: `co2` (unchanged)
+- **React import patterns**: `Vs.default.createElement` (unchanged)
+- **Box component**: `T` (unchanged)
+- **Text component**: `C` (unchanged)
+- **Text wrapper**: `T$` component (unchanged)
+- **Patch approach**: Component-level modification with if(!1) visibility fix
+
+**Notable:** No identifier changes between v2.0.74 and v2.0.75. The same patch patterns work for both versions.
 
 ## Changes from v2.0.73 to v2.0.74
 
