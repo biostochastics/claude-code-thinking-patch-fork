@@ -4,6 +4,8 @@
 
 Make Claude Code's thinking blocks visible by default without pressing `ctrl+o`.
 
+**New in v2.1.x:** Hook highlighting patches - display hooks in cyan when they run!
+
 ## ⚡ Quick Start
 
 **Step 1: Check your Claude Code version**
@@ -13,12 +15,47 @@ claude --version
 
 **Step 2: Run the patch for your version**
 
-**Latest versions (v2.0.17+):**
+**Latest versions (v2.1.x):**
+
+Standard thinking patch:
+```bash
+cd ~/claude-code-thinking-patch-fork
+node patch-thinking-v2.1.12.js       # for v2.1.12 (newest)
+node patch-thinking-v2.1.11.js       # for v2.1.11
+node patch-thinking-v2.1.9.js        # for v2.1.9
+node patch-thinking-v2.1.7.js        # for v2.1.7
+node patch-thinking-v2.1.5.js        # for v2.1.5
+node patch-thinking-v2.1.4.js        # for v2.1.4
+```
+
+Hook highlighting patch (cyan color for hook messages):
+```bash
+node patch-hooks-v2.1.12.js          # for v2.1.12 (newest)
+node patch-hooks-v2.1.11.js          # for v2.1.11
+```
+
+Combined thinking + hooks patch:
+```bash
+node patch-thinking-hooks-v2.1.12.js # for v2.1.12 (both patches)
+node patch-thinking-hooks-v2.1.11.js # for v2.1.11 (both patches)
+```
+
+Custom styled thinking patch (peach emoji, orange border):
+```bash
+node patch-thinking-v2.1.12-custom.js  # for v2.1.12 (newest)
+node patch-thinking-v2.1.11-custom.js  # for v2.1.11
+node patch-thinking-v2.1.9-custom.js   # for v2.1.9
+node patch-thinking-v2.1.7-custom.js   # for v2.1.7
+node patch-thinking-v2.1.5-custom.js   # for v2.1.5
+node patch-thinking-v2.1.4-custom.js   # for v2.1.4
+```
+
+**Previous versions (v2.0.17+):**
 
 Standard patch:
 ```bash
 cd ~/claude-code-thinking-patch-fork
-node patch-thinking-v2.0.75.js       # for v2.0.75 (newest)
+node patch-thinking-v2.0.75.js       # for v2.0.75
 node patch-thinking-v2.0.74.js       # for v2.0.74
 node patch-thinking-v2.0.73.js       # for v2.0.73
 node patch-thinking-v2.0.72.js       # for v2.0.72
@@ -129,6 +166,15 @@ You have to press `ctrl+o` every time to see the actual thinking content. This p
 
 ## Version Support
 
+| Version | Thinking Patch | Hooks Patch | Combined | Status |
+|---------|----------------|-------------|----------|--------|
+| v2.1.12 | `patch-thinking-v2.1.12.js` | `patch-hooks-v2.1.12.js` | `patch-thinking-hooks-v2.1.12.js` | ✅ Working |
+| v2.1.11 | `patch-thinking-v2.1.11.js` | `patch-hooks-v2.1.11.js` | `patch-thinking-hooks-v2.1.11.js` | ✅ Working |
+| v2.1.9 | `patch-thinking-v2.1.9.js` | - | - | ✅ Working |
+| v2.1.7 | `patch-thinking-v2.1.7.js` | - | - | ✅ Working |
+| v2.1.5 | `patch-thinking-v2.1.5.js` | - | - | ✅ Working |
+| v2.1.4 | `patch-thinking-v2.1.4.js` | - | - | ✅ Working |
+
 | Version | Script | Status |
 |---------|--------|--------|
 | v2.0.75 | `patch-thinking-v2.0.75.js` | ✅ Working |
@@ -207,6 +253,48 @@ All scripts now support **dynamic username detection** - they work on any system
 │   with custom styling and       │
 │   bordered box]                 │
 └─────────────────────────────────┘
+```
+
+## 🔵 Hook Highlighting (New in v2.1.x)
+
+Claude Code hooks (configured in `.claude/settings.json`) now display in **cyan** when they run, making it easy to distinguish hook activity from regular output.
+
+### What Hooks Look Like
+
+**Before (default):**
+```
+SessionStart hook succeeded
+PreToolUse:Bash hook says: Running pre-check...
+```
+
+**After (with patch):**
+```
+SessionStart hook succeeded           # displayed in CYAN
+PreToolUse:Bash hook says: ...        # displayed in CYAN
+```
+
+### Hook Color Scheme
+
+| Hook Event Type | Color | Notes |
+|-----------------|-------|-------|
+| `hook_success` | Cyan | Hook completed successfully |
+| `hook_system_message` | Cyan | Hook output message |
+| `hook_permission_decision` | Cyan | Hook allowed/denied action |
+| `hook_error_during_execution` | Cyan | Non-critical warning |
+| `hook_blocking_error` | Red | Critical error (unchanged) |
+| `hook_non_blocking_error` | Red | Error output (unchanged) |
+| `hook_stopped_continuation` | Yellow | Hook stopped execution (unchanged) |
+
+### How to Apply
+
+**Hook highlighting only:**
+```bash
+node patch-hooks-v2.1.11.js
+```
+
+**Both thinking visibility + hook highlighting:**
+```bash
+node patch-thinking-hooks-v2.1.11.js
 ```
 
 ## 🎨 Customization
@@ -295,27 +383,25 @@ See [CHANGELOG.md](CHANGELOG.md) for technical details on version differences.
 
 ```
 claude-code-thinking-patch-fork/
+├── patch-thinking-v2.1.12.js         # v2.1.12 standard thinking patch (newest)
+├── patch-thinking-v2.1.12-custom.js  # v2.1.12 custom styled patch
+├── patch-hooks-v2.1.12.js            # v2.1.12 hook highlighting (cyan)
+├── patch-thinking-hooks-v2.1.12.js   # v2.1.12 combined (thinking + hooks)
+├── patch-thinking-v2.1.11.js         # v2.1.11 standard thinking patch
+├── patch-thinking-v2.1.11-custom.js  # v2.1.11 custom styled patch
+├── patch-hooks-v2.1.11.js            # v2.1.11 hook highlighting (cyan)
+├── patch-thinking-hooks-v2.1.11.js   # v2.1.11 combined (thinking + hooks)
+├── patch-thinking-v2.1.9.js          # v2.1.9 standard patch
+├── patch-thinking-v2.1.9-custom.js   # v2.1.9 custom styled patch
+├── patch-thinking-v2.1.7.js          # v2.1.7 standard patch
+├── patch-thinking-v2.1.7-custom.js   # v2.1.7 custom styled patch
+├── patch-thinking-v2.1.5.js          # v2.1.5 standard patch
+├── patch-thinking-v2.1.5-custom.js   # v2.1.5 custom styled patch
+├── patch-thinking-v2.1.4.js          # v2.1.4 standard patch
+├── patch-thinking-v2.1.4-custom.js   # v2.1.4 custom styled patch
 ├── patch-thinking.js                 # v2.0.11 standard patch
-├── patch-thinking-v2.0.13.js         # v2.0.13 standard patch
-├── patch-thinking-v2.0.14.js         # v2.0.14 standard patch
-├── patch-thinking-v2.0.15.js         # v2.0.15 standard patch
-├── patch-thinking-v2.0.15-custom.js  # v2.0.15 custom styled patch (borders & colors)
-├── patch-thinking-v2.0.17.js         # v2.0.17 standard patch
-├── patch-thinking-v2.0.17-custom.js  # v2.0.17 custom styled patch (borders & colors)
-├── patch-thinking-v2.0.19.js         # v2.0.19 standard patch
-├── patch-thinking-v2.0.19-custom.js  # v2.0.19 custom styled patch (borders & colors)
-├── patch-thinking-v2.0.21.js         # v2.0.21 standard patch
-├── patch-thinking-v2.0.21-custom.js  # v2.0.21 custom styled patch (borders & colors)
-├── patch-thinking-v2.0.22.js         # v2.0.22 standard patch
-├── patch-thinking-v2.0.22-custom.js  # v2.0.22 custom styled patch (borders & colors)
-├── patch-thinking-v2.0.23.js         # v2.0.23 standard patch
-├── patch-thinking-v2.0.23-custom.js  # v2.0.23 custom styled patch (borders & colors)
-├── patch-thinking-v2.0.24.js         # v2.0.24 standard patch
-├── patch-thinking-v2.0.24-custom.js  # v2.0.24 custom styled patch (borders & colors)
-├── patch-thinking-v2.0.26.js         # v2.0.26 standard patch
-├── patch-thinking-v2.0.26-custom.js  # v2.0.26 custom styled patch (borders & colors)
-├── patch-thinking-v2.0.27.js         # v2.0.27 standard patch
-├── patch-thinking-v2.0.27-custom.js  # v2.0.27 custom styled patch (borders & colors)
+├── patch-thinking-v2.0.*.js          # v2.0.x standard patches
+├── patch-thinking-v2.0.*-custom.js   # v2.0.x custom styled patches
 ├── detect-identifiers.js             # Universal identifier detector (works on any version)
 ├── CHANGELOG.md                      # Technical version differences
 └── README.md                         # This file
@@ -473,10 +559,10 @@ This patch is provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last Updated:** 2025-12-20
-**Supported Versions:** v2.0.11, v2.0.13, v2.0.14, v2.0.15, v2.0.17, v2.0.19, v2.0.21, v2.0.22, v2.0.23, v2.0.24, v2.0.26, v2.0.27, v2.0.28, v2.0.29, v2.0.30, v2.0.31, v2.0.32, v2.0.33, v2.0.34, v2.0.35, v2.0.36, v2.0.37, v2.0.42, v2.0.43, v2.0.44, v2.0.45, v2.0.46, v2.0.47, v2.0.49, v2.0.50, v2.0.52, v2.0.53, v2.0.54, v2.0.55, v2.0.56, v2.0.57, v2.0.58, v2.0.59, v2.0.60, v2.0.61, v2.0.69, v2.0.70, v2.0.71, v2.0.72, v2.0.73, v2.0.74, v2.0.75
+**Last Updated:** 2026-01-17
+**Supported Versions:** v2.1.12, v2.1.11, v2.1.9, v2.1.7, v2.1.5, v2.1.4, v2.0.75, v2.0.74, v2.0.73, v2.0.72, v2.0.71, v2.0.70, v2.0.69, v2.0.61, v2.0.60, v2.0.59, v2.0.58, v2.0.57, v2.0.56, v2.0.55, v2.0.54, v2.0.53, v2.0.52, v2.0.50, v2.0.49, v2.0.47, v2.0.46, v2.0.45, v2.0.44, v2.0.43, v2.0.42, v2.0.37, v2.0.36, v2.0.35, v2.0.34, v2.0.33, v2.0.32, v2.0.31, v2.0.30, v2.0.29, v2.0.28, v2.0.27, v2.0.26, v2.0.24, v2.0.23, v2.0.22, v2.0.21, v2.0.19, v2.0.17, v2.0.15, v2.0.14, v2.0.13, v2.0.11
 **Status:** ✅ Working
-**New Features:** 🎨 Custom styling patches · 🔍 Universal identifier detector
+**New Features:** 🔵 Hook highlighting (cyan) · 🎨 Custom styling patches · 🔍 Universal identifier detector
 
 ### Contributing
 

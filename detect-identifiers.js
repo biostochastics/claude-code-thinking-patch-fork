@@ -8,8 +8,9 @@ const os = require('os');
 const homeDir = os.homedir();
 const claudePath = path.join(homeDir, '.claude/local/node_modules/@anthropic-ai/claude-code/cli.js');
 
-console.log('Claude Code Universal Identifier Detector v2');
-console.log('============================================\n');
+console.log('Claude Code Universal Identifier Detector v3');
+console.log('============================================');
+console.log('Detects: Thinking patterns + Hook patterns\n');
 console.log(`Target file: ${claudePath}\n`);
 
 // Check if file exists
@@ -216,10 +217,75 @@ if (fpbIndex === -1) {
   }
 }
 
+// ==================== HOOK RENDERING ====================
+console.log('\n🔵 Searching for Hook Rendering Patterns...');
+
+// Look for hook_success case statement
+const hookSuccessPattern = 'case"hook_success":if(A.hookEvent==="Stop"';
+const hookSuccessIndex = content.indexOf(hookSuccessPattern);
+
+if (hookSuccessIndex === -1) {
+  console.log('❌ Hook success pattern not found!');
+} else {
+  console.log(`✅ Found hook_success case at position ${hookSuccessIndex}`);
+
+  // Extract context to find the component name and check for patching
+  const hookContext = content.substring(hookSuccessIndex, hookSuccessIndex + 400);
+  console.log(`\n📋 Hook Success Case:`);
+  console.log(hookContext.substring(0, 200) + '...');
+
+  // Check if cyan color is applied
+  if (hookContext.includes('{color:"cyan"}')) {
+    console.log('   ✅ Hook highlighting patch applied (cyan color)');
+  } else if (hookContext.includes('createElement(FI,null,')) {
+    console.log('   ℹ️  No hook highlighting (default color)');
+    console.log('\n📝 Hook Highlight Patch:');
+    console.log('   Replace: createElement(FI,null,A.hookName," hook succeeded"');
+    console.log('   With:    createElement(FI,{color:"cyan"},A.hookName," hook succeeded"');
+  }
+
+  // Extract the Text component name (FI)
+  const textComponentMatch = hookContext.match(/createElement\((\w+),/);
+  if (textComponentMatch) {
+    console.log(`   Text component: ${textComponentMatch[1]}`);
+  }
+}
+
+// Look for other hook patterns
+const hookPatterns = [
+  { name: 'hook_blocking_error', pattern: 'case"hook_blocking_error":{if(A.hookEvent' },
+  { name: 'hook_non_blocking_error', pattern: 'case"hook_non_blocking_error":{if(A.hookEvent' },
+  { name: 'hook_system_message', pattern: 'case"hook_system_message":return' },
+  { name: 'hook_permission_decision', pattern: 'case"hook_permission_decision":{let' }
+];
+
+console.log('\n🔵 Hook Pattern Summary:');
+for (const hp of hookPatterns) {
+  const idx = content.indexOf(hp.pattern);
+  if (idx !== -1) {
+    const ctx = content.substring(idx, idx + 300); // Larger context to capture colors
+    const hasCyan = ctx.includes('{color:"cyan"}');
+    const hasError = ctx.includes('{color:"error"}');
+    const hasWarning = ctx.includes('{color:"warning"}');
+
+    let status = 'default (no color)';
+    if (hasCyan) status = 'cyan (patched)';
+    else if (hasError) status = 'error (red)';
+    else if (hasWarning) status = 'warning (yellow)';
+
+    console.log(`   ${hp.name}: ${status}`);
+  } else {
+    console.log(`   ${hp.name}: not found`);
+  }
+}
+
 console.log('\n================================================\n');
 console.log('✅ Detection complete!');
 console.log('\nTo generate a patch:');
 console.log('1. Use the function names and identifiers found above');
 console.log('2. Create search/replace patterns');
 console.log('3. Test on your specific version');
+console.log('\nHook highlighting:');
+console.log('   Run: node patch-hooks-v2.1.11.js');
+console.log('   Or combined: node patch-thinking-hooks-v2.1.11.js');
 console.log('\n================================================\n');
