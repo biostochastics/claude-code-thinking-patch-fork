@@ -15,7 +15,7 @@ claude --version
 file $(which claude)  # Should show "node script" not "Mach-O executable"
 
 # Run the matching patch
-node patch-thinking-v2.1.19-custom.js  # For npm-installed v2.1.19
+node patch-thinking-v2.1.32-custom-peach.js  # For npm-installed v2.1.32
 
 # Restart Claude Code
 ```
@@ -46,7 +46,8 @@ file $(which claude)
 | Type | File | Description |
 |------|------|-------------|
 | **Standard** | `patch-thinking-v*.js` | Shows thinking inline, minimal styling |
-| **Custom** | `patch-thinking-v*-custom.js` | Orange border, "🍑 Thinking Process" header |
+| **Custom** | `patch-thinking-v*-custom.js` | Orange border, bold header |
+| **Custom Peach** | `patch-thinking-v*-custom-peach.js` | Theme-colored border, "🍑 Thinking Process" header + gate fix |
 | **Hooks** | `patch-hooks-v*.js` | Hook messages in cyan (older versions) |
 
 ---
@@ -55,7 +56,9 @@ file $(which claude)
 
 | Version | Patches | Install Method |
 |---------|---------|----------------|
-| **v2.1.19** | Standard, Custom | `npm install -g` |
+| **v2.1.32** | Standard, Custom, Custom Peach | `npm install -g` |
+| v2.1.30 | Standard, Custom, Custom Peach | `npm install -g` |
+| v2.1.19 | Standard, Custom | `npm install -g` |
 | v2.1.12 | Standard, Custom, Hooks | `claude update` (legacy) |
 | v2.1.4–v2.1.11 | Standard, Custom | `claude update` (legacy) |
 | v2.0.x | Standard, Custom | Legacy |
@@ -86,7 +89,7 @@ Updates overwrite patches. Re-apply after updating:
 
 ```bash
 claude --version
-node patch-thinking-v2.1.19-custom.js
+node patch-thinking-v2.1.32-custom-peach.js
 ```
 
 ---
@@ -131,11 +134,13 @@ See [CHANGELOG.md](CHANGELOG.md) for version-specific technical details.
 ## Files
 
 ```
-patch-thinking-v2.1.19.js          # Latest (npm)
-patch-thinking-v2.1.19-custom.js   # Latest custom (npm)
-patch-thinking-v2.1.12.js          # Legacy (claude update)
-patch-thinking-v*.js               # Older versions
-detect-identifiers.js              # Find identifiers for new versions
+patch-thinking-v2.1.32.js              # Latest standard (npm)
+patch-thinking-v2.1.32-custom.js       # Latest custom (npm)
+patch-thinking-v2.1.32-custom-peach.js # Latest custom peach (npm, recommended)
+patch-thinking-v2.1.30*.js             # v2.1.30 patches
+patch-thinking-v2.1.19*.js             # v2.1.19 patches
+patch-thinking-v*.js                   # Older versions
+detect-identifiers.js                  # Find identifiers for new versions
 ```
 
 ---
@@ -162,4 +167,4 @@ Provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last updated:** 2026-01-26 · **Latest:** v2.1.19 (npm)
+**Last updated:** 2026-02-05 · **Latest:** v2.1.32 (npm)

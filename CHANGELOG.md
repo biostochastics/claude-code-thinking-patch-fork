@@ -11,12 +11,15 @@ This document tracks minified identifier changes between Claude Code versions.
 
 ### v2.1.x Identifiers
 
-| Version | Component | React | Box | Text | Wrapper | hideInTranscript | Install |
-|---------|-----------|-------|-----|------|---------|------------------|---------|
-| **v2.1.19** | `oG1` | `VqA` | `I` | `f` | `qO` | `O` | npm |
-| v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | `Z` | legacy |
+| Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
+|---------|-----------|-------|-----|------|-----------------|------|---------|
+| **v2.1.32** | `Cj6` | `L31` | `I` | `f` | `$J` | `EPY` | npm |
+| v2.1.30 | `FD6` | `A31` | `h` | `f` | `DJ` | `IMY` | npm |
+| v2.1.19 | `oG1` | `VqA` | `I` | `f` | `qO` | — | npm |
+| v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | — | legacy |
 
-v2.1.19 (npm) uses different identifiers due to different build process.
+v2.1.30+ has a gate function (IMY/EPY) that controls whether thinking blocks render at all.
+The custom-peach patch includes gate fixes; standard/custom patches only modify the display component.
 
 ### v2.0.x Identifiers
 
@@ -51,6 +54,50 @@ function co2({param:{thinking:A}...}) { ... Vs.default.createElement(...) }
 ```
 
 Patches using exact string matching must be updated for each version.
+
+---
+
+## v2.1.32 (npm)
+
+**Function signature:**
+```javascript
+function Cj6(A){let q=A1(17),{param:K,addMargin:Y,isTranscriptMode:z,hideInTranscript:w}=A,{thinking:H}=K,...
+  if(!H&&!J)return null;
+  if($)return null;  // ← Patch changes to if(!1)
+  let D=z;
+  if(!D){...}        // ← Patch changes to if(!1)
+}
+```
+
+**Gate function (EPY):**
+```javascript
+case"thinking":{if(!j&&!Z)return null;  // ← Custom-peach patch changes to if(!1)
+```
+
+**Key identifiers:**
+- Component: `Cj6` | React: `L31` | Box: `I` | Text: `f` | ThinkingContent: `$J`
+- Gate: `EPY` | Keybind: `kK` | Hook: `A1`
+
+---
+
+## v2.1.30 (npm)
+
+**Function signature:**
+```javascript
+function FD6(A){let q=t(17),{param:K,addMargin:Y,isTranscriptMode:z,hideInTranscript:w}=A,{thinking:H}=K,...
+  if($)return null;  // ← Patch changes to if(!1)
+  if(!D){...}        // ← Patch changes to if(!1)
+}
+```
+
+**Gate function (IMY):**
+```javascript
+case"thinking":{if(!j&&!V)return null;  // ← Custom-peach patch changes to if(!1)
+```
+
+**Key identifiers:**
+- Component: `FD6` | React: `A31` | Box: `h` | Text: `f` | ThinkingContent: `DJ`
+- Gate: `IMY` | Keybind: `pq`
 
 ---
 
@@ -112,7 +159,9 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-01-26 | **v2.1.19** | npm install support |
+| 2026-02-05 | **v2.1.32** | New identifiers (Cj6/L31/EPY), gate fix |
+| 2026-02-03 | v2.1.30 | IMY gate fix, theme colors |
+| 2026-01-26 | v2.1.19 | npm install support |
 | 2026-01-17 | v2.1.12 | Multi-installation support |
 | 2025-12-xx | v2.0.75 | Last v2.0.x release |
 | 2024-12-14 | v2.0.11 | Initial release |
