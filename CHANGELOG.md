@@ -13,14 +13,15 @@ This document tracks minified identifier changes between Claude Code versions.
 
 | Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
 |---------|-----------|-------|-----|------|-----------------|------|---------|
-| **v2.1.44** | `dW6` | `O91` | `I` | `f` | `SJ` | `fyY` | npm |
+| **v2.1.50** | `rT1` | `LY6` | `b` | `f` | `WO` | `jiY` | npm |
+| v2.1.44 | `dW6` | `O91` | `I` | `f` | `SJ` | `fyY` | npm |
 | v2.1.37 | `Mj6` | `y31` | `I` | `f` | `MJ` | `iGY` | npm |
 | v2.1.32 | `Cj6` | `L31` | `I` | `f` | `$J` | `EPY` | npm |
 | v2.1.30 | `FD6` | `A31` | `h` | `f` | `DJ` | `IMY` | npm |
 | v2.1.19 | `oG1` | `VqA` | `I` | `f` | `qO` | — | npm |
 | v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | — | legacy |
 
-v2.1.30+ has a gate function (IMY/EPY/iGY/fyY) that controls whether thinking blocks render at all.
+v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY) that controls whether thinking blocks render at all.
 The custom-peach patch includes gate fixes; standard/custom patches only modify the display component.
 
 ### v2.0.x Identifiers

@@ -15,7 +15,7 @@ claude --version
 file $(which claude)  # Should show "node script" not "Mach-O executable"
 
 # Run the matching patch
-node patch-thinking-v2.1.44-custom-peach.js  # For npm-installed v2.1.44
+node patch-thinking-v2.1.50-custom-peach.js  # For npm-installed v2.1.50
 
 # Restart Claude Code
 ```
@@ -56,7 +56,8 @@ file $(which claude)
 
 | Version | Patches | Install Method |
 |---------|---------|----------------|
-| **v2.1.44** | Standard, Custom, Custom Peach | `npm install -g` |
+| **v2.1.50** | Standard, Custom, Custom Peach | `npm install -g` |
+| v2.1.44 | Standard, Custom, Custom Peach | `npm install -g` |
 | v2.1.37 | Standard, Custom, Custom Peach | `npm install -g` |
 | v2.1.32 | Standard, Custom, Custom Peach | `npm install -g` |
 | v2.1.30 | Standard, Custom, Custom Peach | `npm install -g` |
