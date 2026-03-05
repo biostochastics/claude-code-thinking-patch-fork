@@ -13,7 +13,8 @@ This document tracks minified identifier changes between Claude Code versions.
 
 | Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
 |---------|-----------|-------|-----|------|-----------------|------|---------|
-| **v2.1.63** | `qN1` | `$z6` | `m` | `T` | `GH` | `ZgY` | npm |
+| **v2.1.69** | `LN1` | `Ww6` | `B` | `T` | `zO` | `TcY` | npm |
+| v2.1.63 | `qN1` | `$z6` | `m` | `T` | `GH` | `ZgY` | npm |
 | v2.1.50 | `rT1` | `LY6` | `b` | `f` | `WO` | `jiY` | npm |
 | v2.1.44 | `dW6` | `O91` | `I` | `f` | `SJ` | `fyY` | npm |
 | v2.1.37 | `Mj6` | `y31` | `I` | `f` | `MJ` | `iGY` | npm |
@@ -22,7 +23,7 @@ This document tracks minified identifier changes between Claude Code versions.
 | v2.1.19 | `oG1` | `VqA` | `I` | `f` | `qO` | — | npm |
 | v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | — | legacy |
 
-v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY) that controls whether thinking blocks render at all.
+v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY) that controls whether thinking blocks render at all.
 The custom-peach patch includes gate fixes; standard/custom patches only modify the display component.
 
 ### v2.0.x Identifiers
@@ -58,6 +59,35 @@ function co2({param:{thinking:A}...}) { ... Vs.default.createElement(...) }
 ```
 
 Patches using exact string matching must be updated for each version.
+
+---
+
+## v2.1.69 (npm)
+
+**Function signature:**
+```javascript
+function LN1(A){let q=K6(11),{param:K,addMargin:Y,isTranscriptMode:z,verbose:w,hideInTranscript:_}=A,{thinking:$}=K,...
+  if(!$)return null;
+  if(H)return null;      // ← Patch changes to if(!1)
+  if(!(z||w)){...}       // ← Patch changes to if(!1)
+}
+```
+
+**Gate function (TcY):**
+```javascript
+case"thinking":{if(!D&&!_)return null;  // ← Custom-peach patch changes to if(!1)
+```
+
+**Key identifiers:**
+- Component: `LN1` | React: `Ww6` | Box: `B` | Text: `T` | ThinkingContent: `zO`
+- Gate: `TcY` | Keybind: `YK` | Hook: `K6`
+
+**Notable changes from v2.1.63:**
+- Component renamed: `qN1` → `LN1`
+- React import: `$z6` → `Ww6`
+- Box component: `m` → `B`
+- ThinkingContent: `GH` → `zO`
+- Gate function: `ZgY` → `TcY`, conditional uses `if(!D&&!_)` (same 2-var pattern)
 
 ---
 
@@ -236,7 +266,8 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-02-27 | **v2.1.63** | New identifiers (qN1/$z6/ZgY), restructured component, gate fix |
+| 2026-03-04 | **v2.1.69** | New identifiers (LN1/Ww6/TcY), gate fix |
+| 2026-02-27 | v2.1.63 | New identifiers (qN1/$z6/ZgY), restructured component, gate fix |
 | 2026-02-16 | v2.1.44 | New identifiers (dW6/O91/fyY), gate fix |
 | 2026-02-07 | v2.1.37 | New identifiers (Mj6/y31/iGY), gate fix |
 | 2026-02-05 | v2.1.32 | New identifiers (Cj6/L31/EPY), gate fix |
