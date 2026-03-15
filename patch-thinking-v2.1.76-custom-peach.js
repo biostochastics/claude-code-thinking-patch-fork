@@ -96,6 +96,13 @@ const oTYReplacement = 'case"redacted_thinking":{if(!1)return null;';
 const oTYThinkingSearchPattern = 'case"thinking":{if(!D&&!w)return null;';
 const oTYThinkingReplacement = 'case"thinking":{if(!1)return null;';
 
+// Redact-thinking beta header - v2.1.76 introduced server-side thinking redaction
+// When showThinkingSummaries is not true, the "redact-thinking-2026-02-12" beta header
+// is sent to the API, which causes the server to return redacted_thinking blocks
+// instead of actual thinking content. We must disable this to receive thinking text.
+const redactThinkingSearchPattern = 'if(z&&Bvq(A)&&!q7()&&mA().showThinkingSummaries!==!0&&w8("tengu_quiet_hollow",!1))q.push(wLA);';
+const redactThinkingReplacement = 'if(!1)q.push(wLA);';
+
 // Custom replacement with peach emoji, orange border, and bold header
 // Changes: if(H) -> if(!1), if(!(z||_)) -> if(!1), plus custom styling
 // Uses "warning" theme color for borders (orange-ish) and overflow:hidden for proper rendering
@@ -111,16 +118,23 @@ function checkPatchStatus(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
 
+    // Check redact-thinking patch status (v2.1.76+ server-side redaction)
+    const redactPatched = content.includes(redactThinkingReplacement);
+    const redactNeedsPatching = content.includes(redactThinkingSearchPattern);
+
     // Check oTY patch status (the outer gate that controls if thinking blocks render at all)
     const oTYPatched = content.includes(oTYReplacement) && content.includes(oTYThinkingReplacement);
     const oTYNeedsPatching = content.includes(oTYSearchPattern) || content.includes(oTYThinkingSearchPattern);
 
     // Check for new custom peach patched version (this script's target with theme colors)
     if (content.includes(_N1CustomReplacement)) {
-      if (oTYPatched) {
+      if (oTYPatched && redactPatched) {
         return { status: 'patched', canPatch: false, variant: 'custom-peach-v3' };
-      } else if (oTYNeedsPatching) {
-        return { status: 'patched-other', canPatch: true, variant: 'custom-peach-v2-no-oTY', note: 'Has _N1 patch but missing oTY gate patch (thinking hidden by default)' };
+      } else if (oTYNeedsPatching || redactNeedsPatching) {
+        const missing = [];
+        if (oTYNeedsPatching) missing.push('oTY gate');
+        if (redactNeedsPatching) missing.push('redact-thinking header');
+        return { status: 'patched-other', canPatch: true, variant: 'custom-peach-incomplete', note: `Has _N1 patch but missing: ${missing.join(', ')}` };
       }
       return { status: 'patched', canPatch: false, variant: 'custom-peach-v2' };
     }
@@ -220,7 +234,17 @@ function applyPatch(installation) {
   let modified = false;
   let oTYPatched = false;
 
-  // First, always check and apply oTY patches (the outer gate)
+  // First, patch the redact-thinking beta header (critical for v2.1.76+)
+  // Without this, the API returns redacted_thinking blocks with no content
+  if (content.includes(redactThinkingSearchPattern)) {
+    content = content.replace(redactThinkingSearchPattern, redactThinkingReplacement);
+    modified = true;
+    console.log('   \u2705 Redact-thinking beta header disabled (API will now return full thinking content)');
+  } else if (content.includes(redactThinkingReplacement)) {
+    console.log('   \u2139\ufe0f  Redact-thinking already patched');
+  }
+
+  // Next, always check and apply oTY patches (the outer gate)
   if (content.includes(oTYSearchPattern)) {
     content = content.replace(oTYSearchPattern, oTYReplacement);
     oTYPatched = true;

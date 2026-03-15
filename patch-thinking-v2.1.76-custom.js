@@ -87,6 +87,13 @@ function getInstallationPaths() {
 // Identifiers: _N1 (component), lY6 (React), m (Box), T (Text), U_ (ThinkingContent), Rq (keybind), A6 (cache)
 const _N1SearchPattern = 'function _N1(A){let q=A6(11),{param:K,addMargin:Y,isTranscriptMode:z,verbose:_,hideInTranscript:w}=A,{thinking:O}=K,$=Y===void 0?!1:Y,H=w===void 0?!1:w,j=Rq("app:toggleTranscript","Global","ctrl+o");if(!O)return null;if(H)return null;if(!(z||_)){let W=$?1:0,Z=`${"\u2234 Thinking"} (${j} to expand)`,G;if(q[0]!==Z)G=lY6.default.createElement(T,{dimColor:!0,italic:!0},Z),q[0]=Z,q[1]=G;else G=q[1];let f;if(q[2]!==W||q[3]!==G)f=lY6.default.createElement(m,{marginTop:W},G),q[2]=W,q[3]=G,q[4]=f;else f=q[4];return f}let M=$?1:0,D;if(q[5]===Symbol.for("react.memo_cache_sentinel"))D=lY6.default.createElement(T,{dimColor:!0,italic:!0},"\u2234 Thinking","\u2026"),q[5]=D;else D=q[5];let X;if(q[6]!==O)X=lY6.default.createElement(m,{paddingLeft:2},lY6.default.createElement(U_,{dimColor:!0},O)),q[6]=O,q[7]=X;else X=q[7];let P;if(q[8]!==M||q[9]!==X)P=lY6.default.createElement(m,{flexDirection:"column",gap:1,marginTop:M,width:"100%"},D,X),q[8]=M,q[9]=X,q[10]=P;else P=q[10];return P}';
 
+// Redact-thinking beta header - v2.1.76 introduced server-side thinking redaction
+// When showThinkingSummaries is not true, the "redact-thinking-2026-02-12" beta header
+// is sent to the API, which causes the server to return redacted_thinking blocks
+// instead of actual thinking content. We must disable this to receive thinking text.
+const redactThinkingSearchPattern = 'if(z&&Bvq(A)&&!q7()&&mA().showThinkingSummaries!==!0&&w8("tengu_quiet_hollow",!1))q.push(wLA);';
+const redactThinkingReplacement = 'if(!1)q.push(wLA);';
+
 // Custom replacement with orange border and bold header (no emoji)
 // Changes: if(H) -> if(!1), if(!(z||_)) -> if(!1), plus custom styling
 const _N1CustomReplacement = 'function _N1(A){let q=A6(11),{param:K,addMargin:Y,isTranscriptMode:z,verbose:_,hideInTranscript:w}=A,{thinking:O}=K,$=Y===void 0?!1:Y,H=w===void 0?!1:w,j=Rq("app:toggleTranscript","Global","ctrl+o");if(!O)return null;if(!1)return null;if(!1){let W=$?1:0,Z=`${"\u2234 Thinking"} (${j} to expand)`,G;if(q[0]!==Z)G=lY6.default.createElement(T,{dimColor:!0,italic:!0},Z),q[0]=Z,q[1]=G;else G=q[1];let f;if(q[2]!==W||q[3]!==G)f=lY6.default.createElement(m,{marginTop:W},G),q[2]=W,q[3]=G,q[4]=f;else f=q[4];return f}let M=$?1:0,D;if(q[5]===Symbol.for("react.memo_cache_sentinel"))D=lY6.default.createElement(T,{color:"#FFA500",bold:!0},"\u2234 Thinking"),q[5]=D;else D=q[5];let X;if(q[6]!==O)X=lY6.default.createElement(m,{paddingLeft:1,marginTop:1},lY6.default.createElement(U_,null,O)),q[6]=O,q[7]=X;else X=q[7];let P;if(q[8]!==M||q[9]!==X)P=lY6.default.createElement(m,{flexDirection:"column",borderStyle:"single",borderColor:"#FFA500",paddingX:1,marginTop:M,width:"100%"},D,X),q[8]=M,q[9]=X,q[10]=P;else P=q[10];return P}';
@@ -184,8 +191,24 @@ function applyPatch(installation) {
   console.log(`Path: ${installation.path}`);
 
   let content = fs.readFileSync(installation.path, 'utf8');
+  let modified = false;
+
+  // First, patch the redact-thinking beta header (critical for v2.1.76+)
+  // Without this, the API returns redacted_thinking blocks with no content
+  if (content.includes(redactThinkingSearchPattern)) {
+    content = content.replace(redactThinkingSearchPattern, redactThinkingReplacement);
+    modified = true;
+    console.log('   \u2705 Redact-thinking beta header disabled (API will now return full thinking content)');
+  } else if (content.includes(redactThinkingReplacement)) {
+    console.log('   \u2139\ufe0f  Redact-thinking already patched');
+  }
 
   if (content.includes(_N1CustomReplacement)) {
+    if (modified) {
+      fs.writeFileSync(installation.path, content, 'utf8');
+      console.log('   \u2705 Redact-thinking patch applied (_N1 was already patched)');
+      return true;
+    }
     console.log('   \u26a0\ufe0f  Already patched (custom version)');
     return true;
   }
@@ -193,21 +216,22 @@ function applyPatch(installation) {
   // Can patch from standard version too
   if (content.includes(_N1StandardReplacement)) {
     content = content.replace(_N1StandardReplacement, _N1CustomReplacement);
-    fs.writeFileSync(installation.path, content, 'utf8');
+    modified = true;
     console.log('   \u2705 Upgraded from standard to custom style!');
     console.log('   - Added single-line border with orange (#FFA500) color');
     console.log('   - Changed header to "\u2234 Thinking" with bold orange text');
-    return true;
-  }
-
-  if (content.includes(_N1SearchPattern)) {
+  } else if (content.includes(_N1SearchPattern)) {
     content = content.replace(_N1SearchPattern, _N1CustomReplacement);
-    fs.writeFileSync(installation.path, content, 'utf8');
-    console.log('   \u2705 Patch applied successfully!');
+    modified = true;
+    console.log('   \u2705 _N1 patch applied!');
     console.log('   - Changed hideInTranscript check: if(H) -> if(!1)');
     console.log('   - Changed visibility check: if(!(z||_)) -> if(!1)');
     console.log('   - Added single-line border with orange (#FFA500) color');
     console.log('   - Changed header to "\u2234 Thinking" with bold orange text');
+  }
+
+  if (modified) {
+    fs.writeFileSync(installation.path, content, 'utf8');
     return true;
   } else {
     console.log('   \u274c Pattern not found - cannot patch');

@@ -96,7 +96,7 @@ Updates overwrite patches. Re-apply after updating:
 
 ```bash
 claude --version
-node patch-thinking-v2.1.74-custom-peach.js
+node patch-thinking-v2.1.76-custom-peach.js
 ```
 
 ---
@@ -127,12 +127,13 @@ Edit the `-custom.js` patches to change styling:
 
 ## How It Works
 
-The patch modifies two checks in Claude Code's minified JavaScript:
+The patch modifies three areas in Claude Code's minified JavaScript:
 
-1. `if(hideInTranscript)return null` → `if(!1)return null`
-2. `if(!verbose)return collapsed` → `if(!1)return collapsed`
+1. **API layer (v2.1.76+):** Disables the `"redact-thinking-2026-02-12"` beta header so the server sends full thinking content instead of empty redacted blocks
+2. **Gate function (v2.1.30+):** `if(!D&&!w)return null` → `if(!1)return null` — allows thinking blocks through the rendering gate
+3. **Display component:** `if(hideInTranscript)return null` → `if(!1)return null` and `if(!verbose)return collapsed` → `if(!1)return collapsed` — always shows expanded thinking
 
-This makes thinking blocks always display in expanded form.
+Without the API layer patch (step 1), the server never sends thinking content regardless of rendering fixes.
 
 See [CHANGELOG.md](CHANGELOG.md) for version-specific technical details.
 
@@ -141,9 +142,10 @@ See [CHANGELOG.md](CHANGELOG.md) for version-specific technical details.
 ## Files
 
 ```
-patch-thinking-v2.1.74.js              # Latest standard (npm)
-patch-thinking-v2.1.74-custom.js       # Latest custom (npm)
-patch-thinking-v2.1.74-custom-peach.js # Latest custom peach (npm, recommended)
+patch-thinking-v2.1.76.js              # Latest standard (npm)
+patch-thinking-v2.1.76-custom.js       # Latest custom (npm)
+patch-thinking-v2.1.76-custom-peach.js # Latest custom peach (npm, recommended)
+patch-thinking-v2.1.74*.js             # v2.1.74 patches
 patch-thinking-v2.1.69*.js             # v2.1.69 patches
 patch-thinking-v2.1.63*.js             # v2.1.63 patches
 patch-thinking-v2.1.50*.js             # v2.1.50 patches
@@ -175,4 +177,4 @@ Provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last updated:** 2026-03-12 · **Latest:** v2.1.74 (npm)
+**Last updated:** 2026-03-14 · **Latest:** v2.1.76 (npm)

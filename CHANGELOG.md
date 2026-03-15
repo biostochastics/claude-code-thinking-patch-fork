@@ -26,6 +26,7 @@ This document tracks minified identifier changes between Claude Code versions.
 | v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | — | legacy |
 
 v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY) that controls whether thinking blocks render at all.
+v2.1.76+ has server-side thinking redaction via the `"redact-thinking-2026-02-12"` beta header — all patches must disable this.
 The custom-peach patch includes gate fixes; standard/custom patches only modify the display component.
 
 ### v2.0.x Identifiers
@@ -66,6 +67,22 @@ Patches using exact string matching must be updated for each version.
 
 ## v2.1.76 (npm)
 
+**BREAKING: Server-side thinking redaction introduced.**
+
+v2.1.76 added a new `"redact-thinking-2026-02-12"` API beta header that tells the server
+to return `redacted_thinking` blocks (empty) instead of `thinking` blocks (with content).
+This header is sent by default unless `showThinkingSummaries` is `true` in settings.
+**All patches must now disable this header** in addition to the rendering fixes, or thinking
+content will never be received from the API.
+
+**Redact-thinking beta header:**
+```javascript
+// In beta header builder function (memoized via e1):
+if(z&&Bvq(A)&&!q7()&&mA().showThinkingSummaries!==!0&&w8("tengu_quiet_hollow",!1))q.push(wLA);
+// wLA = "redact-thinking-2026-02-12"
+// ← Patch changes condition to if(!1) to prevent redaction
+```
+
 **Function signature:**
 ```javascript
 function _N1(A){let q=A6(11),{param:K,addMargin:Y,isTranscriptMode:z,verbose:_,hideInTranscript:w}=A,{thinking:O}=K,...
@@ -83,8 +100,10 @@ case"thinking":{if(!D&&!w)return null;  // ← Custom-peach patch changes to if(
 **Key identifiers:**
 - Component: `_N1` | React: `lY6` | Box: `m` | Text: `T` | ThinkingContent: `U_`
 - Gate: `oTY` | Keybind: `Rq` | Hook: `A6`
+- Redact header: `wLA` = `"redact-thinking-2026-02-12"`
 
 **Notable changes from v2.1.74:**
+- **NEW**: Server-side thinking redaction via `"redact-thinking-2026-02-12"` beta header
 - Component renamed: `kv1` → `_N1`
 - React import: `NY6` → `lY6`
 - ThinkingContent: `d_` → `U_`
