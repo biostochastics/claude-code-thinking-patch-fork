@@ -15,7 +15,7 @@ claude --version
 file $(which claude)  # Should show "node script" not "Mach-O executable"
 
 # Run the matching patch
-node patch-thinking-v2.1.76-custom-peach.js  # For npm-installed v2.1.76
+node patch-thinking-v2.1.81-custom-peach.js  # For npm-installed v2.1.81
 
 # Restart Claude Code
 ```
@@ -56,7 +56,8 @@ file $(which claude)
 
 | Version | Patches | Install Method |
 |---------|---------|----------------|
-| **v2.1.76** | Standard, Custom, Custom Peach | `npm install -g` |
+| **v2.1.81** | Standard, Custom, Custom Peach | `npm install -g` |
+| v2.1.76 | Standard, Custom, Custom Peach | `npm install -g` |
 | v2.1.74 | Standard, Custom, Custom Peach | `npm install -g` |
 | v2.1.69 | Standard, Custom, Custom Peach | `npm install -g` |
 | v2.1.63 | Standard, Custom, Custom Peach | `npm install -g` |
@@ -96,7 +97,7 @@ Updates overwrite patches. Re-apply after updating:
 
 ```bash
 claude --version
-node patch-thinking-v2.1.76-custom-peach.js
+node patch-thinking-v2.1.81-custom-peach.js
 ```
 
 ---
@@ -130,7 +131,7 @@ Edit the `-custom.js` patches to change styling:
 The patch modifies three areas in Claude Code's minified JavaScript:
 
 1. **API layer (v2.1.76+):** Disables the `"redact-thinking-2026-02-12"` beta header so the server sends full thinking content instead of empty redacted blocks
-2. **Gate function (v2.1.30+):** `if(!D&&!w)return null` → `if(!1)return null` — allows thinking blocks through the rendering gate
+2. **Gate function (v2.1.30+):** e.g. `if(!X&&!w)return null` → `if(!1)return null` — allows thinking blocks through the rendering gate
 3. **Display component:** `if(hideInTranscript)return null` → `if(!1)return null` and `if(!verbose)return collapsed` → `if(!1)return collapsed` — always shows expanded thinking
 
 Without the API layer patch (step 1), the server never sends thinking content regardless of rendering fixes.
@@ -142,11 +143,11 @@ See [CHANGELOG.md](CHANGELOG.md) for version-specific technical details.
 ## Files
 
 ```
-patch-thinking-v2.1.76.js              # Latest standard (npm)
-patch-thinking-v2.1.76-custom.js       # Latest custom (npm)
-patch-thinking-v2.1.76-custom-peach.js # Latest custom peach (npm, recommended)
+patch-thinking-v2.1.81.js              # Latest standard (npm)
+patch-thinking-v2.1.81-custom.js       # Latest custom (npm)
+patch-thinking-v2.1.81-custom-peach.js # Latest custom peach (npm, recommended)
+patch-thinking-v2.1.76*.js             # v2.1.76 patches
 patch-thinking-v2.1.74*.js             # v2.1.74 patches
-patch-thinking-v2.1.69*.js             # v2.1.69 patches
 patch-thinking-v2.1.63*.js             # v2.1.63 patches
 patch-thinking-v2.1.50*.js             # v2.1.50 patches
 patch-thinking-v*.js                   # Older versions
