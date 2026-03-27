@@ -13,7 +13,8 @@ This document tracks minified identifier changes between Claude Code versions.
 
 | Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
 |---------|-----------|-------|-----|------|-----------------|------|---------|
-| **v2.1.81** | `rE8` | `A16` | `B` | `T` | `zw` | `ty_` | npm |
+| **v2.1.85** | `Xb8` | `Zq6` | `B` | `T` | `Q$` | `Tpz` | npm |
+| v2.1.81 | `rE8` | `A16` | `B` | `T` | `zw` | `ty_` | npm |
 | v2.1.76 | `_N1` | `lY6` | `m` | `T` | `U_` | `oTY` | npm |
 | v2.1.74 | `kv1` | `NY6` | `m` | `T` | `d_` | `TGY` | npm |
 | v2.1.69 | `LN1` | `Ww6` | `B` | `T` | `zO` | `TcY` | npm |
@@ -26,7 +27,7 @@ This document tracks minified identifier changes between Claude Code versions.
 | v2.1.19 | `oG1` | `VqA` | `I` | `f` | `qO` | — | npm |
 | v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | — | legacy |
 
-v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_) that controls whether thinking blocks render at all.
+v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz) that controls whether thinking blocks render at all.
 v2.1.76+ has server-side thinking redaction via the `"redact-thinking-2026-02-12"` beta header — all patches must disable this.
 The custom-peach patch includes gate fixes; standard/custom patches only modify the display component.
 
@@ -63,6 +64,51 @@ function co2({param:{thinking:A}...}) { ... Vs.default.createElement(...) }
 ```
 
 Patches using exact string matching must be updated for each version.
+
+---
+
+## v2.1.85 (npm)
+
+**Standard identifier rotation — no structural changes from v2.1.81.**
+
+v2.1.85 continues the same architecture as v2.1.81: keybind display in a separate sub-component,
+9 cache slots, and server-side thinking redaction that must be disabled.
+
+**Redact-thinking beta header:**
+```javascript
+// In beta header builder function:
+if(Y&&eF4(q)&&!p7()&&W7().showThinkingSummaries!==!0&&g8("tengu_quiet_hollow",!1))K.push(kU7);
+// kU7 = "redact-thinking-2026-02-12"
+// ← Patch changes condition to if(!1) to prevent redaction
+```
+
+**Function signature:**
+```javascript
+function Xb8(q){let K=A6(9),{param:_,addMargin:z,isTranscriptMode:Y,verbose:$,hideInTranscript:A}=q,{thinking:O}=_,...
+  if(!O)return null;
+  if(j)return null;      // ← Patch changes to if(!1)
+  if(!(Y||$)){...}       // ← Patch changes to if(!1)
+}
+```
+
+**Gate function (Tpz):**
+```javascript
+case"thinking":{if(!M&&!A)return null;  // ← Custom-peach patch changes to if(!1)
+```
+
+**Key identifiers:**
+- Component: `Xb8` | React: `Zq6` | Box: `B` | Text: `T` | ThinkingContent: `Q$`
+- Gate: `Tpz` | Keybind: `vj` (sub-component) | Hook: `A6`
+- Redact header: `kU7` = `"redact-thinking-2026-02-12"`
+
+**Notable changes from v2.1.81:**
+- Component renamed: `rE8` → `Xb8`
+- React import: `A16` → `Zq6`
+- ThinkingContent: `zw` → `Q$`
+- Gate function: `ty_` → `Tpz`, conditional uses `if(!M&&!A)` (different var names)
+- Cache hook: `z6(9)` → `A6(9)` — same 9 slots
+- Keybind sub-component: `E$` → `vj`
+- Box (`B`) and Text (`T`) unchanged
 
 ---
 
