@@ -13,7 +13,8 @@ This document tracks minified identifier changes between Claude Code versions.
 
 | Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
 |---------|-----------|-------|-----|------|-----------------|------|---------|
-| **v2.1.85** | `Xb8` | `Zq6` | `B` | `T` | `Q$` | `Tpz` | npm |
+| **v2.1.89** | `Wx8` | `DK6` | `m` | `T` | `HA` | `EQz` | npm |
+| v2.1.85 | `Xb8` | `Zq6` | `B` | `T` | `Q$` | `Tpz` | npm |
 | v2.1.81 | `rE8` | `A16` | `B` | `T` | `zw` | `ty_` | npm |
 | v2.1.76 | `_N1` | `lY6` | `m` | `T` | `U_` | `oTY` | npm |
 | v2.1.74 | `kv1` | `NY6` | `m` | `T` | `d_` | `TGY` | npm |
@@ -27,7 +28,7 @@ This document tracks minified identifier changes between Claude Code versions.
 | v2.1.19 | `oG1` | `VqA` | `I` | `f` | `qO` | — | npm |
 | v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | — | legacy |
 
-v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz) that controls whether thinking blocks render at all.
+v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz) that controls whether thinking blocks render at all.
 v2.1.76+ has server-side thinking redaction via the `"redact-thinking-2026-02-12"` beta header — all patches must disable this.
 The custom-peach patch includes gate fixes; standard/custom patches only modify the display component.
 
@@ -64,6 +65,54 @@ function co2({param:{thinking:A}...}) { ... Vs.default.createElement(...) }
 ```
 
 Patches using exact string matching must be updated for each version.
+
+---
+
+## v2.1.89 (npm)
+
+**Standard identifier rotation — no structural changes from v2.1.85.**
+
+v2.1.89 continues the same architecture: keybind display in a separate sub-component,
+9 cache slots, and server-side thinking redaction that must be disabled.
+Notable: the redact-thinking conditional dropped the `tengu_quiet_hollow` feature flag check.
+Gate function no longer ends in `Y`.
+
+**Redact-thinking beta header:**
+```javascript
+// In beta header builder function:
+if(Y&&iCq(q)&&!g7()&&Z7().showThinkingSummaries!==!0)K.push(WM8);
+// WM8 = "redact-thinking-2026-02-12"
+// ← Patch changes condition to if(!1) to prevent redaction
+```
+
+**Function signature:**
+```javascript
+function Wx8(q){let K=$6(9),{param:_,addMargin:z,isTranscriptMode:Y,verbose:$,hideInTranscript:O}=q,{thinking:A}=_,...
+  if(!A)return null;
+  if(j)return null;      // ← Patch changes to if(!1)
+  if(!(Y||$)){...}       // ← Patch changes to if(!1)
+}
+```
+
+**Gate function (EQz):**
+```javascript
+case"thinking":{if(!X&&!O)return null;  // ← Custom-peach patch changes to if(!1)
+```
+
+**Key identifiers:**
+- Component: `Wx8` | React: `DK6` | Box: `m` | Text: `T` | ThinkingContent: `HA`
+- Gate: `EQz` | Keybind: `z2` (sub-component) | Hook: `$6`
+- Redact header: `WM8` = `"redact-thinking-2026-02-12"`
+
+**Notable changes from v2.1.85:**
+- Component renamed: `Xb8` → `Wx8`
+- React import: `Zq6` → `DK6`
+- ThinkingContent: `Q$` → `HA`
+- Gate function: `Tpz` → `EQz` (no longer ends in `Y`), conditional uses `if(!X&&!O)`
+- Cache hook: `A6(9)` → `$6(9)` — same 9 slots
+- Keybind sub-component: `vj` → `z2`
+- Box changed: `B` → `m` | Text (`T`) unchanged
+- Redact-thinking: dropped `&&g8("tengu_quiet_hollow",!1)` check
 
 ---
 

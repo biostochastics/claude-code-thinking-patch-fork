@@ -15,7 +15,7 @@ claude --version
 file $(which claude)  # Should show "node script" not "Mach-O executable"
 
 # Run the matching patch
-node patch-thinking-v2.1.85-custom-peach.js  # For npm-installed v2.1.85
+node patch-thinking-v2.1.89-custom-peach.js  # For npm-installed v2.1.89
 
 # Restart Claude Code
 ```
@@ -56,7 +56,8 @@ file $(which claude)
 
 | Version | Patches | Install Method |
 |---------|---------|----------------|
-| **v2.1.85** | Standard, Custom, Custom Peach | `npm install -g` |
+| **v2.1.89** | Standard, Custom, Custom Peach | `npm install -g` |
+| v2.1.85 | Standard, Custom, Custom Peach | `npm install -g` |
 | v2.1.81 | Standard, Custom, Custom Peach | `npm install -g` |
 | v2.1.76 | Standard, Custom, Custom Peach | `npm install -g` |
 | v2.1.74 | Standard, Custom, Custom Peach | `npm install -g` |
@@ -98,7 +99,7 @@ Updates overwrite patches. Re-apply after updating:
 
 ```bash
 claude --version
-node patch-thinking-v2.1.85-custom-peach.js
+node patch-thinking-v2.1.89-custom-peach.js
 ```
 
 ---
