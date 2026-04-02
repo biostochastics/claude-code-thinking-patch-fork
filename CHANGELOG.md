@@ -13,7 +13,8 @@ This document tracks minified identifier changes between Claude Code versions.
 
 | Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
 |---------|-----------|-------|-----|------|-----------------|------|---------|
-| **v2.1.89** | `Wx8` | `DK6` | `m` | `T` | `HA` | `EQz` | npm |
+| **v2.1.90** | `AI8` | `bK6` | `u` | `T` | `DA` | `Udz` | npm |
+| v2.1.89 | `Wx8` | `DK6` | `m` | `T` | `HA` | `EQz` | npm |
 | v2.1.85 | `Xb8` | `Zq6` | `B` | `T` | `Q$` | `Tpz` | npm |
 | v2.1.81 | `rE8` | `A16` | `B` | `T` | `zw` | `ty_` | npm |
 | v2.1.76 | `_N1` | `lY6` | `m` | `T` | `U_` | `oTY` | npm |
@@ -28,7 +29,7 @@ This document tracks minified identifier changes between Claude Code versions.
 | v2.1.19 | `oG1` | `VqA` | `I` | `f` | `qO` | — | npm |
 | v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | — | legacy |
 
-v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz) that controls whether thinking blocks render at all.
+v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz/Udz) that controls whether thinking blocks render at all.
 v2.1.76+ has server-side thinking redaction via the `"redact-thinking-2026-02-12"` beta header — all patches must disable this.
 The custom-peach patch includes gate fixes; standard/custom patches only modify the display component.
 
@@ -65,6 +66,55 @@ function co2({param:{thinking:A}...}) { ... Vs.default.createElement(...) }
 ```
 
 Patches using exact string matching must be updated for each version.
+
+---
+
+## v2.1.90 (npm)
+
+**Standard identifier rotation — no structural changes from v2.1.89.**
+
+v2.1.90 continues the same architecture: keybind display in a separate sub-component,
+9 cache slots, and server-side thinking redaction that must be disabled.
+Gate function variables unchanged from v2.1.89 (`if(!X&&!O)`).
+
+**Redact-thinking beta header:**
+```javascript
+// In beta header builder function:
+if(Y&&Qbq(q)&&!F7()&&T7().showThinkingSummaries!==!0)K.push(sM8);
+// sM8 = "redact-thinking-2026-02-12"
+// ← Patch changes condition to if(!1) to prevent redaction
+```
+
+**Function signature:**
+```javascript
+function AI8(q){let K=Y6(9),{param:_,addMargin:z,isTranscriptMode:Y,verbose:$,hideInTranscript:O}=q,{thinking:A}=_,...
+  if(!A)return null;
+  if(j)return null;      // ← Patch changes to if(!1)
+  if(!(Y||$)){...}       // ← Patch changes to if(!1)
+}
+```
+
+**Gate function (Udz):**
+```javascript
+case"thinking":{if(!X&&!O)return null;  // ← Custom-peach patch changes to if(!1)
+```
+
+**Key identifiers:**
+- Component: `AI8` | React: `bK6` | Box: `u` | Text: `T` | ThinkingContent: `DA`
+- Gate: `Udz` | Keybind: `X2` (sub-component) | Hook: `Y6`
+- Redact header: `sM8` = `"redact-thinking-2026-02-12"`
+
+**Notable changes from v2.1.89:**
+- Component renamed: `Wx8` → `AI8`
+- React import: `DK6` → `bK6`
+- Box changed: `m` → `u`
+- ThinkingContent: `HA` → `DA`
+- Gate function: `EQz` → `Udz`, conditional unchanged `if(!X&&!O)`
+- Cache hook: `$6(9)` → `Y6(9)` — same 9 slots
+- Keybind sub-component: `z2` → `X2`
+- Redact header constant: `WM8` → `sM8`
+- Redact conditional changed: `iCq` → `Qbq`, `g7` → `F7`, `Z7` → `T7`
+- Text (`T`) unchanged
 
 ---
 
@@ -491,7 +541,8 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-03-14 | **v2.1.76** | New identifiers (_N1/lY6/oTY), gate fix |
+| 2026-04-02 | **v2.1.90** | New identifiers (AI8/bK6/Udz), gate fix |
+| 2026-03-14 | v2.1.76 | New identifiers (_N1/lY6/oTY), gate fix |
 | 2026-03-12 | v2.1.74 | New identifiers (kv1/NY6/TGY), gate fix |
 | 2026-03-04 | v2.1.69 | New identifiers (LN1/Ww6/TcY), gate fix |
 | 2026-02-27 | v2.1.63 | New identifiers (qN1/$z6/ZgY), restructured component, gate fix |
