@@ -13,7 +13,9 @@ This document tracks minified identifier changes between Claude Code versions.
 
 | Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
 |---------|-----------|-------|-----|------|-----------------|------|---------|
-| **v2.1.104** | `Ng8` | `O96` | `u` | `V` | `S2` | `eOY` | npm |
+| **v2.1.109** | `oF8` | `i36` | `u` | `T` | `kw` | `m7Y` | npm |
+| v2.1.107 | `qU8` | `V96` | `u` | `v` | `Ew` | `d9Y` | npm |
+| v2.1.104 | `Ng8` | `O96` | `u` | `V` | `S2` | `eOY` | npm |
 | v2.1.90 | `AI8` | `bK6` | `u` | `T` | `DA` | `Udz` | npm |
 | v2.1.89 | `Wx8` | `DK6` | `m` | `T` | `HA` | `EQz` | npm |
 | v2.1.85 | `Xb8` | `Zq6` | `B` | `T` | `Q$` | `Tpz` | npm |
@@ -30,7 +32,7 @@ This document tracks minified identifier changes between Claude Code versions.
 | v2.1.19 | `oG1` | `VqA` | `I` | `f` | `qO` | — | npm |
 | v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | — | legacy |
 
-v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz/Udz/eOY) that controls whether thinking blocks render at all.
+v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz/Udz/eOY/d9Y/m7Y) that controls whether thinking blocks render at all.
 v2.1.76+ has server-side thinking redaction via the `"redact-thinking-2026-02-12"` beta header — all patches must disable this.
 The custom-peach patch includes gate fixes; standard/custom patches only modify the display component.
 
@@ -67,6 +69,99 @@ function co2({param:{thinking:A}...}) { ... Vs.default.createElement(...) }
 ```
 
 Patches using exact string matching must be updated for each version.
+
+---
+
+## v2.1.109 (npm)
+
+**Standard identifier rotation with cache slot expansion.**
+
+v2.1.109 keeps the same architecture as v2.1.107 but grows the memo cache from 9 to 17 slots,
+shifting the thinking component's slot indices from `K[0..8]` to `K[8..16]`. Gate conditional,
+redact header, and overall function shape are unchanged.
+
+**Function signature:**
+```javascript
+function oF8(q){let K=s(17),{param:_,addMargin:z,isTranscriptMode:Y,verbose:A,hideInTranscript:O}=q,{thinking:w}=_,...
+  if(!w)return null;
+  if(j)return null;      // ← Patch changes to if(!1)
+  if(!(Y||A)){...}       // ← Patch changes to if(!1)
+}
+```
+
+**Gate function (m7Y):**
+```javascript
+case"thinking":{if(!M&&!O)return null;  // ← Custom-peach patch changes to if(!1)
+```
+
+**Key identifiers:**
+- Component: `oF8` | React: `i36` | Box: `u` | Text: `T` | ThinkingContent: `kw`
+- Gate: `m7Y` | Keybind: `C2` (sub-component) | Hook: `s`
+- Redact header: `OZ8` = `"redact-thinking-2026-02-12"`
+
+**Notable changes from v2.1.107:**
+- Component renamed: `qU8` → `oF8`
+- React import: `V96` → `i36`
+- Text: `v` → `T` (uppercase again)
+- ThinkingContent: `Ew` → `kw`
+- Gate function: `d9Y` → `m7Y`
+- Cache hook: `e(9)` → `s(17)` — slots doubled; indices shifted to 8–16
+- Keybind sub-component: `I2` → `C2`
+- Redact header constant: `nZ8` → `OZ8`
+- Redact conditional helpers: `npq` → `rpq`, `b7` → `m7`, `X7` → `D7`
+- Box (`u`) unchanged
+- Gate conditional pattern unchanged: `if(!M&&!O)return null`
+
+---
+
+## v2.1.107 (npm)
+
+**Standard identifier rotation — no structural changes from v2.1.104.**
+
+v2.1.107 continues the same architecture: keybind display in a separate sub-component,
+9 cache slots, and server-side thinking redaction that must be disabled.
+Gate function uses numeric prefix (`d9Y`). Notable: Text component is now lowercase `v`
+(was uppercase `V`), and cache hook simplified from `_6` to just `e`.
+
+**Redact-thinking beta header:**
+```javascript
+// In beta header builder function:
+if(Y&&npq(q)&&!b7()&&X7().showThinkingSummaries!==!0)K.push(nZ8);
+// nZ8 = "redact-thinking-2026-02-12"
+// ← Patch changes condition to if(!1) to prevent redaction
+```
+
+**Function signature:**
+```javascript
+function qU8(q){let K=e(9),{param:_,addMargin:z,isTranscriptMode:Y,verbose:A,hideInTranscript:O}=q,{thinking:w}=_,...
+  if(!w)return null;
+  if(j)return null;      // ← Patch changes to if(!1)
+  if(!(Y||A)){...}       // ← Patch changes to if(!1)
+}
+```
+
+**Gate function (d9Y):**
+```javascript
+case"thinking":{if(!M&&!O)return null;  // ← Custom-peach patch changes to if(!1)
+```
+
+**Key identifiers:**
+- Component: `qU8` | React: `V96` | Box: `u` | Text: `v` | ThinkingContent: `Ew`
+- Gate: `d9Y` | Keybind: `I2` (sub-component) | Hook: `e`
+- Redact header: `nZ8` = `"redact-thinking-2026-02-12"`
+
+**Notable changes from v2.1.104:**
+- Component renamed: `Ng8` → `qU8`
+- React import: `O96` → `V96`
+- Text changed: `V` → `v` (now lowercase)
+- ThinkingContent: `S2` → `Ew`
+- Gate function: `eOY` → `d9Y` (numeric prefix style)
+- Cache hook: `_6(9)` → `e(9)` — same 9 slots
+- Keybind sub-component: `Uw` → `I2`
+- Redact header constant: `ID8` → `nZ8`
+- Redact conditional changed: `OFq` → `npq`, `c7` → `b7`
+- Box (`u`) unchanged
+- Gate conditional pattern unchanged: `if(!M&&!O)return null`
 
 ---
 
@@ -594,7 +689,9 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-04-12 | **v2.1.104** | New identifiers (Ng8/O96/eOY), gate fix |
+| 2026-04-14 | **v2.1.109** | New identifiers (oF8/i36/m7Y), 17-slot cache, gate fix |
+| 2026-04-13 | v2.1.107 | New identifiers (qU8/V96/d9Y), gate fix |
+| 2026-04-12 | v2.1.104 | New identifiers (Ng8/O96/eOY), gate fix |
 | 2026-04-02 | v2.1.90 | New identifiers (AI8/bK6/Udz), gate fix |
 | 2026-03-14 | v2.1.76 | New identifiers (_N1/lY6/oTY), gate fix |
 | 2026-03-12 | v2.1.74 | New identifiers (kv1/NY6/TGY), gate fix |
