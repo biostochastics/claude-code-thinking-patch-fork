@@ -1,7 +1,9 @@
 # Claude Code Thinking Patch — Technical Changelog
 
-> **Note:** npm installation (`npm install -g @anthropic-ai/claude-code`) provides a patchable Node.js version.
-> See: [NPM Installation](https://code.claude.com/docs/en/setup#npm-installation-deprecated)
+> **v2.1.113 format change:** npm now ships a native Bun SEA binary
+> (`bin/claude.exe`) instead of a `cli.js`. Patching is done via same-length
+> byte substitution in the binary + ad-hoc `codesign` on macOS.
+> Older versions retain the `cli.js` text-replace approach.
 
 This document tracks minified identifier changes between Claude Code versions.
 
@@ -13,7 +15,8 @@ This document tracks minified identifier changes between Claude Code versions.
 
 | Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
 |---------|-----------|-------|-----|------|-----------------|------|---------|
-| **v2.1.112** | `cg8` | `R96` | `u` | `T` | `xw` | `wKY` | npm |
+| **v2.1.113** | `Yl_` | `g1H` | `m` | `L` | `SA` | `ni1` | npm (binary) |
+| v2.1.112 | `cg8` | `R96` | `u` | `T` | `xw` | `wKY` | npm |
 | v2.1.109 | `oF8` | `i36` | `u` | `T` | `kw` | `m7Y` | npm |
 | v2.1.107 | `qU8` | `V96` | `u` | `v` | `Ew` | `d9Y` | npm |
 | v2.1.104 | `Ng8` | `O96` | `u` | `V` | `S2` | `eOY` | npm |
@@ -33,9 +36,10 @@ This document tracks minified identifier changes between Claude Code versions.
 | v2.1.19 | `oG1` | `VqA` | `I` | `f` | `qO` | — | npm |
 | v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | — | legacy |
 
-v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz/Udz/eOY/d9Y/m7Y/wKY) that controls whether thinking blocks render at all.
+v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz/Udz/eOY/d9Y/m7Y/wKY/ni1) that controls whether thinking blocks render at all.
 v2.1.76+ has server-side thinking redaction via the `"redact-thinking-2026-02-12"` beta header — all patches must disable this.
 The custom-peach patch includes gate fixes; standard/custom patches only modify the display component.
+v2.1.113+ ships as a native Bun SEA binary instead of a `cli.js` — the patchers now use same-length byte substitutions and ad-hoc `codesign`. Visual customizations (orange border, peach theme) from older custom/custom-peach variants cannot be reproduced without relinking.
 
 ### v2.0.x Identifiers
 
@@ -70,6 +74,62 @@ function co2({param:{thinking:A}...}) { ... Vs.default.createElement(...) }
 ```
 
 Patches using exact string matching must be updated for each version.
+
+---
+
+## v2.1.113 (npm, binary)
+
+**BREAKING: npm now ships a native Bun SEA binary instead of a `cli.js`.**
+
+The package installs a ~200 MB Mach-O binary (`bin/claude.exe`) containing a
+bundled JS source inside a `__BUN` segment. The JS bundle is duplicated inside
+the segment (two byte-identical copies offset 113,478,872 apart), so every
+patch must be applied to all occurrences. Patches use **same-length byte
+substitutions only** — any length change shifts Mach-O offsets and corrupts
+the binary. On macOS the binary must be re-signed with an ad-hoc signature
+(`codesign --force --sign -`) after patching or the loader rejects it.
+
+**Redact-thinking beta header:**
+```javascript
+// In beta header builder function:
+if(O&&Tmq(H)&&!I8()&&k8().showThinkingSummaries!==!0)_.push(v0_);
+// v0_ = "redact-thinking-2026-02-12"
+// ← Patch changes O to 0 (same length) so condition is always false
+```
+
+**Function signature:**
+```javascript
+function Yl_(H){let _=R_7.c(9),{param:q,addMargin:K,isTranscriptMode:O,verbose:T,hideInTranscript:$}=H,{thinking:A}=q,z=K===void 0?!1:K,w=$===void 0?!1:$;
+  if(!A)return null;
+  if(w)return null;      // ← Patch changes w -> 0 (same length) so always false
+  if(!(O||T)){...}       // ← Patch changes (O||T) -> (1||1) so condition is always false
+}
+```
+
+**Gate function (ni1):**
+```javascript
+case"redacted_thinking":{if(!D&&!$)return null;  // ← Custom-peach patch: !D&&!$ -> !1&&!1
+case"thinking":{if(!D&&!$)return null;           // ← Custom-peach patch: same
+```
+
+**Key identifiers:**
+- Component: `Yl_` | React: `g1H` | Box: `m` | Text: `L` | ThinkingContent: `SA`
+- Gate: `ni1` | Spinner sub-component: `iz` | Cache hook: `R_7(9)` (9 slots)
+- Gate's React: `S1` | Gate's cache: `Cl_(48)` | Redacted component: `gH7`
+- Redact header var: `v0_` = `"redact-thinking-2026-02-12"`
+
+**Notable changes from v2.1.112:**
+- **Format**: `cli.js` (plaintext JS) → Mach-O binary (Bun SEA with embedded JS bundle)
+- Install path: `~/.claude/local/.../cli.js` → `<npm-root>/@anthropic-ai/claude-code/bin/claude.exe`
+- Component renamed: `cg8` → `Yl_`
+- React import: `R96` → `g1H`
+- Box: `u` → `m` | Text: `T` → `L` | ThinkingContent: `xw` → `SA`
+- Gate: `wKY` → `ni1`, conditional variables renamed (`!M&&!O` → `!D&&!$`)
+- Cache hook: `s(17)` → `R_7.c(9)` — inner component slots back down to 9
+- Spinner sub-component: `U2` → `iz`
+- Redact header variable: `pZ8` → `v0_`
+- Redact conditional helpers: `ggq` → `Tmq`, `I7` → `I8`, `v7` → `k8`
+- Patching technique: string replace in `.js` → same-length byte substitution in binary + `codesign`
 
 ---
 
@@ -731,7 +791,8 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-04-16 | **v2.1.112** | New identifiers (cg8/R96/wKY), pure rotation, gate fix |
+| 2026-04-17 | **v2.1.113** | **BREAKING: binary format (Bun SEA)**. New identifiers (Yl_/g1H/ni1), byte-patch + codesign |
+| 2026-04-16 | v2.1.112 | New identifiers (cg8/R96/wKY), pure rotation, gate fix |
 | 2026-04-14 | v2.1.109 | New identifiers (oF8/i36/m7Y), 17-slot cache, gate fix |
 | 2026-04-13 | v2.1.107 | New identifiers (qU8/V96/d9Y), gate fix |
 | 2026-04-12 | v2.1.104 | New identifiers (Ng8/O96/eOY), gate fix |
