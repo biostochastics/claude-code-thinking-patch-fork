@@ -9,13 +9,14 @@ const readline = require('readline');
 // ============================================================
 // Claude Code Thinking Display Patcher v2.1.113 (Custom Peach)
 //
-// FORMAT CHANGE: v2.1.113 ships a native Bun SEA binary
-// (bin/claude.exe) instead of a cli.js. Only SAME-LENGTH byte
-// replacements are possible; the historical peach/theme visual
-// customizations from the cli.js era cannot be applied without
-// relinking. This variant keeps the FUNCTIONAL gate fix so
-// thinking blocks render in default (non-transcript, non-verbose)
-// mode, matching the semantics of the old -custom-peach patch.
+// FORMAT: v2.1.113 ships a native Bun SEA binary (bin/claude.exe).
+// All replacements must be SAME-LENGTH byte substitutions.
+//
+// Visual styling IS available via a 5th patch that repurposes the
+// dead-code branch (if(!(1||1)){...}) created by patch #2. The
+// dead branch frees 25 bytes by simplifying its props; the live
+// path spends those 25 bytes on border/color styling (23 bytes of
+// real styling + 2 trailing commas) to preserve Mach-O offsets.
 //
 // Identifiers: Yl_ (component), g1H (React), m (Box), L (Text),
 //   SA (ThinkingContent), R_7 (cache, 9 slots), iz (Spinner)
@@ -113,6 +114,43 @@ const PATCHES = [
     name: 'ni1 gate — thinking case always renders',
     search: Buffer.from('case"thinking":{if(!D&&!$)return null;'),
     replace: Buffer.from('case"thinking":{if(!1&&!1)return null;')
+  },
+  {
+    // Dead-code branch (if(!(1||1)){...}, made unreachable by patch #2) frees
+    // 25 bytes via prop collapses: {dimColor:!0,italic:!0}→{c:!0} and
+    // {marginTop:J}→{c:J}. The live path spends those 25 bytes on border
+    // styling + warning colors + the 🍑 emoji header; two trailing commas
+    // in the live object literals pad the last 2 bytes so search.length ===
+    // replace.length. Strings use real UTF-8 (single-backslash \u) because
+    // the bundle stores ∴ / … / 🍑 as their UTF-8 byte sequences, not as
+    // literal \uXXXX ASCII escapes.
+    name: 'Yl_ visual styling — peach border + warning colors',
+    search: Buffer.from(
+      'let J=z?1:0,P;if(_[0]===Symbol.for("react.memo_cache_sentinel"))' +
+      'P=g1H.default.createElement(L,{dimColor:!0,italic:!0},"∴ Thinking"," ",' +
+      'g1H.default.createElement(iz,null)),_[0]=P;else P=_[0];' +
+      'let X;if(_[1]!==J)X=g1H.default.createElement(m,{marginTop:J},P),_[1]=J,_[2]=X;else X=_[2];return X}' +
+      'let f=z?1:0,j;if(_[3]===Symbol.for("react.memo_cache_sentinel"))' +
+      'j=g1H.default.createElement(L,{dimColor:!0,italic:!0},"∴ Thinking","…"),_[3]=j;else j=_[3];' +
+      'let D;if(_[4]!==A)D=g1H.default.createElement(m,{paddingLeft:2},' +
+      'g1H.default.createElement(SA,{dimColor:!0},A)),_[4]=A,_[5]=D;else D=_[5];' +
+      'let M;if(_[6]!==f||_[7]!==D)M=g1H.default.createElement(m,' +
+      '{flexDirection:"column",gap:1,marginTop:f,width:"100%"},j,D),' +
+      '_[6]=f,_[7]=D,_[8]=M;else M=_[8];return M}'
+    ),
+    replace: Buffer.from(
+      'let J=z?1:0,P;if(_[0]===Symbol.for("react.memo_cache_sentinel"))' +
+      'P=g1H.default.createElement(L,{c:!0},"∴ Thinking"," ",' +
+      'g1H.default.createElement(iz,null)),_[0]=P;else P=_[0];' +
+      'let X;if(_[1]!==J)X=g1H.default.createElement(m,{c:J},P),_[1]=J,_[2]=X;else X=_[2];return X}' +
+      'let f=z?1:0,j;if(_[3]===Symbol.for("react.memo_cache_sentinel"))' +
+      'j=g1H.default.createElement(L,{color:"warning",bold:!0,},"🍑 Thinking"),_[3]=j;else j=_[3];' +
+      'let D;if(_[4]!==A)D=g1H.default.createElement(m,{paddingLeft:2},' +
+      'g1H.default.createElement(SA,null,A)),_[4]=A,_[5]=D;else D=_[5];' +
+      'let M;if(_[6]!==f||_[7]!==D)M=g1H.default.createElement(m,' +
+      '{flexDirection:"column",borderStyle:"single",borderColor:"warning",paddingX:1,marginTop:f,},j,D),' +
+      '_[6]=f,_[7]=D,_[8]=M;else M=_[8];return M}'
+    )
   }
 ];
 
@@ -194,9 +232,7 @@ async function main() {
   console.log('Claude Code Thinking Display Patcher v2.1.113 (Custom Peach)');
   console.log('============================================================');
   console.log('Binary format (Bun SEA) — same-length byte patches + ad-hoc codesign');
-  console.log('Note: Historical peach/theme visual customizations are not available in');
-  console.log('      the Bun SEA binary format. This variant keeps the FUNCTIONAL gate');
-  console.log('      fix so thinking renders in default mode (no ctrl+o, no --verbose).\n');
+  console.log('Applies: gate fix + 🍑 peach border with warning-theme colors\n');
 
   console.log(`User: ${os.userInfo().username}`);
   console.log(`Home: ${homeDir}\n`);
@@ -267,6 +303,7 @@ async function main() {
   console.log('   - Yl_ component always renders expanded thinking');
   console.log('   - ni1 gate patched: thinking & redacted_thinking render in default mode');
   console.log('     (no need for ctrl+o transcript mode or --verbose flag)');
+  console.log('   - 🍑 Visual: warning-color border box + bold header in live render path');
 }
 
 main().catch(err => { console.error('Error:', err.message); process.exit(1); });

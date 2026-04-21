@@ -115,6 +115,16 @@ const PATCHES = [
     replace: Buffer.from('case"thinking":{if(!1&&!1)return null;')
   },
   {
+    // v2.1.116 API behavior: if thinking.display is unset, server defaults to
+    // "omitted" → returns empty thinking blocks (signature only, no text).
+    // Force oH="summarized" so every thinking request includes display:"summarized".
+    // oH flows into __={type:"adaptive",display:oH} and __={type:"enabled",...,display:oH}.
+    // Whitespace pads to 22 bytes to preserve Mach-O offsets.
+    name: 'Force thinking.display="summarized" (API returns content, not just signature)',
+    search:  Buffer.from('oH=LH?q.display:void 0'),
+    replace: Buffer.from('oH="summarized"       ')
+  },
+  {
     // Dead-code branch (if(!(1||1)){...}) has 25 bytes freed by simplifying
     // props ({dimColor:!0,italic:!0}→{c:!0}, {marginTop:J}→{c:J}) which
     // exactly offsets the 25 bytes added by border+color styling in the live path.

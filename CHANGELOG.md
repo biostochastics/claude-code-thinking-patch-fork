@@ -134,6 +134,25 @@ case"thinking":{if(!f&&!$)return null;           // ← Custom-peach patch: same
 - Live-branch local vars: `f,j,D` → `j,D,f` (swapped roles), final `createElement` order `j,D` → `D,f`
 - Box (`m`), Text (`L`) unchanged
 
+**6th patch (custom-peach only) — force `thinking.display="summarized"`:**
+
+v2.1.116 introduced a new API parameter `thinking.display` with values `"summarized"` or `"omitted"`. When the client omits this parameter, the server defaults to `"omitted"` — returning thinking blocks with only a cryptographic `signature` field and `thinking:""` (empty text). Without text content, the render component hits `if(!A)return null` and nothing displays, even with all prior gate patches applied. Session trajectories confirm this: every returned thinking block has empty content until `display` is set.
+
+The CLI exposes `--thinking-display summarized` (hidden flag) to request summarized text, but there is no settings.json equivalent — the flag must be passed on every launch. The custom-peach patch instead forces the in-code flow variable `oH` to the literal `"summarized"`:
+
+```javascript
+// Original (22 bytes):
+oH=LH?q.display:void 0
+// Patched (22 bytes, 7 trailing spaces for length parity):
+oH="summarized"
+```
+
+`oH` feeds into both thinking-config builders:
+- Adaptive path: `__={type:"adaptive",display:oH}` (used for opus-4-7 because the `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING` env var only applies to opus-4-6/sonnet-4-6)
+- Enabled-with-budget path: `__={budget_tokens:C_,type:"enabled",display:oH}` (used for older models)
+
+Both paths now send `display:"summarized"` to the API, the server returns thinking text, and the patched `Vi_` renders it in the peach-bordered box.
+
 ---
 
 ## v2.1.113 (npm, binary)
@@ -850,7 +869,7 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-04-20 | **v2.1.116** | New identifiers (Vi_/L5H/RH5), pure rotation, gate fix, peach styling |
+| 2026-04-20 | **v2.1.116** | New identifiers (Vi_/L5H/RH5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` (6th patch) so API returns text instead of empty signature-only blocks |
 | 2026-04-17 | v2.1.113 | **BREAKING: binary format (Bun SEA)**. New identifiers (Yl_/g1H/ni1), byte-patch + codesign |
 | 2026-04-16 | v2.1.112 | New identifiers (cg8/R96/wKY), pure rotation, gate fix |
 | 2026-04-14 | v2.1.109 | New identifiers (oF8/i36/m7Y), 17-slot cache, gate fix |
