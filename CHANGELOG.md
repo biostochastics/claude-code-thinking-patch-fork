@@ -15,7 +15,8 @@ This document tracks minified identifier changes between Claude Code versions.
 
 | Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
 |---------|-----------|-------|-----|------|-----------------|------|---------|
-| **v2.1.113** | `Yl_` | `g1H` | `m` | `L` | `SA` | `ni1` | npm (binary) |
+| **v2.1.116** | `Vi_` | `L5H` | `m` | `L` | `pA` | `RH5` | npm (binary) |
+| v2.1.113 | `Yl_` | `g1H` | `m` | `L` | `SA` | `ni1` | npm (binary) |
 | v2.1.112 | `cg8` | `R96` | `u` | `T` | `xw` | `wKY` | npm |
 | v2.1.109 | `oF8` | `i36` | `u` | `T` | `kw` | `m7Y` | npm |
 | v2.1.107 | `qU8` | `V96` | `u` | `v` | `Ew` | `d9Y` | npm |
@@ -36,10 +37,10 @@ This document tracks minified identifier changes between Claude Code versions.
 | v2.1.19 | `oG1` | `VqA` | `I` | `f` | `qO` | — | npm |
 | v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | — | legacy |
 
-v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz/Udz/eOY/d9Y/m7Y/wKY/ni1) that controls whether thinking blocks render at all.
+v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz/Udz/eOY/d9Y/m7Y/wKY/ni1/RH5) that controls whether thinking blocks render at all.
 v2.1.76+ has server-side thinking redaction via the `"redact-thinking-2026-02-12"` beta header — all patches must disable this.
 The custom-peach patch includes gate fixes; standard/custom patches only modify the display component.
-v2.1.113+ ships as a native Bun SEA binary instead of a `cli.js` — the patchers now use same-length byte substitutions and ad-hoc `codesign`. Visual customizations (orange border, peach theme) from older custom/custom-peach variants cannot be reproduced without relinking.
+v2.1.113+ ships as a native Bun SEA binary instead of a `cli.js` — the patchers now use same-length byte substitutions and ad-hoc `codesign`. The custom-peach patch *does* reproduce the peach border/warning header in the binary by repurposing the dead-code branch (the 25 bytes freed by simplifying `{dimColor:!0,italic:!0}`→`{c:!0}` and `{marginTop:J}`→`{c:J}` in the now-unreachable transcript-mode path exactly offsets the 25 bytes added by `borderStyle:"single",borderColor:"warning",paddingX:1` in the live render path). The plain `custom` variant cannot apply visual styling without relinking.
 
 ### v2.0.x Identifiers
 
@@ -74,6 +75,64 @@ function co2({param:{thinking:A}...}) { ... Vs.default.createElement(...) }
 ```
 
 Patches using exact string matching must be updated for each version.
+
+---
+
+## v2.1.116 (npm, binary)
+
+**Standard identifier rotation — same Bun SEA architecture as v2.1.113.**
+
+v2.1.116 keeps the binary format introduced in v2.1.113 (Mach-O with embedded
+`__BUN` segment containing two byte-identical copies of the JS bundle). All
+identifiers rotated, but every search/replace pair retained the same byte
+length, so the same-length byte-patch + ad-hoc `codesign` workflow continues
+to work cleanly. The custom-peach 5th patch (visual styling) was rebuilt with
+v2.1.116's variable layout — note that the live and dead-code branches swapped
+their local variable names (`f,j,D,M` → `j,D,f,M`) and the final `createElement`
+argument order changed from `j,D` to `D,f`.
+
+**Redact-thinking beta header:**
+```javascript
+// In beta header builder function:
+if(O&&zFq(H)&&!S8()&&y8().showThinkingSummaries!==!0)_.push(fZ_);
+// fZ_ = "redact-thinking-2026-02-12"
+// ← Patch changes O to 0 (same length) so condition is always false
+```
+
+**Function signature:**
+```javascript
+function Vi_(H){let _=u97.c(9),{param:q,addMargin:K,isTranscriptMode:O,verbose:T,hideInTranscript:$}=H,{thinking:A}=q,z=K===void 0?!1:K,Y=$===void 0?!1:$;
+  if(!A)return null;
+  if(Y)return null;      // ← Patch changes Y -> 0 (same length) so always false
+  if(!(O||T)){...}       // ← Patch changes (O||T) -> (1||1) so condition is always false
+}
+```
+
+**Gate function (RH5):**
+```javascript
+case"redacted_thinking":{if(!f&&!$)return null;  // ← Custom-peach patch: !f&&!$ -> !1&&!1
+case"thinking":{if(!f&&!$)return null;           // ← Custom-peach patch: same
+```
+
+**Key identifiers:**
+- Component: `Vi_` | React: `L5H` | Box: `m` | Text: `L` | ThinkingContent: `pA`
+- Gate: `RH5` | Spinner sub-component: `jY` | Cache hook: `u97.c(9)` (9 slots)
+- Gate's React: `b1` | Gate's cache: `oi_.c(48)` | Redacted component: `_97`
+- Redact header var: `fZ_` = `"redact-thinking-2026-02-12"`
+
+**Notable changes from v2.1.113:**
+- Component renamed: `Yl_` → `Vi_`
+- React import: `g1H` → `L5H`
+- ThinkingContent: `SA` → `pA`
+- Spinner: `iz` → `jY`
+- Cache: `R_7.c(9)` → `u97.c(9)` (still 9 slots)
+- Gate: `ni1` → `RH5`, conditional variables renamed (`!D&&!$` → `!f&&!$`)
+- Gate's React import: `S1` → `b1` | Gate's cache: `Cl_(48)` → `oi_.c(48)` | Redacted comp: `gH7` → `_97`
+- Redact header variable: `v0_` → `fZ_`
+- Redact conditional helpers: `Tmq` → `zFq`, `I8` → `S8`, `k8` → `y8`
+- `hideInTranscript` local: `w` → `Y`
+- Live-branch local vars: `f,j,D` → `j,D,f` (swapped roles), final `createElement` order `j,D` → `D,f`
+- Box (`m`), Text (`L`) unchanged
 
 ---
 
@@ -791,7 +850,8 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-04-17 | **v2.1.113** | **BREAKING: binary format (Bun SEA)**. New identifiers (Yl_/g1H/ni1), byte-patch + codesign |
+| 2026-04-20 | **v2.1.116** | New identifiers (Vi_/L5H/RH5), pure rotation, gate fix, peach styling |
+| 2026-04-17 | v2.1.113 | **BREAKING: binary format (Bun SEA)**. New identifiers (Yl_/g1H/ni1), byte-patch + codesign |
 | 2026-04-16 | v2.1.112 | New identifiers (cg8/R96/wKY), pure rotation, gate fix |
 | 2026-04-14 | v2.1.109 | New identifiers (oF8/i36/m7Y), 17-slot cache, gate fix |
 | 2026-04-13 | v2.1.107 | New identifiers (qU8/V96/d9Y), gate fix |

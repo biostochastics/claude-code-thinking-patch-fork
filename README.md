@@ -4,12 +4,12 @@
 
 Make Claude Code's thinking blocks visible by default without pressing `ctrl+o`.
 
-> **v2.1.113 is now patchable** — npm switched to shipping a native Bun SEA
-> binary (`bin/claude.exe`) instead of `cli.js`. The v2.1.113 patchers use
-> same-length byte substitutions in the binary and ad-hoc `codesign` on macOS.
-> Historical visual customizations (orange border, peach theme) aren't
-> reproducible in the binary format; functional patches (visibility + gate fix)
-> are preserved.
+> **v2.1.113+ binary format** — npm now ships a native Bun SEA binary
+> (`bin/claude.exe`) instead of `cli.js`. The patchers use same-length byte
+> substitutions in the binary and ad-hoc `codesign` on macOS. The
+> **custom-peach** variant reproduces the peach border + warning header in the
+> binary by repurposing the dead-code branch (no length change). The plain
+> `custom` variant cannot apply visual styling without relinking.
 
 ## Quick Start
 
@@ -17,8 +17,8 @@ Make Claude Code's thinking blocks visible by default without pressing `ctrl+o`.
 # Check your version
 claude --version
 
-# v2.1.113+ (binary format, recommended patch: custom-peach for default-mode visibility)
-node patch-thinking-v2.1.113-custom-peach.js
+# v2.1.113+ (binary format, recommended patch: custom-peach for default-mode visibility + peach styling)
+node patch-thinking-v2.1.116-custom-peach.js
 
 # Older versions with cli.js format
 # node patch-thinking-v2.1.112-custom-peach.js
@@ -64,7 +64,8 @@ claude --version
 
 | Version | Patches | Install Method |
 |---------|---------|----------------|
-| **v2.1.113** | Standard, Custom, Custom Peach (binary; no visual styling) | `npm install -g` |
+| **v2.1.116** | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
+| v2.1.113 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
 | v2.1.112 | Standard, Custom, Custom Peach | `npm install -g` |
 | v2.1.109 | Standard, Custom, Custom Peach | `npm install -g` |
 | v2.1.107 | Standard, Custom, Custom Peach | `npm install -g` |
@@ -104,11 +105,14 @@ located and edited, but with two constraints:
 | The bundle is **duplicated** inside the segment | Every patch must be applied to all occurrences (the patchers use `replaceAll`) |
 | macOS requires **re-signing** | Editing bytes invalidates the existing signature; the patcher runs `codesign --force --sign -` (ad-hoc) automatically |
 
-What this means for custom/peach variants: the historical orange border and
-peach-themed header changed *component props* (code insertion), which requires
-length changes. Those visual customizations are not reproducible in the
-binary. The *functional* parts of each variant — visibility fix in Standard,
-gate fix in Custom Peach — use same-length substitutions and do apply.
+What this means for custom/peach variants: the **custom-peach** variant *does*
+reproduce the peach border + warning header inside the binary. It uses a
+5th same-length patch that simplifies the props of the now-unreachable
+transcript-mode branch (`{dimColor:!0,italic:!0}`→`{c:!0}`,
+`{marginTop:J}`→`{c:J}`) — the 25 bytes freed there exactly offsets the
+25 bytes added by `borderStyle:"single",borderColor:"warning",paddingX:1`
+in the live render path. The plain `custom` variant cannot apply visual
+styling and is functionally identical to Standard.
 
 ---
 
@@ -118,7 +122,7 @@ Updates overwrite patches. Re-apply after updating:
 
 ```bash
 claude --version
-node patch-thinking-v2.1.113-custom-peach.js
+node patch-thinking-v2.1.116-custom-peach.js
 ```
 
 ---
@@ -161,7 +165,7 @@ The patch modifies three areas in Claude Code's minified JavaScript bundle
 (whether loose `cli.js` or embedded inside the Bun SEA binary):
 
 1. **API layer (v2.1.76+):** Disables the `"redact-thinking-2026-02-12"` beta header so the server sends full thinking content instead of empty redacted blocks
-2. **Gate function (v2.1.30+):** e.g. `if(!D&&!$)return null` → `if(!1&&!1)return null` — allows thinking blocks through the rendering gate
+2. **Gate function (v2.1.30+):** e.g. `if(!f&&!$)return null` → `if(!1&&!1)return null` — allows thinking blocks through the rendering gate
 3. **Display component:** `if(hideInTranscript)return null` → `if(0)return null` and `if(!(isTranscript||verbose))` → `if(!(1||1))` — always shows expanded thinking
 
 Without the API layer patch (step 1), the server never sends thinking content regardless of rendering fixes.
@@ -177,12 +181,11 @@ See [CHANGELOG.md](CHANGELOG.md) for version-specific technical details.
 ## Files
 
 ```
-patch-thinking-v2.1.113.js              # Latest standard (npm, binary)
-patch-thinking-v2.1.113-custom.js       # Latest custom (npm, binary — no visual styling)
-patch-thinking-v2.1.113-custom-peach.js # Latest custom-peach (npm, binary, recommended)
-patch-thinking-v2.1.112.js              # Previous standard (npm, cli.js)
-patch-thinking-v2.1.112-custom.js       # Previous custom (npm, cli.js)
-patch-thinking-v2.1.112-custom-peach.js # Previous custom-peach (npm, cli.js)
+patch-thinking-v2.1.116.js              # Latest standard (npm, binary)
+patch-thinking-v2.1.116-custom.js       # Latest custom (npm, binary — no visual styling)
+patch-thinking-v2.1.116-custom-peach.js # Latest custom-peach (npm, binary, recommended)
+patch-thinking-v2.1.113-*.js            # Previous binary triplet
+patch-thinking-v2.1.112-*.js            # Last cli.js triplet (npm, plain JS)
 patch-thinking-v2.1.90*.js              # v2.1.90 patches
 patch-thinking-v2.1.81*.js              # v2.1.81 patches
 patch-thinking-v2.1.76*.js              # v2.1.76 patches
@@ -214,4 +217,4 @@ Provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last updated:** 2026-04-17 · **Latest:** v2.1.113 (npm, binary)
+**Last updated:** 2026-04-20 · **Latest:** v2.1.116 (npm, binary)
