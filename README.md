@@ -18,7 +18,7 @@ Make Claude Code's thinking blocks visible by default without pressing `ctrl+o`.
 claude --version
 
 # v2.1.113+ (binary format, recommended patch: custom-peach for default-mode visibility + peach styling)
-node patch-thinking-v2.1.116-custom-peach.js
+node patch-thinking-v2.1.119-custom-peach.js
 
 # Older versions with cli.js format
 # node patch-thinking-v2.1.112-custom-peach.js
@@ -64,7 +64,8 @@ claude --version
 
 | Version | Patches | Install Method |
 |---------|---------|----------------|
-| **v2.1.116** | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
+| **v2.1.119** | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
+| v2.1.116 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
 | v2.1.113 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
 | v2.1.112 | Standard, Custom, Custom Peach | `npm install -g` |
 | v2.1.109 | Standard, Custom, Custom Peach | `npm install -g` |
@@ -122,7 +123,7 @@ Updates overwrite patches. Re-apply after updating:
 
 ```bash
 claude --version
-node patch-thinking-v2.1.116-custom-peach.js
+node patch-thinking-v2.1.119-custom-peach.js
 ```
 
 ---
@@ -181,10 +182,11 @@ See [CHANGELOG.md](CHANGELOG.md) for version-specific technical details.
 ## Files
 
 ```
-patch-thinking-v2.1.116.js              # Latest standard (npm, binary)
-patch-thinking-v2.1.116-custom.js       # Latest custom (npm, binary — no visual styling)
-patch-thinking-v2.1.116-custom-peach.js # Latest custom-peach (npm, binary, recommended)
-patch-thinking-v2.1.113-*.js            # Previous binary triplet
+patch-thinking-v2.1.119.js              # Latest standard (npm, binary)
+patch-thinking-v2.1.119-custom.js       # Latest custom (npm, binary — no visual styling)
+patch-thinking-v2.1.119-custom-peach.js # Latest custom-peach (npm, binary, recommended)
+patch-thinking-v2.1.116-*.js            # Previous binary triplet
+patch-thinking-v2.1.113-*.js            # Earlier binary triplet
 patch-thinking-v2.1.112-*.js            # Last cli.js triplet (npm, plain JS)
 patch-thinking-v2.1.90*.js              # v2.1.90 patches
 patch-thinking-v2.1.81*.js              # v2.1.81 patches
@@ -217,4 +219,4 @@ Provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last updated:** 2026-04-20 · **Latest:** v2.1.116 (npm, binary)
+**Last updated:** 2026-04-24 · **Latest:** v2.1.119 (npm, binary)

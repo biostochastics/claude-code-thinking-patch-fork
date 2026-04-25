@@ -15,7 +15,8 @@ This document tracks minified identifier changes between Claude Code versions.
 
 | Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
 |---------|-----------|-------|-----|------|-----------------|------|---------|
-| **v2.1.116** | `Vi_` | `L5H` | `m` | `L` | `pA` | `RH5` | npm (binary) |
+| **v2.1.119** | `_86` | `j$H` | `p` | `k` | `rz` | `ZJ5` | npm (binary) |
+| v2.1.116 | `Vi_` | `L5H` | `m` | `L` | `pA` | `RH5` | npm (binary) |
 | v2.1.113 | `Yl_` | `g1H` | `m` | `L` | `SA` | `ni1` | npm (binary) |
 | v2.1.112 | `cg8` | `R96` | `u` | `T` | `xw` | `wKY` | npm |
 | v2.1.109 | `oF8` | `i36` | `u` | `T` | `kw` | `m7Y` | npm |
@@ -37,7 +38,7 @@ This document tracks minified identifier changes between Claude Code versions.
 | v2.1.19 | `oG1` | `VqA` | `I` | `f` | `qO` | — | npm |
 | v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | — | legacy |
 
-v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz/Udz/eOY/d9Y/m7Y/wKY/ni1/RH5) that controls whether thinking blocks render at all.
+v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz/Udz/eOY/d9Y/m7Y/wKY/ni1/RH5/ZJ5) that controls whether thinking blocks render at all.
 v2.1.76+ has server-side thinking redaction via the `"redact-thinking-2026-02-12"` beta header — all patches must disable this.
 The custom-peach patch includes gate fixes; standard/custom patches only modify the display component.
 v2.1.113+ ships as a native Bun SEA binary instead of a `cli.js` — the patchers now use same-length byte substitutions and ad-hoc `codesign`. The custom-peach patch *does* reproduce the peach border/warning header in the binary by repurposing the dead-code branch (the 25 bytes freed by simplifying `{dimColor:!0,italic:!0}`→`{c:!0}` and `{marginTop:J}`→`{c:J}` in the now-unreachable transcript-mode path exactly offsets the 25 bytes added by `borderStyle:"single",borderColor:"warning",paddingX:1` in the live render path). The plain `custom` variant cannot apply visual styling without relinking.
@@ -75,6 +76,70 @@ function co2({param:{thinking:A}...}) { ... Vs.default.createElement(...) }
 ```
 
 Patches using exact string matching must be updated for each version.
+
+---
+
+## v2.1.119 (npm, binary)
+
+**Standard identifier rotation — same Bun SEA architecture as v2.1.113/v2.1.116.**
+
+v2.1.119 keeps the binary format; the JS bundle still appears as two byte-identical copies inside the `__BUN` segment (offsets 72,204,288 / +120,951,224 on the macOS arm64 build). All six patches from v2.1.116's custom-peach variant port over one-to-one after identifier rotation — every search/replace pair retained the same byte length, so the same-length byte-patch + ad-hoc `codesign` workflow continues to work.
+
+**Redact-thinking beta header:**
+```javascript
+// In beta header builder function:
+if(O&&K_9(H)&&!h8()&&x8().showThinkingSummaries!==!0)_.push(EE_);
+// EE_ = "redact-thinking-2026-02-12"
+// ← Patch changes O to 0 (same length) so condition is always false
+```
+
+**Function signature:**
+```javascript
+function _86(H){let _=Ij7.c(9),{param:q,addMargin:K,isTranscriptMode:O,verbose:T,hideInTranscript:$}=H,{thinking:A}=q,z=K===void 0?!1:K,Y=$===void 0?!1:$;
+  if(!A)return null;
+  if(Y)return null;      // ← Patch changes Y -> 0 (same length) so always false
+  if(!(O||T)){...}       // ← Patch changes (O||T) -> (1||1) so condition is always false
+}
+```
+
+**Gate function (ZJ5):**
+```javascript
+case"redacted_thinking":{if(!f&&!$)return null;  // ← Custom-peach patch: !f&&!$ -> !1&&!1
+case"thinking":{if(!f&&!$)return null;           // ← Custom-peach patch: same
+```
+
+**Key identifiers:**
+- Component: `_86` | React: `j$H` | Box: `p` | Text: `k` | ThinkingContent: `rz`
+- Gate: `ZJ5` | Spinner sub-component: `qj` | Cache hook: `Ij7.c(9)` (9 slots)
+- Gate's cache: `N86.c(48)` (48 slots)
+- Redact header var: `EE_` = `"redact-thinking-2026-02-12"`
+
+**Notable changes from v2.1.116:**
+- Component renamed: `Vi_` → `_86`
+- React import: `L5H` → `j$H`
+- Box: `m` → `p`
+- Text: `L` → `k`
+- ThinkingContent: `pA` → `rz`
+- Spinner: `jY` → `qj`
+- Cache: `u97.c(9)` → `Ij7.c(9)` (still 9 slots)
+- Gate: `RH5` → `ZJ5`, conditional unchanged (`!f&&!$`)
+- Gate's cache: `oi_.c(48)` → `N86.c(48)`
+- Redact header variable: `fZ_` → `EE_`
+- Redact conditional helpers: `zFq` → `K_9`, `S8` → `h8`, `y8` → `x8`
+- Live-branch local vars: `J,j,D,M` → `M,D,j,J` (first-branch top local J→M; expanded-branch `z?1:0` var j→D and memoized elem D→j; final returned elem M→J)
+
+**6th patch (custom-peach only) — force `thinking.display="summarized"`:**
+
+Same mechanism as v2.1.116 — the server still defaults thinking display to `"omitted"` (empty thinking text) unless the client explicitly sets `display:"summarized"`. v2.1.119 renamed the flow variables:
+
+```javascript
+// Original (22 bytes):
+$_=eH?q.display:void 0
+// Patched (22 bytes, 7 trailing spaces for length parity):
+$_="summarized"
+```
+
+`$_` feeds into both `J_={type:"adaptive",display:$_}` and `J_={type:"enabled",...,display:$_}`, so both thinking-config paths now request summarized output. The check `if(J_&&$_){let F_=lH.indexOf(EE_);if(F_!==-1)lH.splice(F_,1)}` even splices out the redact-thinking header automatically once `$_` is truthy, making this patch redundant with #1 in the normal case (both are kept for defence-in-depth).
 
 ---
 
