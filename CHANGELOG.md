@@ -172,21 +172,29 @@ function Rer(mHC){
 - `__BUN` bundle is single-copy (previously duplicated at offset 113,478,872)
 - Cache-hook slot count reduced from 9 to 7 (`Htd.c(7)`)
 
-**Patch set (7 same-length patches in the custom-peach variant, all byte-verified):**
+**Patch set (5 same-length patches in the custom-peach variant, all byte-verified):**
 
 | # | Purpose | Search → Replace | Bytes |
 |---|---------|------------------|-------|
 | 1 | Smi opt-in: request `display:"summarized"` + skip redact header | `Smi(){return Bn().showThinkingSummaries??!1}` → `??!0}` | 44=44 |
 | 2 | Outer case guard bypass (thinking + redacted_thinking) | `!cit&&!BY` → `!(1)&&!!0` | 9=9 |
 | 3 | Rer defensive: never null on empty content | `if(!fco){return null}` → `if(!(1)){return null}` | 21=21 |
-| 4 | Force multi-line branch always | `children:xtd?Ste.jsx(Kf` → `children:!!1?Ste.jsx(Kf` | 23=23 |
+| 4 | **Content Box: red border + forced multi-line** (wide `tfs` swap) — swaps outer content Box props to `borderStyle:"single",borderColor:"red",paddingX:1,flexGrow:1`, forces the `!!1` ternary, and reduces the dead compact branch to `null` (freed bytes exactly offset the border props) | see below | 184=184 |
 | 5 | Label styling: red italic ∴ | `dimColor:!0,italic:!0,children:OQo` → `italic:!0,color:"red",children:OQo` | 34=34 |
-| 6 | Dead compact branch styling (cosmetic parity) | `{dimColor:!0,italic:!0,children:fco.trim().replace` → `{italic:!0,color:"red",children:fco.trim().replace` | 50=50 |
-| 7 | Multi-line thinking content: red | `Kf,{dimColor:!0,children:fco` → `Kf,{color:"red",children:fco` | 28=28 |
 
-Standard variant = patches #1–#3. Custom variant = same as Standard (parity; visual customization limited by tight JSX-runtime byte budget). Custom-peach = all seven.
+Patch 4 swap (both sides 184 bytes):
 
-The v2.1.145 -custom-peach could still do a full border box + bold header trick by stealing bytes from the dead compact branch — that trick has less headroom under the new JSX runtime, so v2.1.204's -custom-peach ships a red-italic color swap instead of a border. Reproducing the border+header would be feasible but requires a larger substitution across the assembly (`Fey`) node.
+```javascript
+// SEARCH:
+tfs=Ste.jsx(A,{flexDirection:"column",flexGrow:1,children:xtd?Ste.jsx(Kf,{dimColor:!0,children:fco.trim()}):Ste.jsx(h,{dimColor:!0,italic:!0,children:fco.trim().replace(/\s+/g," ")})})
+
+// REPLACE (43 trailing spaces before `})` for length parity):
+tfs=Ste.jsx(A,{borderStyle:"single",borderColor:"red",paddingX:1,flexGrow:1,children:!!1?Ste.jsx(Kf,{dimColor:!0,children:fco.trim()}):null                                           })
+```
+
+Standard variant = patches #1–#3. Custom variant = same as Standard (parity). Custom-peach = all five.
+
+**Why not color the Kf content?** `Kf` is a syntax-highlighter wrapper (defined at ~156,145,000 in the `__BUN` segment as `Kf(XJu){...vJg=QJu.syntaxHighlightingDisabled?null:Vme()...Ste.jsx(gcs,{...XJu,highlight:vJg})}`). Passing `color:"red"` through the `...XJu` spread has no visible effect because the highlighter overrides child colors. The visual budget in v2.1.204 is best spent on the outer Ink Box (border, drawn by the Box itself) and the plain-Text label — both are independent of the highlighter.
 
 ---
 
@@ -1172,7 +1180,7 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-07-08 | **v2.1.204** | **Architectural rewrite**: new `Smi`/`WGl`/`GGl` request-side pipeline, `Rer` renderer, JSX-runtime (`Ste.jsx`), case-level guard replaces gate function, single-copy `__BUN` bundle, `hideInTranscript` removed. Standard/Custom apply 3 patches; Custom Peach adds red italic label + red content + forced multi-line (7 total) |
+| 2026-07-08 | **v2.1.204** | **Architectural rewrite**: new `Smi`/`WGl`/`GGl` request-side pipeline, `Rer` renderer, JSX-runtime (`Ste.jsx`), case-level guard replaces gate function, single-copy `__BUN` bundle, `hideInTranscript` removed. Standard/Custom apply 3 patches; Custom Peach adds a real single-line red border box + red italic ∴ label + forced multi-line (5 total). `Kf` is a syntax-highlighter wrapper — content color inside is dominated by the highlighter, so the visual budget goes on the outer Box border |
 | 2026-04-28 | v2.1.121 | New identifiers (K96/c$H/dW5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |
 | 2026-04-24 | v2.1.119 | New identifiers (_86/j$H/ZJ5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |
 | 2026-04-20 | v2.1.116 | New identifiers (Vi_/L5H/RH5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` (6th patch) so API returns text instead of empty signature-only blocks |

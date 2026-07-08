@@ -13,23 +13,23 @@ const readline = require('readline');
 // All replacements must be SAME-LENGTH byte substitutions.
 //
 // Applies the Standard v2.1.204 patches plus visual styling:
-//   - Forces the multi-line (Kf) render branch even in default mode
-//     (would otherwise be a whitespace-collapsed one-liner)
-//   - Recolors the ∴ label and thinking content to `color:"red"`
-//     (renders peach-adjacent on warm-theme terminals)
-//   - Recolors the dead compact branch too, for cosmetic parity
+//   - Draws a single-line red border box around thinking content
+//     (via same-length swap on the outer content Box props)
+//   - Forces the multi-line render branch even in default mode
+//   - Recolors the ∴ label to red italic
+//   - Reduces the now-dead compact branch to `null` (freed bytes
+//     are used to fit the border props in the outer Box)
 //
-// The v2.1.145 -custom-peach did a full border+bold header swap by
-// stealing bytes from the dead compact branch. In v2.1.204 the JSX
-// runtime (Ste.jsx) is more compact and the byte budget is tighter,
-// so this variant sticks to color swaps that fit cleanly. To go
-// further (border box, bold header) would require the same
-// dead-branch-stealing trick — feasible but non-trivial.
+// Kf note: Kf is a syntax-highlighter wrapper (see function Kf
+// at ~156,145,000 in the __BUN segment). Coloring Kf's props has
+// no visible effect because the highlighter overrides child text
+// colors. Only the outer Box border and the plain-Text label are
+// reliably style-able. This variant reflects that constraint.
 //
 // v2.1.204 identifiers: Smi (setting gate), Rer (renderer),
 //   cit=isTranscriptMode, BY=verbose, fco=thinking content,
-//   xtd=multi-line-mode flag, OQo=∴ glyph, Kf=multi-line Text
-//   component, h=Text, A=Box, Ste=jsx-runtime module.
+//   xtd=multi-line-mode flag, OQo=∴ glyph, Kf=syntax-highlighter,
+//   h=Text, A=Box, Ste=jsx-runtime module.
 // ============================================================
 
 const homeDir = os.homedir();
@@ -138,44 +138,28 @@ const PATCHES = [
     expectedSites: 1
   },
 
-  // ── Custom Peach visual (4 same-length swaps in Rer body) ─────────────
+  // ── Custom Peach visual (2 same-length swaps in Rer body) ─────────────
   //
-  // Order matters: label + compact-branch patches (which include an
-  // `,italic:!0` suffix that we swap to `,color:"red"`) must run BEFORE
-  // the plain `dimColor:!0` swap on the multi-line branch — otherwise
-  // the general swap would corrupt the compound-property spots first.
-  //
-  // Force the multi-line (Kf) branch regardless of xtd (isTranscript||verbose).
-  // In default mode the compact one-liner branch would otherwise render.
+  // The wide `tfs` swap below subsumes what would otherwise be three
+  // narrower patches (force-multi-line, dead-branch styling, multi-line
+  // color). It replaces the outer content Box's props with border +
+  // color + padding, forces the `!!1` ternary, and reduces the dead
+  // compact branch to `null` — the freed bytes exactly offset the border
+  // props added on the Box, so total length is preserved.
   {
-    name: 'Force multi-line render (xtd → always true) at ternary use-site',
-    search: Buffer.from('children:xtd?Ste.jsx(Kf'),
-    replace: Buffer.from('children:!!1?Ste.jsx(Kf'),
+    name: 'Content Box: red border + forced multi-line (wide tfs swap)',
+    search: Buffer.from('tfs=Ste.jsx(A,{flexDirection:"column",flexGrow:1,children:xtd?Ste.jsx(Kf,{dimColor:!0,children:fco.trim()}):Ste.jsx(h,{dimColor:!0,italic:!0,children:fco.trim().replace(/\\s+/g," ")})})'),
+    replace: Buffer.from('tfs=Ste.jsx(A,{borderStyle:"single",borderColor:"red",paddingX:1,flexGrow:1,children:!!1?Ste.jsx(Kf,{dimColor:!0,children:fco.trim()}):null                                           })'),
     expectedSites: 1
   },
   // Recolor the ∴ label. Original: `{"aria-label":"thinking:",dimColor:!0,italic:!0,children:OQo}`.
   // Byte-preserving swap: drop dimColor, keep italic, add red color.
+  // The label uses plain Ink `h` (Text), so `color:"red"` renders visibly —
+  // unlike the content, whose Kf syntax highlighter overrides colors.
   {
     name: 'Label styling: red italic ∴',
     search: Buffer.from('dimColor:!0,italic:!0,children:OQo'),
     replace: Buffer.from('italic:!0,color:"red",children:OQo'),
-    expectedSites: 1
-  },
-  // Recolor the dead compact branch too — cosmetic parity in case any
-  // future refactor makes the branch reachable.
-  {
-    name: 'Compact branch styling: red italic (dead code, cosmetic parity)',
-    search: Buffer.from('{dimColor:!0,italic:!0,children:fco.trim().replace'),
-    replace: Buffer.from('{italic:!0,color:"red",children:fco.trim().replace'),
-    expectedSites: 1
-  },
-  // Recolor the LIVE multi-line thinking text. The `Kf,` prefix keeps
-  // this specific to the Kf JSX call and avoids collateral swaps on any
-  // other `dimColor:!0,children:` construct elsewhere in the bundle.
-  {
-    name: 'Multi-line thinking text: red',
-    search: Buffer.from('Kf,{dimColor:!0,children:fco'),
-    replace: Buffer.from('Kf,{color:"red",children:fco'),
     expectedSites: 1
   }
 ];
@@ -344,8 +328,8 @@ async function main() {
   console.log('   - Smi flipped: API returns summarized thinking (Opus 4.7+)');
   console.log('   - Outer case gate bypassed: thinking + redacted_thinking always render');
   console.log('   - Rer defensive: never returns null on empty content');
-  console.log('   - Forced multi-line: no more whitespace-collapsed one-liner in default mode');
-  console.log('   - 🍑 Visual: red italic ∴ label + red thinking content');
+  console.log('   - Content Box: single-line red border + forced multi-line always');
+  console.log('   - Label: red italic ∴');
 }
 
 main().catch(err => { console.error('Error:', err.message); process.exit(1); });
