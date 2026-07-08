@@ -67,7 +67,7 @@ claude --version
 
 | Version | Patches | Install Method |
 |---------|---------|----------------|
-| **v2.1.204** | Standard, Custom, Custom Peach (binary; red border box + red italic label + forced multi-line in custom-peach) | `npm install -g` |
+| **v2.1.204** | Standard, Custom, Custom Peach (binary; peach `#ffc27a` border box + 🍑 emoji label + forced multi-line in custom-peach) | `npm install -g` |
 | v2.1.145 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
 | v2.1.121 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
 | v2.1.119 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |

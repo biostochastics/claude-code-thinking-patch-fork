@@ -179,8 +179,10 @@ function Rer(mHC){
 | 1 | Smi opt-in: request `display:"summarized"` + skip redact header | `Smi(){return Bn().showThinkingSummaries??!1}` → `??!0}` | 44=44 |
 | 2 | Outer case guard bypass (thinking + redacted_thinking) | `!cit&&!BY` → `!(1)&&!!0` | 9=9 |
 | 3 | Rer defensive: never null on empty content | `if(!fco){return null}` → `if(!(1)){return null}` | 21=21 |
-| 4 | **Content Box: red border + forced multi-line** (wide `tfs` swap) — swaps outer content Box props to `borderStyle:"single",borderColor:"red",paddingX:1,flexGrow:1`, forces the `!!1` ternary, and reduces the dead compact branch to `null` (freed bytes exactly offset the border props) | see below | 184=184 |
-| 5 | Label styling: red italic ∴ | `dimColor:!0,italic:!0,children:OQo` → `italic:!0,color:"red",children:OQo` | 34=34 |
+| 4 | **Content Box: peach border + forced multi-line** (wide `tfs` swap) — outer content Box props swapped to `borderStyle:"single",borderColor:"#ffc27a",paddingX:1,flexGrow:1`, forces the `!!1` ternary, and reduces the dead compact branch to `null` (freed bytes exactly offset the border props) | see below | 184=184 |
+| 5 | **Label: 🍑 peach emoji** — replaces the `∴` glyph reference (`children:OQo`) with a surrogate-pair escape (`"🍑"`); the `aria-label` prop is dropped to fit the byte budget (14 spaces of padding restore length parity) | see below | 72=72 |
+
+Peach color: `#ffc27a` (hex sends the exact RGB triplet — no ANSI palette lookup, no theme remap). Named color like `"red"` renders gray on some terminal themes; hex bypasses that.
 
 Patch 4 swap (both sides 184 bytes):
 
@@ -188,8 +190,18 @@ Patch 4 swap (both sides 184 bytes):
 // SEARCH:
 tfs=Ste.jsx(A,{flexDirection:"column",flexGrow:1,children:xtd?Ste.jsx(Kf,{dimColor:!0,children:fco.trim()}):Ste.jsx(h,{dimColor:!0,italic:!0,children:fco.trim().replace(/\s+/g," ")})})
 
-// REPLACE (43 trailing spaces before `})` for length parity):
-tfs=Ste.jsx(A,{borderStyle:"single",borderColor:"red",paddingX:1,flexGrow:1,children:!!1?Ste.jsx(Kf,{dimColor:!0,children:fco.trim()}):null                                           })
+// REPLACE (39 trailing spaces before `})` for length parity):
+tfs=Ste.jsx(A,{borderStyle:"single",borderColor:"#ffc27a",paddingX:1,flexGrow:1,children:!!1?Ste.jsx(Kf,{dimColor:!0,children:fco.trim()}):null                                       })
+```
+
+Patch 5 swap (both sides 72 bytes):
+
+```javascript
+// SEARCH:
+Ste.jsx(h,{"aria-label":"thinking:",dimColor:!0,italic:!0,children:OQo})
+
+// REPLACE (14 leading spaces after `{` for length parity):
+Ste.jsx(h,{              dimColor:!0,italic:!0,children:"🍑"})
 ```
 
 Standard variant = patches #1–#3. Custom variant = same as Standard (parity). Custom-peach = all five.
@@ -1180,7 +1192,7 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-07-08 | **v2.1.204** | **Architectural rewrite**: new `Smi`/`WGl`/`GGl` request-side pipeline, `Rer` renderer, JSX-runtime (`Ste.jsx`), case-level guard replaces gate function, single-copy `__BUN` bundle, `hideInTranscript` removed. Standard/Custom apply 3 patches; Custom Peach adds a real single-line red border box + red italic ∴ label + forced multi-line (5 total). `Kf` is a syntax-highlighter wrapper — content color inside is dominated by the highlighter, so the visual budget goes on the outer Box border |
+| 2026-07-08 | **v2.1.204** | **Architectural rewrite**: new `Smi`/`WGl`/`GGl` request-side pipeline, `Rer` renderer, JSX-runtime (`Ste.jsx`), case-level guard replaces gate function, single-copy `__BUN` bundle, `hideInTranscript` removed. Standard/Custom apply 3 patches; Custom Peach adds a real single-line peach (`#ffc27a`) border box + 🍑 emoji label + forced multi-line (5 total). Uses hex color (not named "red") because some terminal themes remap named ANSI colors. `Kf` is a syntax-highlighter wrapper — content color inside is dominated by the highlighter, so the visual budget goes on the outer Box border |
 | 2026-04-28 | v2.1.121 | New identifiers (K96/c$H/dW5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |
 | 2026-04-24 | v2.1.119 | New identifiers (_86/j$H/ZJ5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |
 | 2026-04-20 | v2.1.116 | New identifiers (Vi_/L5H/RH5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` (6th patch) so API returns text instead of empty signature-only blocks |

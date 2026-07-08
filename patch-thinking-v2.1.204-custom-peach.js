@@ -146,20 +146,30 @@ const PATCHES = [
   // color + padding, forces the `!!1` ternary, and reduces the dead
   // compact branch to `null` — the freed bytes exactly offset the border
   // props added on the Box, so total length is preserved.
+  // Peach hex `#ffc27a` (matches the v2.1.145 peach). Named "red" rendered as
+  // gray on some terminal themes (ANSI palette remap + possible dim inheritance).
+  // Hex sends the exact RGB triplet, no palette lookup, no remap.
+  //
+  // Note on the label: the ∴ label's byte slot (`dimColor:!0,italic:!0` = 21 chars)
+  // is too small to fit `color:"#ffc27a"` (15 chars) alongside any Text modifier
+  // that keeps the glyph legible (`bold:!0` = 7, `italic:!0` = 9). So the label
+  // is left in its default dim-italic form — the peach border on the outer Box
+  // is what carries the visual identity.
   {
-    name: 'Content Box: red border + forced multi-line (wide tfs swap)',
+    name: 'Content Box: peach border + forced multi-line (wide tfs swap)',
     search: Buffer.from('tfs=Ste.jsx(A,{flexDirection:"column",flexGrow:1,children:xtd?Ste.jsx(Kf,{dimColor:!0,children:fco.trim()}):Ste.jsx(h,{dimColor:!0,italic:!0,children:fco.trim().replace(/\\s+/g," ")})})'),
-    replace: Buffer.from('tfs=Ste.jsx(A,{borderStyle:"single",borderColor:"red",paddingX:1,flexGrow:1,children:!!1?Ste.jsx(Kf,{dimColor:!0,children:fco.trim()}):null                                           })'),
+    replace: Buffer.from('tfs=Ste.jsx(A,{borderStyle:"single",borderColor:"#ffc27a",paddingX:1,flexGrow:1,children:!!1?Ste.jsx(Kf,{dimColor:!0,children:fco.trim()}):null                                       })'),
     expectedSites: 1
   },
-  // Recolor the ∴ label. Original: `{"aria-label":"thinking:",dimColor:!0,italic:!0,children:OQo}`.
-  // Byte-preserving swap: drop dimColor, keep italic, add red color.
-  // The label uses plain Ink `h` (Text), so `color:"red"` renders visibly —
-  // unlike the content, whose Kf syntax highlighter overrides colors.
+  // Peach emoji label: swap the ∴ variable reference (`OQo`) for a literal peach
+  // emoji via surrogate-pair escape (`🍑` = U+1F351 🍑). The label's
+  // byte budget only fits the emoji if we drop the `aria-label`; 14 spaces of
+  // padding restore length parity. Screen readers fall back to the emoji glyph
+  // as the accessible name (macOS VoiceOver reads "peach").
   {
-    name: 'Label styling: red italic ∴',
-    search: Buffer.from('dimColor:!0,italic:!0,children:OQo'),
-    replace: Buffer.from('italic:!0,color:"red",children:OQo'),
+    name: 'Label swap: peach emoji 🍑 (drops aria-label to fit)',
+    search:  Buffer.from('Ste.jsx(h,{"aria-label":"thinking:",dimColor:!0,italic:!0,children:OQo})'),
+    replace: Buffer.from('Ste.jsx(h,{              dimColor:!0,italic:!0,children:"\\uD83C\\uDF51"})'),
     expectedSites: 1
   }
 ];
@@ -328,8 +338,8 @@ async function main() {
   console.log('   - Smi flipped: API returns summarized thinking (Opus 4.7+)');
   console.log('   - Outer case gate bypassed: thinking + redacted_thinking always render');
   console.log('   - Rer defensive: never returns null on empty content');
-  console.log('   - Content Box: single-line red border + forced multi-line always');
-  console.log('   - Label: red italic ∴');
+  console.log('   - Content Box: single-line peach border (#ffc27a) + forced multi-line always');
+  console.log('   - Label: 🍑 peach emoji (replaces ∴)');
 }
 
 main().catch(err => { console.error('Error:', err.message); process.exit(1); });
