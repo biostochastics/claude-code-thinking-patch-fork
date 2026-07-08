@@ -17,8 +17,11 @@ Make Claude Code's thinking blocks visible by default without pressing `ctrl+o`.
 # Check your version
 claude --version
 
-# v2.1.113+ (binary format, recommended patch: custom-peach for default-mode visibility + peach styling)
-node patch-thinking-v2.1.145-custom-peach.js
+# v2.1.204 (latest — architectural rewrite; custom-peach recommended)
+node patch-thinking-v2.1.204-custom-peach.js
+
+# v2.1.145 (previous)
+# node patch-thinking-v2.1.145-custom-peach.js
 
 # Older versions with cli.js format
 # node patch-thinking-v2.1.112-custom-peach.js
@@ -64,7 +67,8 @@ claude --version
 
 | Version | Patches | Install Method |
 |---------|---------|----------------|
-| **v2.1.145** | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
+| **v2.1.204** | Standard, Custom, Custom Peach (binary; red italic + forced multi-line in custom-peach) | `npm install -g` |
+| v2.1.145 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
 | v2.1.121 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
 | v2.1.119 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
 | v2.1.116 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
@@ -105,7 +109,7 @@ located and edited, but with two constraints:
 | Constraint | Why |
 |------------|-----|
 | Replacements must be **same-length** | Mach-O offsets and segment sizes are fixed — any length change corrupts the binary |
-| The bundle is **duplicated** inside the segment | Every patch must be applied to all occurrences (the patchers use `replaceAll`) |
+| The bundle is **duplicated** inside the segment (v2.1.113–v2.1.121) | Every patch must be applied to all occurrences (the patchers use `replaceAll`). From **v2.1.145** onward the bundle is single-copy, but the patchers keep the `replaceAll` behavior for safety |
 | macOS requires **re-signing** | Editing bytes invalidates the existing signature; the patcher runs `codesign --force --sign -` (ad-hoc) automatically |
 
 What this means for custom/peach variants: the **custom-peach** variant *does*
@@ -125,7 +129,7 @@ Updates overwrite patches. Re-apply after updating:
 
 ```bash
 claude --version
-node patch-thinking-v2.1.145-custom-peach.js
+node patch-thinking-v2.1.204-custom-peach.js
 ```
 
 ---
@@ -184,10 +188,11 @@ See [CHANGELOG.md](CHANGELOG.md) for version-specific technical details.
 ## Files
 
 ```
-patch-thinking-v2.1.145.js              # Latest standard (npm, binary)
-patch-thinking-v2.1.145-custom.js       # Latest custom (npm, binary — no visual styling)
-patch-thinking-v2.1.145-custom-peach.js # Latest custom-peach (npm, binary, recommended)
-patch-thinking-v2.1.119-*.js            # Previous binary triplet
+patch-thinking-v2.1.204.js              # Latest standard (npm, binary — architectural rewrite)
+patch-thinking-v2.1.204-custom.js       # Latest custom (npm, binary — parity with standard)
+patch-thinking-v2.1.204-custom-peach.js # Latest custom-peach (npm, binary, recommended)
+patch-thinking-v2.1.145-*.js            # Previous binary triplet
+patch-thinking-v2.1.119-*.js            # Earlier binary triplet
 patch-thinking-v2.1.116-*.js            # Earlier binary triplet
 patch-thinking-v2.1.113-*.js            # Earlier binary triplet
 patch-thinking-v2.1.112-*.js            # Last cli.js triplet (npm, plain JS)
@@ -222,4 +227,4 @@ Provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last updated:** 2026-05-19 · **Latest:** v2.1.145 (npm, binary)
+**Last updated:** 2026-07-08 · **Latest:** v2.1.204 (npm, binary — architectural rewrite)

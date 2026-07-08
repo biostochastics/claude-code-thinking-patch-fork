@@ -15,7 +15,8 @@ This document tracks minified identifier changes between Claude Code versions.
 
 | Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
 |---------|-----------|-------|-----|------|-----------------|------|---------|
-| **v2.1.145** | `NA6` | `nJH` | `B` | `V` | `eA` | `Le5` | npm (binary) |
+| **v2.1.204** | `Rer` | `Ste` (jsx runtime) | `A` | `h` | `Kf` (multi-line) | case-level `!cit&&!BY` | npm (binary) |
+| v2.1.145 | `NA6` | `nJH` | `B` | `V` | `eA` | `Le5` | npm (binary) |
 | v2.1.121 | `K96` | `c$H` | `p` | `v` | `fY` | `dW5` | npm (binary) |
 | v2.1.119 | `_86` | `j$H` | `p` | `k` | `rz` | `ZJ5` | npm (binary) |
 | v2.1.116 | `Vi_` | `L5H` | `m` | `L` | `pA` | `RH5` | npm (binary) |
@@ -40,7 +41,7 @@ This document tracks minified identifier changes between Claude Code versions.
 | v2.1.19 | `oG1` | `VqA` | `I` | `f` | `qO` | — | npm |
 | v2.1.4–v2.1.12 | `WkA` | `z9A` | `j` | `$` | `$D` | — | legacy |
 
-v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz/Udz/eOY/d9Y/m7Y/wKY/ni1/RH5/ZJ5/dW5/Le5) that controls whether thinking blocks render at all.
+v2.1.30+ has a gate function (IMY/EPY/iGY/fyY/jiY/ZgY/TcY/TGY/oTY/ty_/Tpz/EQz/Udz/eOY/d9Y/m7Y/wKY/ni1/RH5/ZJ5/dW5/Le5) that controls whether thinking blocks render at all. **v2.1.204 removed the dedicated gate function** — the equivalent guard is inlined as `if(!cit&&!BY){return null}` at the top of the `case"thinking"` / `case"redacted_thinking"` blocks. The renderer component was also renamed (`Rer`), the `hideInTranscript` prop was dropped, and the inline `"∴ Thinking…"` string was replaced by a variable reference (`OQo="∴"`).
 v2.1.76+ has server-side thinking redaction via the `"redact-thinking-2026-02-12"` beta header — all patches must disable this.
 The custom-peach patch includes gate fixes; standard/custom patches only modify the display component.
 v2.1.113+ ships as a native Bun SEA binary instead of a `cli.js` — the patchers now use same-length byte substitutions and ad-hoc `codesign`. The custom-peach patch *does* reproduce the peach border/warning header in the binary by repurposing the dead-code branch (the 25 bytes freed by simplifying `{dimColor:!0,italic:!0}`→`{c:!0}` and `{marginTop:J}`→`{c:J}` in the now-unreachable transcript-mode path exactly offsets the 25 bytes added by `borderStyle:"single",borderColor:"warning",paddingX:1` in the live render path). The plain `custom` variant cannot apply visual styling without relinking.
@@ -78,6 +79,114 @@ function co2({param:{thinking:A}...}) { ... Vs.default.createElement(...) }
 ```
 
 Patches using exact string matching must be updated for each version.
+
+---
+
+## v2.1.204 (npm, binary)
+
+**Architectural rewrite — thinking pipeline restructured around a new API opt-in.**
+
+v2.1.204 is not a simple identifier rotation. Anthropic reworked how thinking blocks are requested, returned, and displayed:
+
+1. **Server-side default flipped.** Claude Opus 4.7 (mid-2026) introduced a new `thinking.display` request parameter with values `"summarized"` or `"omitted"`. The **default is `"omitted"`** — the API returns thinking blocks with only a cryptographic signature and no text unless the client explicitly opts in.
+2. **New client-side gate.** A single boolean setting `showThinkingSummaries` (in `~/.claude/settings.json`) drives both the outbound request (`display:"summarized"`) and whether the legacy `redact-thinking-2026-02-12` beta header is attached. Both mechanisms are now paired — flipping one implicitly disables the other.
+3. **Renderer refactored.** The old `hideInTranscript` prop and the compact-vs-expanded internal split were removed. The new `Rer` component has one inner emptiness check and a single ternary that picks between multi-line (`Kf`) and whitespace-collapsed one-liner (`h`) based on `xtd = isTranscriptMode||verbose`.
+4. **JSX runtime migration.** The bundle now uses `Ste.jsx(A, ...)` instead of `React.createElement(A, ...)`. Every render site is shorter, which tightens the byte budget for visual customization.
+5. **Bundle no longer duplicated.** Inside the `__BUN` Mach-O segment, the JS bundle now appears **once** — the two byte-identical copies from v2.1.113–v2.1.145 are gone. `replaceAll` on binary substitution is still safe but no longer required.
+6. **Inline label literal removed.** The `"∴ Thinking…"` string is gone from the bundle; only the glyph variable `OQo="∴"` remains. Downstream fingerprint-based detectors need new anchors.
+
+**Request-side gate — `Smi()`:**
+```javascript
+function Smi(){return Bn().showThinkingSummaries??!1}
+// Consumed at:
+//   WGl(...)  — decides whether to send display:"summarized" (Opus 4.7+ path)
+//   if(i&&_Ir(e)&&!Rn()&&!Smi()) t.push(Nwr)  — Nwr = "redact-thinking-2026-02-12"
+// Standard patch flips `??!1` → `??!0` (44=44 bytes). This single edit does both
+// jobs: enables summarized thinking on Opus 4.7+ AND skips the legacy redact header
+// on older models.
+```
+
+**Display-value picker — `WGl` / `GGl`:**
+```javascript
+function WGl({explicitDisplay:e,isNonInteractive:t,outputFormat:r,verbose:n}){
+  if(e) return e;
+  if(!t) return Smi()?"summarized":void 0;
+  if(r==="text"||r==="json"&&!n) return "omitted";
+  return
+}
+function GGl(e,{...,sessionDisplayExplicit:i}){
+  if(i||!o||t||r||n||e.type==="disabled"||e.display==="omitted") return e;
+  return {...e,display:"omitted"}
+}
+```
+
+**Outer case gate (equivalent of the old Le5/ni1 gate function):**
+```javascript
+case"redacted_thinking":{if(!cit&&!BY){return null}...}
+case"thinking":{if(!cit&&!BY){return null}
+  ...Kd.jsx(Rer,{addMargin:ej,param:XO,isTranscriptMode:cit,verbose:BY})...
+}
+// cit=isTranscriptMode, BY=verbose. Custom-peach patches `!cit&&!BY` → `!(1)&&!!0`
+// (9=9 bytes). One search matches both cases — bundle is single-copy, so a single
+// replace-all touches both sites.
+```
+
+**Renderer — `Rer`:**
+```javascript
+function Rer(mHC){
+  let Itd=Htd.c(7),
+      {param:hHC,addMargin:Mey,isTranscriptMode:gHC,verbose:yHC}=mHC,
+      {thinking:fco}=hHC,
+      _HC=Mey===void 0?!1:Mey;
+  if(!fco){return null}                        // ← standard patch: `!fco` → `!(1)`
+  let xtd=gHC||yHC;                            // isTranscriptMode || verbose
+  const ktd=_HC?1:0;
+  // Label:
+  Ney = Ste.jsx(A,{minWidth:2,children:Ste.jsx(h,{"aria-label":"thinking:",dimColor:!0,italic:!0,children:OQo})})
+  // Content ternary:
+  tfs = Ste.jsx(A,{flexDirection:"column",flexGrow:1,
+    children: xtd
+      ? Ste.jsx(Kf,{dimColor:!0,children:fco.trim()})                              // multi-line
+      : Ste.jsx(h,{dimColor:!0,italic:!0,children:fco.trim().replace(/\s+/g," ")}) // compact one-liner
+  })
+  // Assembly:
+  Fey = Ste.jsxs(A,{flexDirection:"row",marginTop:ktd,width:"100%",children:[Ney,tfs]})
+  return Fey
+}
+```
+
+**Key identifiers:**
+- Renderer: `Rer` | Setting-gate: `Smi` | Display-picker: `WGl` | Request normalizer: `GGl`
+- JSX runtime: `Ste` (imports `jsx` + `jsxs`) | Box: `A` | Text: `h` | Multi-line Text: `Kf`
+- Case-level guard vars: `cit` (isTranscriptMode) | `BY` (verbose) | `fco` (thinking content)
+- Glyph var: `OQo="∴"` | Redact header var: `Nwr` = `"redact-thinking-2026-02-12"` (legacy path)
+
+**Notable changes from v2.1.145:**
+- Component: `NA6` → `Rer` (also role split — request-side setting gate is now `Smi`)
+- React imports: `nJH.default.createElement(B,...)` → `Ste.jsx(A,...)` / `Ste.jsxs(A,...)`
+- Box: `B` → `A` | Text: `V` → `h` | Multi-line Text: (new) `Kf`
+- Gate function: `Le5` removed — case-level `!cit&&!BY` guard instead
+- Redact-header condition: `if(O&&gD9(H)&&!R8()&&g8().showThinkingSummaries!==!0)` → `if(i&&_Ir(e)&&!Rn()&&!Smi())` — the compound `showThinkingSummaries!==!0` check collapsed into the single `!Smi()` call
+- `hideInTranscript` prop **removed** from the renderer entirely
+- `"∴ Thinking…"` inline literal replaced by glyph-only variable reference (`OQo`)
+- `__BUN` bundle is single-copy (previously duplicated at offset 113,478,872)
+- Cache-hook slot count reduced from 9 to 7 (`Htd.c(7)`)
+
+**Patch set (7 same-length patches in the custom-peach variant, all byte-verified):**
+
+| # | Purpose | Search → Replace | Bytes |
+|---|---------|------------------|-------|
+| 1 | Smi opt-in: request `display:"summarized"` + skip redact header | `Smi(){return Bn().showThinkingSummaries??!1}` → `??!0}` | 44=44 |
+| 2 | Outer case guard bypass (thinking + redacted_thinking) | `!cit&&!BY` → `!(1)&&!!0` | 9=9 |
+| 3 | Rer defensive: never null on empty content | `if(!fco){return null}` → `if(!(1)){return null}` | 21=21 |
+| 4 | Force multi-line branch always | `children:xtd?Ste.jsx(Kf` → `children:!!1?Ste.jsx(Kf` | 23=23 |
+| 5 | Label styling: red italic ∴ | `dimColor:!0,italic:!0,children:OQo` → `italic:!0,color:"red",children:OQo` | 34=34 |
+| 6 | Dead compact branch styling (cosmetic parity) | `{dimColor:!0,italic:!0,children:fco.trim().replace` → `{italic:!0,color:"red",children:fco.trim().replace` | 50=50 |
+| 7 | Multi-line thinking content: red | `Kf,{dimColor:!0,children:fco` → `Kf,{color:"red",children:fco` | 28=28 |
+
+Standard variant = patches #1–#3. Custom variant = same as Standard (parity; visual customization limited by tight JSX-runtime byte budget). Custom-peach = all seven.
+
+The v2.1.145 -custom-peach could still do a full border box + bold header trick by stealing bytes from the dead compact branch — that trick has less headroom under the new JSX runtime, so v2.1.204's -custom-peach ships a red-italic color swap instead of a border. Reproducing the border+header would be feasible but requires a larger substitution across the assembly (`Fey`) node.
 
 ---
 
@@ -1063,7 +1172,8 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-04-28 | **v2.1.121** | New identifiers (K96/c$H/dW5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |
+| 2026-07-08 | **v2.1.204** | **Architectural rewrite**: new `Smi`/`WGl`/`GGl` request-side pipeline, `Rer` renderer, JSX-runtime (`Ste.jsx`), case-level guard replaces gate function, single-copy `__BUN` bundle, `hideInTranscript` removed. Standard/Custom apply 3 patches; Custom Peach adds red italic label + red content + forced multi-line (7 total) |
+| 2026-04-28 | v2.1.121 | New identifiers (K96/c$H/dW5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |
 | 2026-04-24 | v2.1.119 | New identifiers (_86/j$H/ZJ5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |
 | 2026-04-20 | v2.1.116 | New identifiers (Vi_/L5H/RH5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` (6th patch) so API returns text instead of empty signature-only blocks |
 | 2026-04-17 | v2.1.113 | **BREAKING: binary format (Bun SEA)**. New identifiers (Yl_/g1H/ni1), byte-patch + codesign |

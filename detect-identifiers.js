@@ -8,9 +8,10 @@ const os = require('os');
 const homeDir = os.homedir();
 const claudePath = path.join(homeDir, '.claude/local/node_modules/@anthropic-ai/claude-code/cli.js');
 
-console.log('Claude Code Universal Identifier Detector v3');
+console.log('Claude Code Universal Identifier Detector v4');
 console.log('============================================');
-console.log('Detects: Thinking patterns + Hook patterns\n');
+console.log('Detects: Thinking patterns (v2.1.204 rewrite + legacy) + Hook patterns');
+console.log('For v2.1.113+ binary installs: extract __BUN segment and point at it.\n');
 console.log(`Target file: ${claudePath}\n`);
 
 // Check if file exists
@@ -27,6 +28,76 @@ const content = fs.readFileSync(claudePath, 'utf8');
 console.log(`File size: ${(content.length / 1024 / 1024).toFixed(2)} MB\n`);
 
 // Strategy: Use distinctive strings to locate code, then extract identifiers
+
+// ==================== v2.1.204+ REWRITE DETECTION ====================
+// v2.1.204 rewrote the thinking pipeline. Anchors:
+//   - `showThinkingSummaries??!` — the request-side setting gate (Smi function)
+//   - `function Rer(` — the renderer component (in patched forks it may be renamed;
+//     grep for `let xtd=` + `||` + a 3-char ident pair to find equivalents)
+//   - `case"thinking":{if(!` — the case-level outer guard (replaces the old Le5/ni1 gate)
+console.log('🔍 Detecting v2.1.204+ rewrite architecture...');
+const v204Signals = {
+  smi: content.indexOf('showThinkingSummaries??!'),
+  rerCase: content.indexOf('case"thinking":{if(!'),
+  jsxRuntime: content.indexOf('Ste.jsx('),
+  glyphVar: content.indexOf('OQo="∴"'),
+  redactedThinking: content.indexOf('case"redacted_thinking":{if(!'),
+};
+let isV204Style = 0;
+for (const k of Object.keys(v204Signals)) if (v204Signals[k] !== -1) isV204Style++;
+if (isV204Style >= 3) {
+  console.log(`✅ v2.1.204+ architecture detected (${isV204Style}/5 signals)`);
+
+  // Extract Smi function body to identify the setting-gate identifier
+  const smiMatch = content.match(/function\s+(\w+)\(\)\{return\s+(\w+)\(\)\.showThinkingSummaries\?\?!([01])\}/);
+  if (smiMatch) {
+    console.log(`   Setting-gate fn:      ${smiMatch[1]}()`);
+    console.log(`   Settings-accessor fn: ${smiMatch[2]}()`);
+    console.log(`   Fallback default:     !${smiMatch[3]}   (${smiMatch[3] === '0' ? 'ALREADY PATCHED (returns true)' : 'unpatched (returns false)'})`);
+  }
+
+  // Extract the case guard variables (cit=isTranscriptMode, BY=verbose in v2.1.204)
+  const guardMatch = content.match(/case"thinking":\{if\(!(\w{1,4})&&!(\w{1,4})\)\{return null\}/);
+  if (guardMatch) {
+    console.log(`   Case guard vars:      isTranscriptMode=${guardMatch[1]}, verbose=${guardMatch[2]}`);
+    console.log(`   Custom-peach patch:   !${guardMatch[1]}&&!${guardMatch[2]}  ->  !(1)&&!!0`);
+  } else if (content.indexOf('case"thinking":{if(!(1)&&!!0)') !== -1) {
+    console.log(`   Case guard vars:      ALREADY PATCHED (!(1)&&!!0)`);
+  }
+
+  // Find the renderer function — look for the props destructure with isTranscriptMode + verbose
+  const rerRegex = /function\s+(\w{1,5})\(\w+\)\{let\s+(\w+)=(\w+)\.c\((\d+)\),\{param:\w+,addMargin:\w+,isTranscriptMode:(\w+),verbose:(\w+)\}=/;
+  const rerMatch = content.match(rerRegex);
+  if (rerMatch) {
+    console.log(`   Renderer function:    ${rerMatch[1]}(...)  (cache: ${rerMatch[3]}.c(${rerMatch[4]}), ${rerMatch[4]} slots)`);
+    console.log(`   Renderer prop vars:   isTranscriptMode=${rerMatch[5]}, verbose=${rerMatch[6]}`);
+
+    // Locate the compact-vs-multi-line ternary INSIDE the renderer body (not somewhere
+    // else in the bundle that happens to match a similar shape).
+    const rerStart = content.search(rerRegex);
+    if (rerStart !== -1) {
+      // Rer body is small (~700 chars typically). Slice a generous window.
+      const rerWindow = content.substring(rerStart, rerStart + 2000);
+      const ternaryMatch = rerWindow.match(/children:(\w{1,4})\?(\w+)\.jsx\((\w+)/);
+      if (ternaryMatch) {
+        console.log(`   Multi-line flag var:  ${ternaryMatch[1]}   (patch to !!1 for always multi-line)`);
+        console.log(`   JSX runtime import:   ${ternaryMatch[2]}   (${ternaryMatch[2]}.jsx / ${ternaryMatch[2]}.jsxs)`);
+        console.log(`   Multi-line Text cmp:  ${ternaryMatch[3]}`);
+      }
+    }
+  }
+
+  console.log(`\n📝 v2.1.204+ standard patch template:`);
+  console.log(`   1. ${smiMatch ? smiMatch[1] : 'Smi'}(){return ${smiMatch ? smiMatch[2] : 'Bn'}().showThinkingSummaries??!1}  ->  ??!0}`);
+  console.log(`   2. !${guardMatch ? guardMatch[1] : 'cit'}&&!${guardMatch ? guardMatch[2] : 'BY'}  ->  !(1)&&!!0    (2 sites — thinking + redacted_thinking)`);
+  console.log(`   3. if(!fco){return null}  ->  if(!(1)){return null}   (defensive Rer guard)\n`);
+
+  console.log('─'.repeat(60));
+  console.log('Skipping legacy detection (v2.1.145 and earlier patterns).');
+  console.log('If you need those identifiers, run against a legacy install.\n');
+  process.exit(0);
+}
+console.log(`   v2.1.204+ signals: ${isV204Style}/5 — falling through to legacy detection.\n`);
 
 // ==================== BANNER FUNCTION ====================
 console.log('🔍 Searching for Banner Function...');
