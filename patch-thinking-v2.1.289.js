@@ -158,6 +158,11 @@ const PATCHES = [
   }
 ];
 
+// --restore: every patch is a same-length swap, so undoing one is the same
+// swap with search/replace reversed. No backup file is needed.
+const RESTORE = process.argv.includes('--restore');
+if (RESTORE) for (const p of PATCHES) [p.search, p.replace] = [p.replace, p.search];
+
 function checkPatchStatus(inst) {
   try {
     if (inst.format === 'js') {
@@ -267,8 +272,8 @@ async function main() {
     const icon = status.status === 'patched' ? '✅' :
                  status.status === 'unpatched' || status.status === 'partial' ? '⬚' : '❓';
     let text;
-    if (status.status === 'patched') text = `PATCHED (${status.variant})`;
-    else if (status.status === 'unpatched') text = 'UNPATCHED';
+    if (status.status === 'patched') text = RESTORE ? 'UNPATCHED (nothing to restore)' : `PATCHED (${status.variant})`;
+    else if (status.status === 'unpatched') text = RESTORE ? 'PATCHED (will restore)' : 'UNPATCHED';
     else if (status.status === 'partial') text = `PARTIAL (${status.reason})`;
     else text = `UNKNOWN (${status.reason})`;
     console.log(`  [${i + 1}] ${icon} ${inst.name} [${inst.format}] - ${text}`);
@@ -278,7 +283,7 @@ async function main() {
   }
 
   if (patchable.length === 0) {
-    console.log('ℹ️  No installations need patching.');
+    console.log(RESTORE ? 'ℹ️  Nothing to restore.' : 'ℹ️  No installations need patching.');
     process.exit(0);
   }
 
@@ -290,7 +295,7 @@ async function main() {
     answer = 'a';
   } else {
     console.log('─'.repeat(50));
-    console.log('\nWhich installation(s) would you like to patch?\n');
+    console.log(`\nWhich installation(s) would you like to ${RESTORE ? 'restore' : 'patch'}?\n`);
     console.log('  [a] All patchable installations');
     for (const p of patchable) console.log(`  [${p.index}] ${p.name} only`);
     console.log('  [q] Quit without patching\n');
@@ -309,15 +314,16 @@ async function main() {
   }
 
   console.log('\n' + '═'.repeat(50));
-  console.log('Applying patches...');
+  console.log(RESTORE ? 'Reverting patches...' : 'Applying patches...');
   console.log('═'.repeat(50));
 
   let successCount = 0;
   for (const inst of toPatch) if (applyBinaryPatches(inst)) successCount++;
 
   console.log('\n' + '═'.repeat(50));
-  console.log(`\n✅ Done! Patched ${successCount}/${toPatch.length} installation(s)`);
+  console.log(`\n✅ Done! ${RESTORE ? 'Restored' : 'Patched'} ${successCount}/${toPatch.length} installation(s)`);
   console.log('\n⚠️  Please restart Claude Code for changes to take effect.\n');
+  if (RESTORE) return;
   console.log('Features:');
   console.log('   - pCn flipped: API returns summarized thinking, redact header removed');
   console.log('   - Outer case gate bypassed: thinking + redacted_thinking always render');
