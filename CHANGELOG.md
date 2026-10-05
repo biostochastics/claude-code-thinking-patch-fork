@@ -89,6 +89,13 @@ Patches using exact string matching must be updated for each version.
 
 Install location changed for most users: the native installer (`curl | sh`, `claude update`) puts the Bun SEA binary at `~/.local/share/claude/versions/<version>` with `~/.local/bin/claude` symlinked to it. The npm `bin/claude.exe` layout still exists. Patchers now scan both. Bundle is single-copy; every fingerprint below has exactly one hit.
 
+**BREAKING for byte patching: the binary ships precompiled JavaScriptCore bytecode.** Every module source starts with `// @bun @bytecode` and Bun's module-graph table (52-byte records before the `\n---- Bun! ----\n` trailer, Bun 1.4.3) carries a bytecode pointer per module. The source text is kept only for stack traces, so a same-length edit to the JS is **inert** — verified on the live binary with a pty capture: patched bytes on disk, `∴` and no border on screen. The patchers therefore do two extra things, both reversible with `--restore`:
+
+1. blank the `@bytecode` pragma (`// @bun @bytecode\n` → `// @bun          \n`, same length, 2185 sites), and
+2. zero the bytecode `StringPointer` in every module record (2181 of 2414 records), saving the originals to `<binary>.bytecode-ptrs.json` beside the binary.
+
+Bun then compiles each chunk from its (patched) source. Measured startup on the JS path (`--help`) was unchanged (0.23s), since JSC compiles lazily anyway. A patcher for any later bytecode build must do the same, and the module-graph parser (`parseModuleGraph`) is the piece to reuse. (The duplicated-string-constant pattern that gives this away — e.g. `"Scanning local sessions"` appearing twice — is also present in v2.1.280, so the v2.1.204 patch may have been inert as well; untested.)
+
 1. **Setting gate renamed.** `Smi()` → `pCn()`, settings accessor `Bn()` → `lt()`. Same shape: `return lt().showThinkingSummaries??!1`. The request code splices the `redact-thinking-2026-02-12` beta out of the betas list whenever a display mode is resolved, so `showThinkingSummaries: true` in settings.json is functionally identical to patch #1.
 2. **New narration renderer `Za`.** `case"thinking"` first tests `Tut(l)` = non-empty text AND `jle(l)`, which decodes the block's signature and checks for the "narration" classifier marker. Those blocks render through `Za` (Claude dot + `oa` prose) with **no** transcript/verbose gate. Ordinary thinking falls through to the gated path.
 3. **Ordinary renderer `Ss`.** Replaces `Rer`. Compiler-memoized (`w(27)` cache). Content node is `j = ee ? e(oa,{dimColor,capProseWidth,children:z.trim()}) : e(n,{dimColor,italic,children:z.trim().replace(/\s+/g," ")})` with `ee = isTranscriptMode||verbose`. Label is `e(n,{"aria-label":"thinking:",dimColor:!0,italic:!0,children:nEt})`, `nEt="∴"`.
@@ -137,7 +144,7 @@ e(n,{              dimColor:!0,italic:!0,children:"🍑"})
 - Case guard vars: `U` (isTranscriptMode) | `R` (verbose) | Glyph var: `nEt="∴"` | Redact beta var: `Xzt`
 - Display picker: `H9r` / `M9r` / `a8o` | Flag choices: `dWe=["summarized","omitted","highlights"]`
 
-**Notable changes from v2.1.204:** the `if(!fco){return null}` hardening patch is dropped (its `Ss` equivalent `if(!z){E=null;break Y}` would render empty boxes for redacted blocks). Standard/Custom are 2 patches; Custom Peach is 4.
+**Notable changes from v2.1.204:** the `if(!fco){return null}` hardening patch is dropped (its `Ss` equivalent `if(!z){E=null;break Y}` would render empty boxes for redacted blocks). Standard/Custom are 3 string patches (pragma + 2) plus the bytecode-pointer clear; Custom Peach is 5 string patches plus the clear. `--restore` reverses every swap and puts the bytecode pointers back from the sidecar; the `__BUN` segment is then byte-identical to the original.
 
 ## v2.1.204 (npm, binary)
 
@@ -1249,7 +1256,7 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-10-04 | **v2.1.289** | **Two-renderer pipeline**: `Ss` (ordinary thinking, gated by `!U&&!R`) and new `Za` (narration summaries, ungated). Setting gate renamed `Smi`→`pCn`, settings accessor `Bn`→`lt`, glyph `OQo`→`nEt`. Standard/Custom apply 2 patches (the old `if(!fco)` hardening is dropped since empty blocks would render as empty boxes); Custom Peach adds a round peach (`#ffc27a`) border + paddingX around the `oa` prose renderer and the 🍑 label (4 total). Patchers now detect the native installer at `~/.local/share/claude/versions/`. Mods (v2.1.287+) have no thinking render site, so the byte patch remains the only way to restyle |
+| 2026-10-04 | **v2.1.289** | **Two-renderer pipeline**: `Ss` (ordinary thinking, gated by `!U&&!R`) and new `Za` (narration summaries, ungated). Setting gate renamed `Smi`→`pCn`, settings accessor `Bn`→`lt`, glyph `OQo`→`nEt`. Standard/Custom apply 2 patches (the old `if(!fco)` hardening is dropped since empty blocks would render as empty boxes); Custom Peach adds a round peach (`#ffc27a`) border + paddingX around the `oa` prose renderer and the 🍑 label (4 total). Patchers now detect the native installer at `~/.local/share/claude/versions/`. **Binary ships JSC bytecode**: source edits are inert until the `@bytecode` pragma is blanked and the module-graph bytecode pointers are zeroed (sidecar JSON backup, `--restore` reverts). Mods (v2.1.287+) have no thinking render site, so the byte patch remains the only way to restyle |
 | 2026-07-08 | v2.1.204 | **Architectural rewrite**: new `Smi`/`WGl`/`GGl` request-side pipeline, `Rer` renderer, JSX-runtime (`Ste.jsx`), case-level guard replaces gate function, single-copy `__BUN` bundle, `hideInTranscript` removed. Standard/Custom apply 3 patches; Custom Peach adds a real single-line peach (`#ffc27a`) border box + 🍑 emoji label + forced multi-line (5 total). Uses hex color (not named "red") because some terminal themes remap named ANSI colors. `Kf` is a syntax-highlighter wrapper — content color inside is dominated by the highlighter, so the visual budget goes on the outer Box border |
 | 2026-04-28 | v2.1.121 | New identifiers (K96/c$H/dW5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |
 | 2026-04-24 | v2.1.119 | New identifiers (_86/j$H/ZJ5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |

@@ -103,7 +103,7 @@ function getInstallationPaths() {
     for (const v of fs.readdirSync(nativeDir).sort()) {
       const bin = path.join(nativeDir, v);
       try {
-        if (fs.statSync(bin).isFile() && !paths.some(p => p.path === bin)) {
+        if (!v.endsWith('.json') && fs.statSync(bin).isFile() && !paths.some(p => p.path === bin)) {
           paths.push({
             name: `native install ${v} (binary)`,
             path: bin,
@@ -147,6 +147,21 @@ function getInstallationPaths() {
 //             (case"thinking" first tries `Tut(l)` → narration renderer `Za`,
 //             which is NOT gated; ordinary thinking falls through to `Ss`.)
 const PATCHES = [
+  // ── Bun bytecode cache ────────────────────────────────────────────────
+  // v2.1.289 is compiled with `bun build --compile --bytecode`: every chunk
+  // ships precompiled JavaScriptCore bytecode and its source text is kept
+  // only for stack traces. Editing the source alone is therefore inert.
+  // Two steps make the (patched) source the code that actually runs:
+  //   1. blank the `@bytecode` pragma (same-length swap, this entry), and
+  //   2. zero the per-module bytecode pointers in Bun's module-graph table
+  //      (see stripBytecode below; the original pointers are saved to a
+  //      sidecar JSON so --restore can put them back).
+  // Startup cost measured on the JS path (`--help`): unchanged (0.23s).
+  {
+    name: 'Bun: blank @bytecode pragma (forces source compile)',
+    search: Buffer.from('// @bun @bytecode\n'),
+    replace: Buffer.from('// @bun          \n')
+  },
   {
     name: 'pCn: opt in to summarized thinking always',
     search: Buffer.from('pCn(){return lt().showThinkingSummaries??!1}'),
@@ -166,6 +181,81 @@ const PATCHES = [
 const RESTORE = process.argv.includes('--restore');
 if (RESTORE) for (const p of PATCHES) [p.search, p.replace] = [p.replace, p.search];
 
+// ── Bun standalone module graph: bytecode pointers ─────────────────────
+// Layout (Bun 1.3.9+, verified on 1.4.3): the __BUN data ends with a
+// 32-byte Offsets struct { byte_count:u64, modules:{off:u32,len:u32},
+// entry_point_id:u32, ... } followed by the trailer "\n---- Bun! ----\n".
+// Every StringPointer is relative to dataStart = trailer - 32 - byte_count.
+// The module table is 52-byte records: name(8) contents(8) sourcemap(8)
+// bytecode(8) ... flags. Zeroing a record's bytecode pointer makes Bun
+// compile that module from its (patched) source instead.
+const BUN_TRAILER = Buffer.from('\n---- Bun! ----\n');
+const BUN_RECORD = 52;
+
+function parseModuleGraph(data) {
+  const tr = data.lastIndexOf(BUN_TRAILER);
+  if (tr < 64) throw new Error('Bun trailer not found');
+  const byteCount = Number(data.readBigUInt64LE(tr - 32));
+  const modOff = data.readUInt32LE(tr - 24);
+  const modLen = data.readUInt32LE(tr - 20);
+  const base = tr - 32 - byteCount;
+  if (base < 0 || modLen % BUN_RECORD !== 0 || base + modOff + modLen > tr) {
+    throw new Error('Bun module graph header did not validate');
+  }
+  const first = base + modOff;
+  const nameOff = data.readUInt32LE(first), nameLen = data.readUInt32LE(first + 4);
+  const name = data.subarray(base + nameOff, base + nameOff + Math.min(nameLen, 16)).toString('latin1');
+  if (!name.startsWith('/$bunfs/')) throw new Error('Bun module table did not validate (first name: ' + JSON.stringify(name) + ')');
+  const records = [];
+  for (let i = 0; i < modLen / BUN_RECORD; i++) {
+    const r = first + i * BUN_RECORD;
+    records.push({ at: r + 24, off: data.readUInt32LE(r + 24), len: data.readUInt32LE(r + 28) });
+  }
+  return { base, records };
+}
+
+function bytecodeBackupPath(binPath) { return binPath + '.bytecode-ptrs.json'; }
+
+function bytecodeState(data) {
+  try {
+    const { records } = parseModuleGraph(data);
+    return { ok: true, active: records.filter(r => r.len > 0).length, total: records.length };
+  } catch (e) {
+    return { ok: false, reason: e.message, active: 0, total: 0 };
+  }
+}
+
+// Zero every bytecode pointer; save the originals beside the binary.
+function stripBytecode(data, binPath) {
+  const { records } = parseModuleGraph(data);
+  const active = records.filter(r => r.len > 0);
+  if (active.length === 0) { console.log('   ℹ️  Bun bytecode pointers: already cleared'); return 0; }
+  const backup = bytecodeBackupPath(binPath);
+  if (!fs.existsSync(backup)) {
+    fs.writeFileSync(backup, JSON.stringify({ version: 1, records: active.map(r => [r.at, r.off, r.len]) }));
+  }
+  for (const r of active) { data.writeUInt32LE(0, r.at); data.writeUInt32LE(0, r.at + 4); }
+  console.log(`   ✅ Bun bytecode pointers cleared: ${active.length}/${records.length} modules (originals saved to ${path.basename(backup)})`);
+  return active.length;
+}
+
+// Put the saved pointers back (for --restore).
+function restoreBytecode(data, binPath) {
+  const backup = bytecodeBackupPath(binPath);
+  if (!fs.existsSync(backup)) {
+    console.log('   ⚠️  Bun bytecode pointers: no sidecar backup found — left cleared (harmless; reinstall for a pristine binary)');
+    return 0;
+  }
+  const saved = JSON.parse(fs.readFileSync(backup, 'utf8'));
+  let n = 0;
+  for (const [at, off, len] of saved.records) {
+    if (data.readUInt32LE(at) === 0 && data.readUInt32LE(at + 4) === 0) { data.writeUInt32LE(off, at); data.writeUInt32LE(len, at + 4); n++; }
+  }
+  if (n > 0) { fs.unlinkSync(backup); console.log(`   ✅ Bun bytecode pointers restored: ${n} modules`); }
+  else console.log('   ℹ️  Bun bytecode pointers: already restored');
+  return n;
+}
+
 function checkPatchStatus(inst) {
   try {
     if (inst.format === 'js') {
@@ -180,6 +270,12 @@ function checkPatchStatus(inst) {
     for (const p of PATCHES) {
       if (data.indexOf(p.search) !== -1) unpatched++;
       if (data.indexOf(p.replace) !== -1) patched++;
+    }
+    const bc = bytecodeState(data);
+    if (!bc.ok) return { status: 'unknown', canPatch: false, reason: 'Bun module graph not parseable: ' + bc.reason };
+    const bcDone = RESTORE ? (bc.active > 0 || !fs.existsSync(bytecodeBackupPath(inst.path))) : bc.active === 0;
+    if (unpatched === 0 && patched === PATCHES.length && !bcDone) {
+      return { status: 'partial', canPatch: true, reason: RESTORE ? 'bytecode pointers still cleared — will restore' : `${bc.active} Bun bytecode pointers still active — patches are inert until cleared` };
     }
     if (unpatched === 0 && patched === PATCHES.length) {
       return { status: 'patched', canPatch: false, variant: 'custom' };
@@ -230,6 +326,8 @@ function applyBinaryPatches(inst) {
   }
 
   if (data.length !== originalLength) throw new Error(`Binary length changed: ${data.length} != ${originalLength}`);
+
+  totalReplaced += RESTORE ? restoreBytecode(data, inst.path) : stripBytecode(data, inst.path);
 
   if (totalReplaced > 0) {
     fs.writeFileSync(inst.path, data);

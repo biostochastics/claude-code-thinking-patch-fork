@@ -67,7 +67,7 @@ claude --version
 
 | Version | Patches | Install Method |
 |---------|---------|----------------|
-| **v2.1.289** | Standard, Custom, Custom Peach (binary; round peach `#ffc27a` border + 🍑 emoji label + forced multi-line in custom-peach). Also detects the native installer (`~/.local/share/claude/versions/`). The official `showThinkingSummaries: true` setting now covers patch #1 on its own | native installer or `npm install -g` |
+| **v2.1.289** | Standard, Custom, Custom Peach (binary; round peach `#ffc27a` border + 🍑 emoji label + forced multi-line in custom-peach). Also detects the native installer (`~/.local/share/claude/versions/`). The binary ships precompiled bytecode, so the patcher also clears Bun's bytecode pointers (reversible with `--restore`). The official `showThinkingSummaries: true` setting now covers patch #1 on its own | native installer or `npm install -g` |
 | v2.1.204 | Standard, Custom, Custom Peach (binary; peach `#ffc27a` border box + 🍑 emoji label + forced multi-line in custom-peach) | `npm install -g` |
 | v2.1.145 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
 | v2.1.121 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
