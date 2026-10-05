@@ -17,11 +17,11 @@ Make Claude Code's thinking blocks visible by default without pressing `ctrl+o`.
 # Check your version
 claude --version
 
-# v2.1.204 (latest — architectural rewrite; custom-peach recommended)
-node patch-thinking-v2.1.204-custom-peach.js
+# v2.1.289 (latest — native installer or npm binary; custom-peach recommended)
+node patch-thinking-v2.1.289-custom-peach.js
 
-# v2.1.145 (previous)
-# node patch-thinking-v2.1.145-custom-peach.js
+# v2.1.204 (previous)
+# node patch-thinking-v2.1.204-custom-peach.js
 
 # Older versions with cli.js format
 # node patch-thinking-v2.1.112-custom-peach.js
@@ -67,7 +67,8 @@ claude --version
 
 | Version | Patches | Install Method |
 |---------|---------|----------------|
-| **v2.1.204** | Standard, Custom, Custom Peach (binary; peach `#ffc27a` border box + 🍑 emoji label + forced multi-line in custom-peach) | `npm install -g` |
+| **v2.1.289** | Standard, Custom, Custom Peach (binary; round peach `#ffc27a` border + 🍑 emoji label + forced multi-line in custom-peach). Also detects the native installer (`~/.local/share/claude/versions/`). The official `showThinkingSummaries: true` setting now covers patch #1 on its own | native installer or `npm install -g` |
+| v2.1.204 | Standard, Custom, Custom Peach (binary; peach `#ffc27a` border box + 🍑 emoji label + forced multi-line in custom-peach) | `npm install -g` |
 | v2.1.145 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
 | v2.1.121 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
 | v2.1.119 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
@@ -129,7 +130,7 @@ Updates overwrite patches. Re-apply after updating:
 
 ```bash
 claude --version
-node patch-thinking-v2.1.204-custom-peach.js
+node patch-thinking-v2.1.289-custom-peach.js
 ```
 
 ---
@@ -188,10 +189,11 @@ See [CHANGELOG.md](CHANGELOG.md) for version-specific technical details.
 ## Files
 
 ```
-patch-thinking-v2.1.204.js              # Latest standard (npm, binary — architectural rewrite)
-patch-thinking-v2.1.204-custom.js       # Latest custom (npm, binary — parity with standard)
-patch-thinking-v2.1.204-custom-peach.js # Latest custom-peach (npm, binary, recommended)
-patch-thinking-v2.1.145-*.js            # Previous binary triplet
+patch-thinking-v2.1.289.js              # Latest standard (binary — native installer or npm)
+patch-thinking-v2.1.289-custom.js       # Latest custom (binary — parity with standard)
+patch-thinking-v2.1.289-custom-peach.js # Latest custom-peach (binary, recommended)
+patch-thinking-v2.1.204-*.js            # Previous binary triplet (architectural rewrite)
+patch-thinking-v2.1.145-*.js            # Earlier binary triplet
 patch-thinking-v2.1.119-*.js            # Earlier binary triplet
 patch-thinking-v2.1.116-*.js            # Earlier binary triplet
 patch-thinking-v2.1.113-*.js            # Earlier binary triplet
@@ -227,4 +229,4 @@ Provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last updated:** 2026-07-08 · **Latest:** v2.1.204 (npm, binary — architectural rewrite)
+**Last updated:** 2026-10-04 · **Latest:** v2.1.289 (binary — native installer or npm; two-renderer thinking pipeline)

@@ -15,7 +15,8 @@ This document tracks minified identifier changes between Claude Code versions.
 
 | Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
 |---------|-----------|-------|-----|------|-----------------|------|---------|
-| **v2.1.204** | `Rer` | `Ste` (jsx runtime) | `A` | `h` | `Kf` (multi-line) | case-level `!cit&&!BY` | npm (binary) |
+| **v2.1.289** | `Ss` (+ `Za` narration) | `e`/`r` (jsx/jsxs) | `s` | `n` | `oa` (prose) | case-level `!U&&!R` | native installer / npm (binary) |
+| v2.1.204 | `Rer` | `Ste` (jsx runtime) | `A` | `h` | `Kf` (multi-line) | case-level `!cit&&!BY` | npm (binary) |
 | v2.1.145 | `NA6` | `nJH` | `B` | `V` | `eA` | `Le5` | npm (binary) |
 | v2.1.121 | `K96` | `c$H` | `p` | `v` | `fY` | `dW5` | npm (binary) |
 | v2.1.119 | `_86` | `j$H` | `p` | `k` | `rz` | `ZJ5` | npm (binary) |
@@ -81,6 +82,62 @@ function co2({param:{thinking:A}...}) { ... Vs.default.createElement(...) }
 Patches using exact string matching must be updated for each version.
 
 ---
+
+## v2.1.289 (native installer / npm, binary)
+
+**Two-renderer pipeline. Identifier rotation on top of the v2.1.204 architecture, plus a new ungated "narration" renderer.**
+
+Install location changed for most users: the native installer (`curl | sh`, `claude update`) puts the Bun SEA binary at `~/.local/share/claude/versions/<version>` with `~/.local/bin/claude` symlinked to it. The npm `bin/claude.exe` layout still exists. Patchers now scan both. Bundle is single-copy; every fingerprint below has exactly one hit.
+
+1. **Setting gate renamed.** `Smi()` → `pCn()`, settings accessor `Bn()` → `lt()`. Same shape: `return lt().showThinkingSummaries??!1`. The request code splices the `redact-thinking-2026-02-12` beta out of the betas list whenever a display mode is resolved, so `showThinkingSummaries: true` in settings.json is functionally identical to patch #1.
+2. **New narration renderer `Za`.** `case"thinking"` first tests `Tut(l)` = non-empty text AND `jle(l)`, which decodes the block's signature and checks for the "narration" classifier marker. Those blocks render through `Za` (Claude dot + `oa` prose) with **no** transcript/verbose gate. Ordinary thinking falls through to the gated path.
+3. **Ordinary renderer `Ss`.** Replaces `Rer`. Compiler-memoized (`w(27)` cache). Content node is `j = ee ? e(oa,{dimColor,capProseWidth,children:z.trim()}) : e(n,{dimColor,italic,children:z.trim().replace(/\s+/g," ")})` with `ee = isTranscriptMode||verbose`. Label is `e(n,{"aria-label":"thinking:",dimColor:!0,italic:!0,children:nEt})`, `nEt="∴"`.
+4. **`--thinking-display` flag and `thinking_display` bridge field.** Choices `summarized | omitted | highlights`. `highlights` is accepted only from Anthropic-hosted sessions and falls back to `omitted` on rejection.
+5. **Mods (v2.1.287+) cannot reach thinking.** `RenderComponent` in the bundle is exactly `AskUserQuestion, UserMessage, AssistantMessage, ToolUse, ToolResult, ToolGroup, ToolProgress, CommandOutput, Spinner, TurnDuration, InfoNotice, SessionMode, PromptHint, AbovePrompt, Pane`. `AssistantMessage` is text blocks only. A `turn.step` hook can rewrite `TurnStepThinkingChunk` text but cannot restyle the block.
+
+**Request-side gate — `pCn()`:**
+```javascript
+function pCn(){return lt().showThinkingSummaries??!1}
+function i8o(e){if(e!==void 0)return{display:e,source:"flag"};let n=lt().showThinkingSummaries;if(n===void 0)return;return{display:n?"summarized":"omitted",source:"setting"}}
+// Standard patch flips `??!1` → `??!0` (44=44 bytes).
+```
+
+**Outer case gate:**
+```javascript
+case"redacted_thinking":{if(!U&&!R){return null}...e(ja,{addMargin:h})...}
+case"thinking":{if(Tut(l)){...return e(Za,{param:l,model:p,addMargin:h,shouldShowDot:E})}
+  if(!U&&!R){return null}...e(Ss,{param:l,addMargin:h,isTranscriptMode:U,verbose:R})...}
+// U=isTranscriptMode, R=verbose. Patch `if(!U&&!R){return null}` → `if(!1&&!1){return null}` (23=23), 2 sites.
+```
+
+**Renderer — `Ss` (relevant fragments):**
+```javascript
+function Ss(m){let C=w(27),{param:l,addMargin:p,isTranscriptMode:h,verbose:M}=m,{thinking:y}=l,...
+  let z=Jg(y);if(!z){E=null;break Y}      // empty → render nothing (left alone on purpose)
+  let ee=h||M;
+  q=e(s,{minWidth:2,children:e(n,{"aria-label":"thinking:",dimColor:!0,italic:!0,children:nEt})})
+  _=s;F="column";U=1;
+  j=ee?e(oa,{dimColor:!0,capProseWidth:!0,children:z.trim()}):e(n,{dimColor:!0,italic:!0,children:z.trim().replace(/\s+/g," ")})
+  ...
+  ie=e(_,{flexDirection:F,flexGrow:U,children:j})
+  te=r(v,{flexDirection:"row",marginTop:W,width:H,children:[q,ie]})
+```
+
+**Custom Peach swaps (both inside `Ss`, 126=126 and 66=66 bytes):**
+```javascript
+// content: drop the dead compact branch (67 bytes) to pay for a round peach border
+j=e(s,{borderStyle:"round",borderColor:"#ffc27a",paddingX:1,children:e(oa,{dimColor:!0,capProseWidth:!0,children:z.trim()}) })
+// label: drop aria-label (25 bytes) to fit the surrogate-pair emoji escape, 14 spaces pad
+e(n,{              dimColor:!0,italic:!0,children:"🍑"})
+```
+
+**Key identifiers:**
+- Ordinary renderer: `Ss` | Narration renderer: `Za` | Narration predicate: `Tut` / `jle` | Setting gate: `pCn` | Settings: `lt`
+- jsx: `e` | jsxs: `r` | Box: `s` | Text: `n` | Prose renderer: `oa` | Text cleaner: `Jg`
+- Case guard vars: `U` (isTranscriptMode) | `R` (verbose) | Glyph var: `nEt="∴"` | Redact beta var: `Xzt`
+- Display picker: `H9r` / `M9r` / `a8o` | Flag choices: `dWe=["summarized","omitted","highlights"]`
+
+**Notable changes from v2.1.204:** the `if(!fco){return null}` hardening patch is dropped (its `Ss` equivalent `if(!z){E=null;break Y}` would render empty boxes for redacted blocks). Standard/Custom are 2 patches; Custom Peach is 4.
 
 ## v2.1.204 (npm, binary)
 
@@ -1192,7 +1249,8 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-07-08 | **v2.1.204** | **Architectural rewrite**: new `Smi`/`WGl`/`GGl` request-side pipeline, `Rer` renderer, JSX-runtime (`Ste.jsx`), case-level guard replaces gate function, single-copy `__BUN` bundle, `hideInTranscript` removed. Standard/Custom apply 3 patches; Custom Peach adds a real single-line peach (`#ffc27a`) border box + 🍑 emoji label + forced multi-line (5 total). Uses hex color (not named "red") because some terminal themes remap named ANSI colors. `Kf` is a syntax-highlighter wrapper — content color inside is dominated by the highlighter, so the visual budget goes on the outer Box border |
+| 2026-10-04 | **v2.1.289** | **Two-renderer pipeline**: `Ss` (ordinary thinking, gated by `!U&&!R`) and new `Za` (narration summaries, ungated). Setting gate renamed `Smi`→`pCn`, settings accessor `Bn`→`lt`, glyph `OQo`→`nEt`. Standard/Custom apply 2 patches (the old `if(!fco)` hardening is dropped since empty blocks would render as empty boxes); Custom Peach adds a round peach (`#ffc27a`) border + paddingX around the `oa` prose renderer and the 🍑 label (4 total). Patchers now detect the native installer at `~/.local/share/claude/versions/`. Mods (v2.1.287+) have no thinking render site, so the byte patch remains the only way to restyle |
+| 2026-07-08 | v2.1.204 | **Architectural rewrite**: new `Smi`/`WGl`/`GGl` request-side pipeline, `Rer` renderer, JSX-runtime (`Ste.jsx`), case-level guard replaces gate function, single-copy `__BUN` bundle, `hideInTranscript` removed. Standard/Custom apply 3 patches; Custom Peach adds a real single-line peach (`#ffc27a`) border box + 🍑 emoji label + forced multi-line (5 total). Uses hex color (not named "red") because some terminal themes remap named ANSI colors. `Kf` is a syntax-highlighter wrapper — content color inside is dominated by the highlighter, so the visual budget goes on the outer Box border |
 | 2026-04-28 | v2.1.121 | New identifiers (K96/c$H/dW5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |
 | 2026-04-24 | v2.1.119 | New identifiers (_86/j$H/ZJ5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |
 | 2026-04-20 | v2.1.116 | New identifiers (Vi_/L5H/RH5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` (6th patch) so API returns text instead of empty signature-only blocks |
