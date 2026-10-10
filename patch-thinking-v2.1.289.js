@@ -42,19 +42,21 @@ function safeExec(command, args = []) {
 function getInstallationPaths() {
   const paths = [];
 
-  const argTarget = process.argv.slice(2).find(a => a.startsWith('--target='));
+  const argTarget = process.argv.slice(2).find((a) => a.startsWith('--target='));
   const overridePath = (argTarget && argTarget.slice('--target='.length)) || process.env.CLAUDE_PATCH_TARGET;
   if (overridePath) {
     if (!fs.existsSync(overridePath)) {
       console.error(`Override target not found: ${overridePath}`);
       process.exit(1);
     }
-    return [{
-      name: 'Explicit target (--target=/env)',
-      path: overridePath,
-      format: 'binary',
-      description: 'Override supplied via CLI or CLAUDE_PATCH_TARGET'
-    }];
+    return [
+      {
+        name: 'Explicit target (--target=/env)',
+        path: overridePath,
+        format: 'binary',
+        description: 'Override supplied via CLI or CLAUDE_PATCH_TARGET',
+      },
+    ];
   }
 
   const legacyCliJs = path.join(homeDir, '.claude/local/node_modules/@anthropic-ai/claude-code/cli.js');
@@ -63,20 +65,24 @@ function getInstallationPaths() {
       name: '~/.claude/local/ (legacy cli.js)',
       path: legacyCliJs,
       format: 'js',
-      description: 'Pre-v2.1.113 cli.js install — use an older patch (e.g. patch-thinking-v2.1.112.js)'
+      description: 'Pre-v2.1.113 cli.js install — use an older patch (e.g. patch-thinking-v2.1.112.js)',
     });
   }
 
   if (process.env.NVM_DIR) {
     const nodeVersion = process.version;
-    const nvmBin = path.join(process.env.NVM_DIR, 'versions/node', nodeVersion,
-      'lib/node_modules/@anthropic-ai/claude-code/bin/claude.exe');
+    const nvmBin = path.join(
+      process.env.NVM_DIR,
+      'versions/node',
+      nodeVersion,
+      'lib/node_modules/@anthropic-ai/claude-code/bin/claude.exe',
+    );
     if (fs.existsSync(nvmBin)) {
       paths.push({
         name: 'nvm global (binary)',
         path: nvmBin,
         format: 'binary',
-        description: `nvm-managed installation (Node ${nodeVersion})`
+        description: `nvm-managed installation (Node ${nodeVersion})`,
       });
     }
   }
@@ -84,12 +90,12 @@ function getInstallationPaths() {
   const npmGlobalRoot = safeExec('npm', ['root', '-g']);
   if (npmGlobalRoot) {
     const npmBin = path.join(npmGlobalRoot, '@anthropic-ai/claude-code/bin/claude.exe');
-    if (fs.existsSync(npmBin) && !paths.some(p => p.path === npmBin)) {
+    if (fs.existsSync(npmBin) && !paths.some((p) => p.path === npmBin)) {
       paths.push({
         name: 'npm global (binary)',
         path: npmBin,
         format: 'binary',
-        description: 'Global npm installation'
+        description: 'Global npm installation',
       });
     }
   }
@@ -100,12 +106,12 @@ function getInstallationPaths() {
     for (const v of fs.readdirSync(nativeDir).sort()) {
       const bin = path.join(nativeDir, v);
       try {
-        if (!v.endsWith('.json') && fs.statSync(bin).isFile() && !paths.some(p => p.path === bin)) {
+        if (!v.endsWith('.json') && fs.statSync(bin).isFile() && !paths.some((p) => p.path === bin)) {
           paths.push({
             name: `native install ${v} (binary)`,
             path: bin,
             format: 'binary',
-            description: 'Native installer (~/.local/share/claude/versions)'
+            description: 'Native installer (~/.local/share/claude/versions)',
           });
         }
       } catch {}
@@ -117,12 +123,12 @@ function getInstallationPaths() {
     try {
       const realPath = fs.realpathSync(whichClaude);
       const isBinary = realPath.endsWith('claude.exe') || realPath.includes('/.local/share/claude/versions/');
-      if (isBinary && !paths.some(p => p.path === realPath)) {
+      if (isBinary && !paths.some((p) => p.path === realPath)) {
         paths.push({
           name: 'PATH claude (binary)',
           path: realPath,
           format: 'binary',
-          description: `Current PATH installation (${whichClaude})`
+          description: `Current PATH installation (${whichClaude})`,
         });
       }
     } catch {}
@@ -130,7 +136,6 @@ function getInstallationPaths() {
 
   return paths;
 }
-
 
 // Same-length byte patches for the v2.1.289 binary.
 // Each `search` MUST have the same byte length as its `replace`.
@@ -157,20 +162,20 @@ const PATCHES = [
   {
     name: 'Bun: blank @bytecode pragma (forces source compile)',
     search: Buffer.from('// @bun @bytecode\n'),
-    replace: Buffer.from('// @bun          \n')
+    replace: Buffer.from('// @bun          \n'),
   },
   {
     name: 'pCn: opt in to summarized thinking always',
     search: Buffer.from('pCn(){return lt().showThinkingSummaries??!1}'),
     replace: Buffer.from('pCn(){return lt().showThinkingSummaries??!0}'),
-    expectedSites: 1
+    expectedSites: 1,
   },
   {
     name: 'Outer transcript gate bypass (thinking + redacted_thinking)',
     search: Buffer.from('if(!U&&!R){return null}'),
     replace: Buffer.from('if(!1&&!1){return null}'),
-    expectedSites: 2
-  }
+    expectedSites: 2,
+  },
 ];
 
 // --restore: every patch is a same-length swap, so undoing one is the same
@@ -200,9 +205,11 @@ function parseModuleGraph(data) {
     throw new Error('Bun module graph header did not validate');
   }
   const first = base + modOff;
-  const nameOff = data.readUInt32LE(first), nameLen = data.readUInt32LE(first + 4);
+  const nameOff = data.readUInt32LE(first),
+    nameLen = data.readUInt32LE(first + 4);
   const name = data.subarray(base + nameOff, base + nameOff + Math.min(nameLen, 16)).toString('latin1');
-  if (!name.startsWith('/$bunfs/')) throw new Error('Bun module table did not validate (first name: ' + JSON.stringify(name) + ')');
+  if (!name.startsWith('/$bunfs/'))
+    throw new Error('Bun module table did not validate (first name: ' + JSON.stringify(name) + ')');
   const records = [];
   for (let i = 0; i < modLen / BUN_RECORD; i++) {
     const r = first + i * BUN_RECORD;
@@ -211,12 +218,14 @@ function parseModuleGraph(data) {
   return { base, records };
 }
 
-function bytecodeBackupPath(binPath) { return binPath + '.bytecode-ptrs.json'; }
+function bytecodeBackupPath(binPath) {
+  return binPath + '.bytecode-ptrs.json';
+}
 
 function bytecodeState(data) {
   try {
     const { records } = parseModuleGraph(data);
-    return { ok: true, active: records.filter(r => r.len > 0).length, total: records.length };
+    return { ok: true, active: records.filter((r) => r.len > 0).length, total: records.length };
   } catch (e) {
     return { ok: false, reason: e.message, active: 0, total: 0 };
   }
@@ -225,14 +234,22 @@ function bytecodeState(data) {
 // Zero every bytecode pointer; save the originals beside the binary.
 function stripBytecode(data, binPath) {
   const { records } = parseModuleGraph(data);
-  const active = records.filter(r => r.len > 0);
-  if (active.length === 0) { console.log('   ℹ️  Bun bytecode pointers: already cleared'); return 0; }
+  const active = records.filter((r) => r.len > 0);
+  if (active.length === 0) {
+    console.log('   ℹ️  Bun bytecode pointers: already cleared');
+    return 0;
+  }
   const backup = bytecodeBackupPath(binPath);
   if (!fs.existsSync(backup)) {
-    fs.writeFileSync(backup, JSON.stringify({ version: 1, records: active.map(r => [r.at, r.off, r.len]) }));
+    fs.writeFileSync(backup, JSON.stringify({ version: 1, records: active.map((r) => [r.at, r.off, r.len]) }));
   }
-  for (const r of active) { data.writeUInt32LE(0, r.at); data.writeUInt32LE(0, r.at + 4); }
-  console.log(`   ✅ Bun bytecode pointers cleared: ${active.length}/${records.length} modules (originals saved to ${path.basename(backup)})`);
+  for (const r of active) {
+    data.writeUInt32LE(0, r.at);
+    data.writeUInt32LE(0, r.at + 4);
+  }
+  console.log(
+    `   ✅ Bun bytecode pointers cleared: ${active.length}/${records.length} modules (originals saved to ${path.basename(backup)})`,
+  );
   return active.length;
 }
 
@@ -240,16 +257,24 @@ function stripBytecode(data, binPath) {
 function restoreBytecode(data, binPath) {
   const backup = bytecodeBackupPath(binPath);
   if (!fs.existsSync(backup)) {
-    console.log('   ⚠️  Bun bytecode pointers: no sidecar backup found — left cleared (harmless; reinstall for a pristine binary)');
+    console.log(
+      '   ⚠️  Bun bytecode pointers: no sidecar backup found — left cleared (harmless; reinstall for a pristine binary)',
+    );
     return 0;
   }
   const saved = JSON.parse(fs.readFileSync(backup, 'utf8'));
   let n = 0;
   for (const [at, off, len] of saved.records) {
-    if (data.readUInt32LE(at) === 0 && data.readUInt32LE(at + 4) === 0) { data.writeUInt32LE(off, at); data.writeUInt32LE(len, at + 4); n++; }
+    if (data.readUInt32LE(at) === 0 && data.readUInt32LE(at + 4) === 0) {
+      data.writeUInt32LE(off, at);
+      data.writeUInt32LE(len, at + 4);
+      n++;
+    }
   }
-  if (n > 0) { fs.unlinkSync(backup); console.log(`   ✅ Bun bytecode pointers restored: ${n} modules`); }
-  else console.log('   ℹ️  Bun bytecode pointers: already restored');
+  if (n > 0) {
+    fs.unlinkSync(backup);
+    console.log(`   ✅ Bun bytecode pointers restored: ${n} modules`);
+  } else console.log('   ℹ️  Bun bytecode pointers: already restored');
   return n;
 }
 
@@ -263,16 +288,23 @@ function checkPatchStatus(inst) {
     if (data.indexOf(marker) === -1) {
       return { status: 'unknown', canPatch: false, reason: 'v2.1.289 pCn signature not found — wrong version?' };
     }
-    let unpatched = 0, patched = 0;
+    let unpatched = 0,
+      patched = 0;
     for (const p of PATCHES) {
       if (data.indexOf(p.search) !== -1) unpatched++;
       if (data.indexOf(p.replace) !== -1) patched++;
     }
     const bc = bytecodeState(data);
     if (!bc.ok) return { status: 'unknown', canPatch: false, reason: 'Bun module graph not parseable: ' + bc.reason };
-    const bcDone = RESTORE ? (bc.active > 0 || !fs.existsSync(bytecodeBackupPath(inst.path))) : bc.active === 0;
+    const bcDone = RESTORE ? bc.active > 0 || !fs.existsSync(bytecodeBackupPath(inst.path)) : bc.active === 0;
     if (unpatched === 0 && patched === PATCHES.length && !bcDone) {
-      return { status: 'partial', canPatch: true, reason: RESTORE ? 'bytecode pointers still cleared — will restore' : `${bc.active} Bun bytecode pointers still active — patches are inert until cleared` };
+      return {
+        status: 'partial',
+        canPatch: true,
+        reason: RESTORE
+          ? 'bytecode pointers still cleared — will restore'
+          : `${bc.active} Bun bytecode pointers still active — patches are inert until cleared`,
+      };
     }
     if (unpatched === 0 && patched === PATCHES.length) {
       return { status: 'patched', canPatch: false, variant: 'standard' };
@@ -299,7 +331,9 @@ function applyBinaryPatches(inst) {
 
   for (const patch of PATCHES) {
     if (patch.search.length !== patch.replace.length) {
-      throw new Error(`Same-length invariant violated: ${patch.name} (search=${patch.search.length}, replace=${patch.replace.length})`);
+      throw new Error(
+        `Same-length invariant violated: ${patch.name} (search=${patch.search.length}, replace=${patch.replace.length})`,
+      );
     }
     let replaced = 0;
     let idx = 0;
@@ -311,8 +345,8 @@ function applyBinaryPatches(inst) {
       idx = i + patch.replace.length;
     }
     if (replaced > 0) {
-      const suffix = patch.expectedSites && replaced !== patch.expectedSites
-        ? ` (expected ${patch.expectedSites})` : '';
+      const suffix =
+        patch.expectedSites && replaced !== patch.expectedSites ? ` (expected ${patch.expectedSites})` : '';
       console.log(`   ✅ ${patch.name}: ${replaced} site(s) patched${suffix}`);
     } else if (data.indexOf(patch.replace) !== -1) {
       console.log(`   ℹ️  ${patch.name}: already patched`);
@@ -335,12 +369,17 @@ function applyBinaryPatches(inst) {
     }
     return true;
   }
-  return PATCHES.every(p => data.indexOf(p.replace) !== -1);
+  return PATCHES.every((p) => data.indexOf(p.replace) !== -1);
 }
 
 function promptUser(question) {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-  return new Promise((resolve) => rl.question(question, (a) => { rl.close(); resolve(a.trim().toLowerCase()); }));
+  return new Promise((resolve) =>
+    rl.question(question, (a) => {
+      rl.close();
+      resolve(a.trim().toLowerCase());
+    }),
+  );
 }
 
 async function main() {
@@ -367,8 +406,8 @@ async function main() {
     const inst = installations[i];
     const status = checkPatchStatus(inst);
     inst.patchStatus = status;
-    const icon = status.status === 'patched' ? '✅' :
-                 status.status === 'unpatched' || status.status === 'partial' ? '⬚' : '❓';
+    const icon =
+      status.status === 'patched' ? '✅' : status.status === 'unpatched' || status.status === 'partial' ? '⬚' : '❓';
     let text;
     if (status.status === 'patched') text = RESTORE ? 'UNPATCHED (nothing to restore)' : `PATCHED (${status.variant})`;
     else if (status.status === 'unpatched') text = RESTORE ? 'PATCHED (will restore)' : 'UNPATCHED';
@@ -400,14 +439,20 @@ async function main() {
     answer = await promptUser('Enter choice: ');
   }
 
-  if (answer === 'q' || answer === '') { console.log('\nExiting without changes.'); process.exit(0); }
+  if (answer === 'q' || answer === '') {
+    console.log('\nExiting without changes.');
+    process.exit(0);
+  }
 
   let toPatch = [];
   if (answer === 'a') toPatch = patchable;
   else {
     const num = parseInt(answer);
-    const found = patchable.find(p => p.index === num);
-    if (!found) { console.log('\n❌ Invalid choice'); process.exit(1); }
+    const found = patchable.find((p) => p.index === num);
+    if (!found) {
+      console.log('\n❌ Invalid choice');
+      process.exit(1);
+    }
     toPatch = [found];
   }
 
@@ -425,7 +470,12 @@ async function main() {
   console.log('Features:');
   console.log('   - pCn flipped: API returns summarized thinking, redact header removed');
   console.log('   - Outer case gate bypassed: thinking + redacted_thinking always render');
-  console.log('   - Tip: `showThinkingSummaries: true` + `verbose: true` in settings.json does the same without patching');
+  console.log(
+    '   - Tip: `showThinkingSummaries: true` + `verbose: true` in settings.json does the same without patching',
+  );
 }
 
-main().catch(err => { console.error('Error:', err.message); process.exit(1); });
+main().catch((err) => {
+  console.error('Error:', err.message);
+  process.exit(1);
+});
