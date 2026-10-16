@@ -17,11 +17,11 @@ Make Claude Code's thinking blocks visible by default without pressing `ctrl+o`.
 # Check your version
 claude --version
 
-# v2.1.289 (latest — native installer or npm binary; custom-peach recommended)
-node patch-thinking-v2.1.289-custom-peach.js
+# v2.1.302 (latest — native installer or npm binary; custom-peach recommended)
+node patch-thinking-v2.1.302-custom-peach.js
 
-# v2.1.204 (previous)
-# node patch-thinking-v2.1.204-custom-peach.js
+# v2.1.289 (previous)
+# node patch-thinking-v2.1.289-custom-peach.js
 
 # Older versions with cli.js format
 # node patch-thinking-v2.1.112-custom-peach.js
@@ -67,7 +67,8 @@ claude --version
 
 | Version | Patches | Install Method |
 |---------|---------|----------------|
-| **v2.1.289** | Standard, Custom, Custom Peach (binary; round peach `#ffc27a` border + 🍑 emoji label + forced multi-line in custom-peach). Also detects the native installer (`~/.local/share/claude/versions/`). The binary ships precompiled bytecode, so the patcher also clears Bun's bytecode pointers (reversible with `--restore`). The official `showThinkingSummaries: true` setting now covers patch #1 on its own | native installer or `npm install -g` |
+| **v2.1.302** | Standard, Custom, Custom Peach (binary; same pipeline and patch set as v2.1.289 with rotated identifiers; bytecode cleared, reversible with `--restore`) | native installer or `npm install -g` |
+| v2.1.289 | Standard, Custom, Custom Peach (binary; round peach `#ffc27a` border + 🍑 emoji label + forced multi-line in custom-peach). Also detects the native installer (`~/.local/share/claude/versions/`). The binary ships precompiled bytecode, so the patcher also clears Bun's bytecode pointers (reversible with `--restore`). The official `showThinkingSummaries: true` setting now covers patch #1 on its own | native installer or `npm install -g` |
 | v2.1.204 | Standard, Custom, Custom Peach (binary; peach `#ffc27a` border box + 🍑 emoji label + forced multi-line in custom-peach) | `npm install -g` |
 | v2.1.145 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
 | v2.1.121 | Standard, Custom, Custom Peach (binary; peach styling in custom-peach) | `npm install -g` |
@@ -130,7 +131,7 @@ Updates overwrite patches. Re-apply after updating:
 
 ```bash
 claude --version
-node patch-thinking-v2.1.289-custom-peach.js
+node patch-thinking-v2.1.302-custom-peach.js
 ```
 
 ---
@@ -189,9 +190,10 @@ See [CHANGELOG.md](CHANGELOG.md) for version-specific technical details.
 ## Files
 
 ```
-patch-thinking-v2.1.289.js              # Latest standard (binary — native installer or npm)
-patch-thinking-v2.1.289-custom.js       # Latest custom (binary — parity with standard)
-patch-thinking-v2.1.289-custom-peach.js # Latest custom-peach (binary, recommended)
+patch-thinking-v2.1.302.js              # Latest standard (binary — native installer or npm)
+patch-thinking-v2.1.302-custom.js       # Latest custom (binary — parity with standard)
+patch-thinking-v2.1.302-custom-peach.js # Latest custom-peach (binary, recommended)
+patch-thinking-v2.1.289-*.js            # Previous binary triplet (first bytecode-aware patcher)
 patch-thinking-v2.1.204-*.js            # Previous binary triplet (architectural rewrite)
 patch-thinking-v2.1.145-*.js            # Earlier binary triplet
 patch-thinking-v2.1.119-*.js            # Earlier binary triplet
@@ -229,4 +231,4 @@ Provided as-is for educational purposes. Use at your own risk.
 
 ---
 
-**Last updated:** 2026-10-04 · **Latest:** v2.1.289 (binary — native installer or npm; two-renderer thinking pipeline)
+**Last updated:** 2026-10-16 · **Latest:** v2.1.302 (binary — native installer or npm; identifier rotation of v2.1.289)

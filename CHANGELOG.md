@@ -15,7 +15,8 @@ This document tracks minified identifier changes between Claude Code versions.
 
 | Version | Component | React | Box | Text | ThinkingContent | Gate | Install |
 |---------|-----------|-------|-----|------|-----------------|------|---------|
-| **v2.1.289** | `Ss` (+ `Za` narration) | `e`/`r` (jsx/jsxs) | `s` | `n` | `oa` (prose) | case-level `!U&&!R` | native installer / npm (binary) |
+| **v2.1.302** | `Ds` (+ `ci` narration) | `e`/`r` (jsx/jsxs) | `s` | `n` | `Va` (prose) | case-level `!W&&!M` | native installer / npm (binary) |
+| v2.1.289 | `Ss` (+ `Za` narration) | `e`/`r` (jsx/jsxs) | `s` | `n` | `oa` (prose) | case-level `!U&&!R` | native installer / npm (binary) |
 | v2.1.204 | `Rer` | `Ste` (jsx runtime) | `A` | `h` | `Kf` (multi-line) | case-level `!cit&&!BY` | npm (binary) |
 | v2.1.145 | `NA6` | `nJH` | `B` | `V` | `eA` | `Le5` | npm (binary) |
 | v2.1.121 | `K96` | `c$H` | `p` | `v` | `fY` | `dW5` | npm (binary) |
@@ -82,6 +83,22 @@ function co2({param:{thinking:A}...}) { ... Vs.default.createElement(...) }
 Patches using exact string matching must be updated for each version.
 
 ---
+
+## v2.1.302 (native installer / npm, binary)
+
+**Pure identifier rotation of v2.1.289.** Same two-renderer pipeline, same bytecode build, same patch set. Every rename is the same length, so the v2.1.302 triplet is the v2.1.289 triplet with substituted names.
+
+| Role | v2.1.289 | v2.1.302 |
+|------|----------|----------|
+| Setting gate | `pCn(){return lt()...}` | `edn(){return ut()...}` |
+| Case guard (transcript / verbose) | `!U&&!R` | `!W&&!M` |
+| Ordinary renderer | `Ss` | `Ds` |
+| Narration renderer / predicate | `Za` / `Tut` | `ci` / `e4e` |
+| Prose renderer | `oa` | `Va` |
+| Content variable in renderer | `z` | `q` |
+| ∴ glyph variable | `nEt` | `$1t` |
+
+Hit counts on v2.1.302: 2452 `@bytecode` pragmas, 2448 of 2705 module records carry bytecode, 1 setting gate, 2 case guards, 1 content node, 1 label. Verified with a pty capture (🍑 label + round peach border rendered) and a `--restore` round trip (byte-identical `__BUN` segment). The narration renderer now also takes a `messageId` prop and returns `null` on blank text; neither affects the patches.
 
 ## v2.1.289 (native installer / npm, binary)
 
@@ -1256,7 +1273,8 @@ grep 'hideInTranscript' cli.js
 
 | Date | Version | Notes |
 |------|---------|-------|
-| 2026-10-04 | **v2.1.289** | **Two-renderer pipeline**: `Ss` (ordinary thinking, gated by `!U&&!R`) and new `Za` (narration summaries, ungated). Setting gate renamed `Smi`→`pCn`, settings accessor `Bn`→`lt`, glyph `OQo`→`nEt`. Standard/Custom apply 2 patches (the old `if(!fco)` hardening is dropped since empty blocks would render as empty boxes); Custom Peach adds a round peach (`#ffc27a`) border + paddingX around the `oa` prose renderer and the 🍑 label (4 total). Patchers now detect the native installer at `~/.local/share/claude/versions/`. **Binary ships JSC bytecode**: source edits are inert until the `@bytecode` pragma is blanked and the module-graph bytecode pointers are zeroed (sidecar JSON backup, `--restore` reverts). Mods (v2.1.287+) have no thinking render site, so the byte patch remains the only way to restyle |
+| 2026-10-16 | **v2.1.302** | Pure identifier rotation of v2.1.289 (`edn`/`ut`/`Ds`/`ci`/`Va`/`$1t`, case guard `!W&&!M`). Same bytecode-aware patch set; verified by pty capture and `--restore` round trip |
+| 2026-10-04 | v2.1.289 | **Two-renderer pipeline**: `Ss` (ordinary thinking, gated by `!U&&!R`) and new `Za` (narration summaries, ungated). Setting gate renamed `Smi`→`pCn`, settings accessor `Bn`→`lt`, glyph `OQo`→`nEt`. Standard/Custom apply 2 patches (the old `if(!fco)` hardening is dropped since empty blocks would render as empty boxes); Custom Peach adds a round peach (`#ffc27a`) border + paddingX around the `oa` prose renderer and the 🍑 label (4 total). Patchers now detect the native installer at `~/.local/share/claude/versions/`. **Binary ships JSC bytecode**: source edits are inert until the `@bytecode` pragma is blanked and the module-graph bytecode pointers are zeroed (sidecar JSON backup, `--restore` reverts). Mods (v2.1.287+) have no thinking render site, so the byte patch remains the only way to restyle |
 | 2026-07-08 | v2.1.204 | **Architectural rewrite**: new `Smi`/`WGl`/`GGl` request-side pipeline, `Rer` renderer, JSX-runtime (`Ste.jsx`), case-level guard replaces gate function, single-copy `__BUN` bundle, `hideInTranscript` removed. Standard/Custom apply 3 patches; Custom Peach adds a real single-line peach (`#ffc27a`) border box + 🍑 emoji label + forced multi-line (5 total). Uses hex color (not named "red") because some terminal themes remap named ANSI colors. `Kf` is a syntax-highlighter wrapper — content color inside is dominated by the highlighter, so the visual budget goes on the outer Box border |
 | 2026-04-28 | v2.1.121 | New identifiers (K96/c$H/dW5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |
 | 2026-04-24 | v2.1.119 | New identifiers (_86/j$H/ZJ5), pure rotation, gate fix, peach styling, force `thinking.display="summarized"` |
